@@ -1,10 +1,18 @@
 import { notFound, redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { TopicSelector } from "@/components/topic-selector";
+import { ProcessingStatus } from "@/components/processing-status";
 import { Sidebar } from "@/components/sidebar";
 
-export default async function TopicsPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function TopicsPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ processing?: string }>;
+}) {
   const { id } = await params;
+  const { processing } = await searchParams;
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
@@ -17,7 +25,20 @@ export default async function TopicsPage({ params }: { params: Promise<{ id: str
     .single();
 
   if (!doc) notFound();
-  if (doc.status !== "ready") redirect(`/documents/${id}/topics?processing=true`);
+
+  if (doc.status !== "ready") {
+    if (processing === "true") {
+      return (
+        <div className="flex min-h-screen bg-background">
+          <Sidebar />
+          <div className="flex-1 flex justify-center">
+            <ProcessingStatus documentId={id} />
+          </div>
+        </div>
+      );
+    }
+    redirect(`/documents/${id}/topics?processing=true`);
+  }
 
   const { data: topics } = await supabase
     .from("topics")
