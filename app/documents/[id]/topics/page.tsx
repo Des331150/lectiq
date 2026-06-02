@@ -1,9 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { TopicSelector } from "@/components/topic-selector";
-import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Sidebar } from "@/components/sidebar";
 
 export default async function TopicsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -28,20 +26,17 @@ export default async function TopicsPage({ params }: { params: Promise<{ id: str
     .order("position");
 
   return (
-    <div className="min-h-screen p-6 max-w-2xl mx-auto">
-      <div className="mb-6">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-        </Link>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <div className="flex-1 flex justify-center">
+        <div className="w-full py-6 px-6 max-w-2xl">
+          <h1 className="text-2xl font-bold mb-1">{doc.title}</h1>
+          <p className="text-muted-foreground mb-6">
+            Select the topics you want to be quizzed on and choose your question format.
+          </p>
+          <TopicSelector topics={topics || []} documentId={id} />
+        </div>
       </div>
-      <h1 className="text-2xl font-bold mb-1">{doc.title}</h1>
-      <p className="text-muted-foreground mb-6">
-        Select the topics you want to be quizzed on and choose your question format.
-      </p>
-      <TopicSelector topics={topics || []} documentId={id} />
     </div>
   );
 }

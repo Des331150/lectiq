@@ -21,14 +21,14 @@ export function DashboardStats({
 
   return (
     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div className="rounded-lg border border-border bg-white p-4">
+      <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Documents</p>
         <p className="text-[28px] font-bold text-primary">
           {documentsUsed}
           {!isPro && <span className="text-base font-normal text-muted-foreground"> / {documentsLimit}</span>}
         </p>
       </div>
-      <div className="rounded-lg border border-border bg-white p-4">
+      <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Quizzes Taken</p>
         <p className="text-[28px] font-bold text-primary">
           {quizzesUsed}
@@ -40,13 +40,13 @@ export function DashboardStats({
           </div>
         )}
       </div>
-      <div className="rounded-lg border border-border bg-white p-4">
+      <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Avg Score</p>
         <p className="text-[28px] font-bold text-primary">
           {averageScore !== null ? `${Math.round(averageScore)}%` : "\u2014"}
         </p>
       </div>
-      <div className="rounded-lg border border-border bg-white p-4">
+      <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Topics Extracted</p>
         <p className="text-[28px] font-bold text-primary">{topicsExtracted}</p>
       </div>
