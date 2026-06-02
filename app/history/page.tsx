@@ -1,8 +1,8 @@
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { Sidebar } from "@/components/sidebar";
 
 export default async function HistoryPage() {
   const supabase = await createServerSupabaseClient();
@@ -20,16 +20,10 @@ export default async function HistoryPage() {
     .limit(50);
 
   return (
-    <div className="min-h-screen p-6 max-w-3xl mx-auto">
-      <div className="mb-6">
-        <Link href="/dashboard">
-          <Button variant="ghost" size="sm">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Dashboard
-          </Button>
-        </Link>
-      </div>
-      <h1 className="text-2xl font-bold mb-6">Quiz History</h1>
+    <div className="flex min-h-screen bg-background">
+      <Sidebar />
+      <div className="flex-1 py-6 px-6 max-w-3xl">
+        <h1 className="text-2xl font-bold mb-6">Quiz History</h1>
 
       {quizzes && quizzes.length > 0 ? (
         <div className="space-y-2">
@@ -63,6 +57,7 @@ export default async function HistoryPage() {
           </Link>
         </div>
       )}
+      </div>
     </div>
   );
 }
