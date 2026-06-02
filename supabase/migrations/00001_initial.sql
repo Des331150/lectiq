@@ -59,6 +59,16 @@ create policy "Users can read own document topics"
     )
   );
 
+create policy "Users can insert own document topics"
+  on public.topics for insert
+  with check (
+    exists (
+      select 1 from public.documents
+      where documents.id = topics.document_id
+      and documents.user_id = auth.uid()
+    )
+  );
+
 create index topics_document_id_idx on public.topics(document_id);
 
 -- Quizzes
@@ -164,9 +174,55 @@ create policy "Users can read own usage records"
   on public.usage_records for select
   using (auth.uid() = user_id);
 
+create policy "Users can insert own usage records"
+  on public.usage_records for insert
+  with check (auth.uid() = user_id);
+
+create policy "Users can update own usage records"
+  on public.usage_records for update
+  using (auth.uid() = user_id);
+
 create index usage_records_user_id_idx on public.usage_records(user_id);
 
 -- Auto-create user record on signup
+-- Create documents storage bucket
+insert into storage.buckets (id, name, public)
+values ('Documents', 'Documents', false)
+on conflict (id) do nothing;
+
+-- Storage RLS for documents bucket
+create policy "Users can upload own files"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "Users can read own files"
+  on storage.objects for select
+  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "Users can update own files"
+  on storage.objects for update
+  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "Users can delete own files"
+  on storage.objects for delete
+  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
 create or replace function public.handle_new_user()
 returns trigger
 language plpgsql

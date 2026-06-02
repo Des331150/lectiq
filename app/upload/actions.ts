@@ -7,7 +7,8 @@ import { getCurrentMonth } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
-  const pdfjsLib = await import("pdfjs-dist");
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = null as any;
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const texts: string[] = [];
 
@@ -60,10 +61,10 @@ export async function uploadDocument(formData: FormData) {
 
   const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
   const { error: uploadError } = await supabase.storage
-    .from("documents")
+    .from("Documents")
     .upload(filePath, file);
 
-  if (uploadError) return { error: "Failed to upload file" };
+  if (uploadError) return { error: `Failed to upload file: ${uploadError.message}` };
 
   const { data: doc, error: docError } = await supabase
     .from("documents")
@@ -77,7 +78,7 @@ export async function uploadDocument(formData: FormData) {
     .select()
     .single();
 
-  if (docError || !doc) return { error: "Failed to create document record" };
+  if (docError || !doc) return { error: `Failed to create document record: ${docError?.message}` };
 
   try {
     const buffer = await file.arrayBuffer();
@@ -121,7 +122,8 @@ export async function uploadDocument(formData: FormData) {
 
   } catch (err) {
     await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
-    return { error: "Failed to process document" };
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return { error: `Failed to process document: ${message}` };
   }
 
   revalidatePath("/dashboard");
