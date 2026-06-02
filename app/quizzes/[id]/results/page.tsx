@@ -58,7 +58,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
                     {answer?.is_correct ? "Correct" : "Incorrect"}
                   </span>
                 ) : (
-                  <span className="text-sm font-medium">{answer?.ai_score !== null ? `${answer.ai_score}%` : "\u2014"}</span>
+                  <span className="text-sm font-medium">{answer && answer.ai_score !== null ? `${answer.ai_score}%` : "\u2014"}</span>
                 )}
               </div>
               <p className="text-sm mb-2">{question.question_text}</p>

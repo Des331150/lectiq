@@ -66,17 +66,20 @@ const SelectTrigger = React.forwardRef<
 });
 SelectTrigger.displayName = "SelectTrigger";
 
-const SelectValue = React.forwardRef<
-  HTMLSpanElement,
-  React.HTMLAttributes<HTMLSpanElement>
->(({ className, children, ...props }, ref) => {
-  const { value } = useSelectContext();
-  return (
-    <span ref={ref} className={cn("block truncate", className)} {...props}>
-      {children || value}
-    </span>
-  );
-});
+interface SelectValueProps extends React.HTMLAttributes<HTMLSpanElement> {
+  placeholder?: string;
+}
+
+const SelectValue = React.forwardRef<HTMLSpanElement, SelectValueProps>(
+  ({ className, children, placeholder, ...props }, ref) => {
+    const { value } = useSelectContext();
+    return (
+      <span ref={ref} className={cn("block truncate", className)} {...props}>
+        {children || value || placeholder || ""}
+      </span>
+    );
+  }
+);
 SelectValue.displayName = "SelectValue";
 
 const SelectContent = React.forwardRef<
