@@ -22,41 +22,43 @@ export default async function HistoryPage() {
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <div className="flex-1 py-6 px-6 max-w-3xl">
-        <h1 className="text-2xl font-bold mb-6">Quiz History</h1>
+      <div className="flex-1 flex justify-center">
+        <div className="w-full py-6 px-6 max-w-3xl">
+          <h1 className="text-2xl font-bold mb-6">Quiz History</h1>
 
-      {quizzes && quizzes.length > 0 ? (
-        <div className="space-y-2">
-          {quizzes.map((quiz: any) => (
-            <Link key={quiz.id} href={`/quizzes/${quiz.id}/results`}>
-              <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition-colors">
-                <div>
-                  <p className="font-medium">{quiz.document?.title || "Unknown document"}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(quiz.created_at).toLocaleDateString()} &middot;{" "}
-                    {quiz.question_count} questions &middot;{" "}
-                    <span className="capitalize">{quiz.format.replace("_", " + ")}</span>
-                  </p>
+        {quizzes && quizzes.length > 0 ? (
+          <div className="space-y-2">
+            {quizzes.map((quiz: any) => (
+              <Link key={quiz.id} href={`/quizzes/${quiz.id}/results`}>
+                <div className="flex items-center justify-between rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+                  <div>
+                    <p className="font-medium">{quiz.document?.title || "Unknown document"}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date(quiz.created_at).toLocaleDateString()} &middot;{" "}
+                      {quiz.question_count} questions &middot;{" "}
+                      <span className="capitalize">{quiz.format.replace("_", " + ")}</span>
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    {quiz.score !== null ? (
+                      <p className="text-lg font-bold">{Math.round(quiz.score)}%</p>
+                    ) : (
+                      <p className="text-sm text-muted-foreground capitalize">{quiz.status}</p>
+                    )}
+                  </div>
                 </div>
-                <div className="text-right">
-                  {quiz.score !== null ? (
-                    <p className="text-lg font-bold">{Math.round(quiz.score)}%</p>
-                  ) : (
-                    <p className="text-sm text-muted-foreground capitalize">{quiz.status}</p>
-                  )}
-                </div>
-              </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 border rounded-lg bg-muted/30">
+            <p className="text-muted-foreground mb-4">No quizzes taken yet</p>
+            <Link href="/upload">
+              <Button variant="outline">Upload a document to get started</Button>
             </Link>
-          ))}
+          </div>
+        )}
         </div>
-      ) : (
-        <div className="text-center py-12 border rounded-lg bg-muted/30">
-          <p className="text-muted-foreground mb-4">No quizzes taken yet</p>
-          <Link href="/upload">
-            <Button variant="outline">Upload a document to get started</Button>
-          </Link>
-        </div>
-      )}
       </div>
     </div>
   );

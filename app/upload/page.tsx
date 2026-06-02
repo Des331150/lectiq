@@ -26,15 +26,17 @@ export default function UploadPage() {
   return (
     <div className="flex min-h-screen bg-background">
       <Sidebar />
-      <div className="flex-1 py-6 px-6 max-w-2xl">
-        <h1 className="text-2xl font-bold mb-2">Upload Document</h1>
-        <p className="text-muted-foreground mb-8">
-          Upload a PDF or PowerPoint file. We&apos;ll extract the topics so you can start quizzing.
-        </p>
-        <UploadZone onUpload={handleUpload} />
-        {error && (
-          <p className="mt-4 text-sm text-destructive">{error}</p>
-        )}
+      <div className="flex-1 flex justify-center">
+        <div className="w-full py-6 px-6 max-w-2xl">
+          <h1 className="text-2xl font-bold mb-2">Upload Document</h1>
+          <p className="text-muted-foreground mb-8">
+            Upload a PDF or PowerPoint file. We&apos;ll extract the topics so you can start quizzing.
+          </p>
+          <UploadZone onUpload={handleUpload} />
+          {error && (
+            <p className="mt-4 text-sm text-destructive">{error}</p>
+          )}
+        </div>
       </div>
     </div>
   );
