@@ -21,7 +21,7 @@ export default function LandingPage() {
           <div className="flex-1">
             <h1 className="text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.15] tracking-tight text-balance mb-4">
               Turn your lecture notes<br />
-              <span className="text-[hsl(var(--accent))]">into quizzes</span>
+              <span className="text-accent">into quizzes</span>
             </h1>
             <p className="text-base leading-relaxed text-muted-foreground max-w-[65ch] mb-7">
               Upload your PDFs and slides. Lectiq extracts the topics and generates
@@ -29,10 +29,10 @@ export default function LandingPage() {
             </p>
             <div className="flex gap-2.5">
               <Link href="/auth/register">
-                <Button size="lg" className="text-sm font-medium px-6 py-3 h-auto">Start Studying Free</Button>
+                <Button size="lg" className="text-sm font-medium">Start Studying Free</Button>
               </Link>
               <Link href="/auth/login">
-                <Button variant="outline" size="lg" className="text-sm font-medium px-6 py-3 h-auto">Sign In</Button>
+                <Button variant="outline" size="lg" className="text-sm font-medium">Sign In</Button>
               </Link>
             </div>
           </div>
@@ -44,9 +44,9 @@ export default function LandingPage() {
         </div>
 
         <div className="border-t border-border py-12 px-7">
-          <p className="text-center text-xs font-medium uppercase tracking-[1.5px] text-[hsl(var(--accent))] mb-8">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-8">
             How it works
-          </p>
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
             {[
               { num: "1", title: "Upload", desc: "Drop your PDF or PowerPoint. We extract the key topics automatically." },
