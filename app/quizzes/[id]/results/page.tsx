@@ -81,7 +81,7 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
 
       <div className="flex gap-4 mt-8">
         <Link href="/dashboard" className="flex-1"><Button variant="outline" className="w-full">Back to Dashboard</Button></Link>
-        <Link href={`/documents/${quiz.document_id}/quiz/new`} className="flex-1"><Button className="w-full">Take Another Quiz</Button></Link>
+        <Link href={`/documents/${quiz.document_id}/topics`} className="flex-1"><Button className="w-full">Take Another Quiz</Button></Link>
       </div>
     </div>
   );
