@@ -7,8 +7,11 @@ import { getCurrentMonth } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
+  const path = await import("path");
+  const { pathToFileURL } = await import("url");
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = null as any;
+  const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = pathToFileURL(workerPath).href;
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const texts: string[] = [];
 
@@ -99,6 +102,8 @@ export async function uploadDocument(formData: FormData) {
 
     await supabase.from("topics").insert(topicRows);
     await supabase.from("documents").update({ status: "ready", page_count: text.split("\n\n").length }).eq("id", doc.id);
+
+    await supabase.storage.from("Documents").remove([filePath]);
 
     const month = getCurrentMonth();
     const { data: existing } = await supabase
