@@ -60,7 +60,7 @@ export async function uploadDocument(formData: FormData) {
 
   const ext = file.name.endsWith(".pptx") ? "pptx" : "pdf";
   if (!["pdf", "pptx"].includes(ext)) return { error: "Only PDF and PPTX files are supported" };
-  if (file.size > 20 * 1024 * 1024) return { error: "File must be under 20MB" };
+  if (file.size > 40 * 1024 * 1024) return { error: "File must be under 40MB" };
 
   const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
   const { error: uploadError } = await supabase.storage

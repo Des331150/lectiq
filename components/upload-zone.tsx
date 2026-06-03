@@ -33,7 +33,7 @@ export function UploadZone({ onUpload, disabled }: UploadZoneProps) {
       "application/vnd.openxmlformats-officedocument.presentationml.presentation": [".pptx"],
     },
     maxFiles: 1,
-    maxSize: 20 * 1024 * 1024,
+    maxSize: 40 * 1024 * 1024,
     disabled: uploading || disabled,
   });
 
@@ -55,7 +55,7 @@ export function UploadZone({ onUpload, disabled }: UploadZoneProps) {
       ) : (
         <div>
           <p className="font-medium mb-1">Drop a PDF or PPTX here, or click to browse</p>
-          <p className="text-sm text-muted-foreground">Max 20MB &middot; PDF or PPTX only</p>
+          <p className="text-sm text-muted-foreground">Max 40MB &middot; PDF or PPTX only</p>
         </div>
       )}
     </div>
