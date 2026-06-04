@@ -37,9 +37,11 @@ export default function LandingPage() {
             </div>
           </div>
           <div className="flex-1 w-full">
-            <div className="rounded-xl bg-card border border-border h-[220px] flex items-center justify-center text-sm text-muted-foreground border-dashed">
-              App Screenshot
-            </div>
+            <img
+              src="/dashboard-screenshot.png"
+              alt="Lectiq dashboard"
+              className="rounded-xl border border-border w-full h-auto shadow-sm"
+            />
           </div>
         </div>
 
