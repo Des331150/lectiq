@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { uploadDocument } from "./actions";
+import { createClient } from "@/lib/supabase/client";
 import { UploadZone } from "@/components/upload-zone";
 import { Sidebar } from "@/components/sidebar";
 
@@ -12,19 +13,40 @@ export default function UploadPage() {
 
   const handleUpload = async (file: File) => {
     setError(null);
-    const formData = new FormData();
-    formData.append("file", file);
 
-    try {
-      const result = await uploadDocument(formData);
-      if (result.error) {
-        setError(result.error);
-        return;
-      }
-      router.push(`/documents/${result.documentId}/topics`);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Unexpected error uploading file");
+    const ext = file.name.endsWith(".pptx") ? "pptx" : "pdf";
+    if (!["pdf", "pptx"].includes(ext)) {
+      setError("Only PDF and PPTX files are supported");
+      return;
     }
+    if (file.size > 40 * 1024 * 1024) {
+      setError("File must be under 40MB");
+      return;
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setError("Not authenticated"); return; }
+
+    const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("Documents")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      setError(`Failed to upload: ${uploadError.message}`);
+      return;
+    }
+
+    const result = await uploadDocument(filePath, file.name, ext);
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    router.push(`/documents/${result.documentId}/topics`);
   };
 
   return (

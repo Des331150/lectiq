@@ -43,7 +43,7 @@ async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
   return slides.join("\n\n---\n\n");
 }
 
-export async function uploadDocument(formData: FormData) {
+export async function uploadDocument(filePath: string, fileName: string, fileType: string) {
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
@@ -51,27 +51,15 @@ export async function uploadDocument(formData: FormData) {
   const quota = await checkUploadQuota(user.id);
   if (!quota.allowed) return { error: quota.reason };
 
-  const file = formData.get("file") as File;
-  if (!file) return { error: "No file provided" };
-
-  const ext = file.name.endsWith(".pptx") ? "pptx" : "pdf";
-  if (!["pdf", "pptx"].includes(ext)) return { error: "Only PDF and PPTX files are supported" };
-  if (file.size > 40 * 1024 * 1024) return { error: "File must be under 40MB" };
-
-  const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
-  const { error: uploadError } = await supabase.storage
-    .from("Documents")
-    .upload(filePath, file);
-
-  if (uploadError) return { error: `Failed to upload file: ${uploadError.message}` };
+  if (!["pdf", "pptx"].includes(fileType)) return { error: "Only PDF and PPTX files are supported" };
 
   const { data: doc, error: docError } = await supabase
     .from("documents")
     .insert({
       user_id: user.id,
-      title: file.name,
+      title: fileName,
       file_path: filePath,
-      file_type: ext,
+      file_type: fileType,
       status: "processing",
     })
     .select()
@@ -80,12 +68,18 @@ export async function uploadDocument(formData: FormData) {
   if (docError || !doc) return { error: `Failed to create document record: ${docError?.message}` };
 
   try {
-    const buffer = await file.arrayBuffer();
-    const text = ext === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
+    const { data: fileData, error: downloadError } = await supabase.storage
+      .from("Documents")
+      .download(filePath);
+
+    if (downloadError || !fileData) throw new Error(`Failed to read uploaded file: ${downloadError?.message}`);
+
+    const buffer = await fileData.arrayBuffer();
+    const text = fileType === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
 
     if (!text.trim()) {
       await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
-      const reason = ext === "pdf" ? "Scanned PDFs or image-based PDFs are not supported yet." : "Could not extract text from this PowerPoint file. It may be image-only or password-protected.";
+      const reason = fileType === "pdf" ? "Scanned PDFs or image-based PDFs are not supported yet." : "Could not extract text from this PowerPoint file. It may be image-only or password-protected.";
       return { error: reason };
     }
 
