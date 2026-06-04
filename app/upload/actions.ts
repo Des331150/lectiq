@@ -7,11 +7,7 @@ import { getCurrentMonth } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
-  const path = await import("path");
-  const { pathToFileURL } = await import("url");
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-  const workerPath = path.resolve(process.cwd(), "node_modules/pdfjs-dist/legacy/build/pdf.worker.mjs");
-  pdfjsLib.GlobalWorkerOptions.workerSrc = pathToFileURL(workerPath).href;
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const texts: string[] = [];
 
