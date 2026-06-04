@@ -31,7 +31,7 @@ async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
 
   for (const file of slideFiles) {
     const content = await zip.files[file].async("text");
-    const textMatches = content.match(/<a:t[^>]*>([^<]+)<\/a:t>/g) || [];
+    const textMatches = content.match(/<[^>]*:t[^>]*>([^<]+)<\/[^>]*:t[^>]*>/g) || [];
     const slideText = textMatches
       .map((m: string) => m.replace(/<[^>]+>/g, ""))
       .join(" ");
@@ -85,7 +85,8 @@ export async function uploadDocument(formData: FormData) {
 
     if (!text.trim()) {
       await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
-      return { error: "Could not extract text from this document. Scanned PDFs are not supported yet." };
+      const reason = ext === "pdf" ? "Scanned PDFs or image-based PDFs are not supported yet." : "Could not extract text from this PowerPoint file. It may be image-only or password-protected.";
+      return { error: reason };
     }
 
     const topics = await extractTopics(text);
