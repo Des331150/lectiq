@@ -1,3 +1,8 @@
+declare module "pdfjs-dist/legacy/build/pdf.worker.min.mjs" {
+  const WorkerMessageHandler: any;
+  export { WorkerMessageHandler };
+}
+
 declare module "pdfjs-dist/legacy/build/pdf" {
   interface PDFDocumentProxy {
     numPages: number;
