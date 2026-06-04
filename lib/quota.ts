@@ -19,8 +19,8 @@ export async function checkUploadQuota(userId: string): Promise<{ allowed: boole
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId);
 
-  if (count !== null && count >= 3) {
-    return { allowed: false, reason: "Free plan limited to 3 documents. Upgrade to Pro for unlimited uploads." };
+  if (count !== null && count >= 10) {
+    return { allowed: false, reason: "Free plan limited to 10 documents. Upgrade to Pro for unlimited uploads." };
   }
 
   return { allowed: true };
