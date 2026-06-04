@@ -28,7 +28,7 @@ export default async function BillingPage() {
               <h2 className="text-lg font-bold mb-2">Free</h2>
               <p className="text-3xl font-bold mb-4">$0</p>
               <ul className="space-y-2 mb-6">
-                <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-600" /> 3 documents</li>
+                <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-600" /> 10 documents</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-600" /> 5 quizzes / month</li>
                 <li className="flex items-center gap-2 text-sm"><Check className="h-4 w-4 text-green-600" /> MCQ + Free Response</li>
               </ul>

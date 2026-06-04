@@ -77,7 +77,7 @@ export default async function DashboardPage() {
             <div>
               <h1 className="text-2xl font-bold">Dashboard</h1>
               <p className="text-muted-foreground text-sm">
-                {isPro ? "Pro plan" : `Free plan \u2014 ${documents?.length || 0}/3 documents used`}
+                {isPro ? "Pro plan" : `Free plan \u2014 ${documents?.length || 0}/10 documents used`}
               </p>
             </div>
             <Link href="/upload">
@@ -91,7 +91,7 @@ export default async function DashboardPage() {
           <div className="mb-8">
             <DashboardStats
               documentsUsed={documents?.length || 0}
-              documentsLimit={3}
+              documentsLimit={10}
               quizzesUsed={usage?.quizzes_used || 0}
               quizzesLimit={5}
               averageScore={avgScore}

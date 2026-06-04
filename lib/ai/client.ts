@@ -4,22 +4,27 @@ const MODEL = "openrouter/free";
 export async function aiComplete(
   systemPrompt: string,
   userPrompt: string,
-  _format: "json_object" | "text" = "text"
+  format: "json_object" | "text" = "text"
 ) {
+  const body: Record<string, unknown> = {
+    model: MODEL,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    temperature: 0.3,
+  };
+  if (format === "json_object") {
+    body.response_format = { type: "json_object" };
+  }
+
   const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${OPENROUTER_API_KEY}`,
     },
-    body: JSON.stringify({
-      model: MODEL,
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: userPrompt },
-      ],
-      temperature: 0.3,
-    }),
+    body: JSON.stringify(body),
   });
 
   if (!response.ok) {
