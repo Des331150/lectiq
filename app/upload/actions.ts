@@ -8,6 +8,9 @@ import { revalidatePath } from "next/cache";
 
 async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
   const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+  pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdn.jsdelivr.net/npm/pdfjs-dist@${(
+    await import("pdfjs-dist/package.json")
+  ).version}/legacy/build/pdf.worker.min.mjs`;
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const texts: string[] = [];
 
@@ -31,16 +34,18 @@ async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
 
   for (const file of slideFiles) {
     const content = await zip.files[file].async("text");
-    const textMatches = content.match(/<[^>]*:t[^>]*>([^<]+)<\/[^>]*:t[^>]*>/g) || [];
-    const slideText = textMatches
-      .map((m: string) => m.replace(/<[^>]+>/g, ""))
-      .join(" ");
-    if (slideText.trim()) {
-      slides.push(slideText.trim());
+    const text = content
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z]+;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text) {
+      const slideNum = slideFiles.indexOf(file) + 1;
+      slides.push(`[Slide ${slideNum}]\n${text}`);
     }
   }
 
-  return slides.join("\n\n---\n\n");
+  return slides.join("\n\n");
 }
 
 export async function uploadDocument(filePath: string, fileName: string, fileType: string) {

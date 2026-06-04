@@ -8,12 +8,15 @@ interface ExtractedTopic {
 const MAX_CHARS = 15000;
 
 export async function extractTopics(documentText: string): Promise<ExtractedTopic[]> {
-  const systemPrompt = `You are an academic assistant. Extract distinct topics from the provided document text. 
-For each topic, return:
-- title: a concise topic name
-- content: the key excerpt from the document that covers this topic (2-5 sentences)
+  const systemPrompt = `You are an academic assistant. Extract distinct, comprehensive topics from the provided document.
 
-If the document has clear section headings or slide titles, use those as topic titles.
+If the content is divided into slides or sections (marked as [Slide 1], [Slide 2], etc.), GROUP related slides into topics and use the slide titles as topic names.
+
+For each topic, return:
+- title: a concise, descriptive topic name
+- content: a comprehensive summary of everything covered in that topic (2-5 sentences)
+
+Cover ALL material in the document. Do not skip sections. Extract every distinct topic.
 Return ONLY a JSON object with this structure: { "topics": [{ "title": "...", "content": "..." }] }`;
 
   const truncatedText = documentText.length > MAX_CHARS
