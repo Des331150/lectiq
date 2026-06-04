@@ -93,7 +93,7 @@ export default async function DashboardPage() {
               documentsUsed={documents?.length || 0}
               documentsLimit={10}
               quizzesUsed={usage?.quizzes_used || 0}
-              quizzesLimit={5}
+              quizzesLimit={10}
               averageScore={avgScore}
               topicsExtracted={topicsExtracted}
               isPro={isPro}

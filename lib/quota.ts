@@ -47,8 +47,8 @@ export async function checkQuizQuota(userId: string): Promise<{ allowed: boolean
     .eq("month", month)
     .single();
 
-  if (usage && usage.quizzes_used >= 5) {
-    return { allowed: false, reason: "Free plan limited to 5 quizzes per month. Upgrade to Pro for unlimited quizzes." };
+  if (usage && usage.quizzes_used >= 10) {
+    return { allowed: false, reason: "Free plan limited to 10 quizzes per month. Upgrade to Pro for unlimited quizzes." };
   }
 
   return { allowed: true };
