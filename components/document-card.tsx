@@ -1,6 +1,10 @@
-import Link from "next/link";
-import { FileText } from "lucide-react";
+"use client";
+
+import { Trash2, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { deleteDocument } from "@/app/dashboard/actions";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import type { Document } from "@/types/database";
 
 interface DocumentCardProps {
@@ -10,6 +14,14 @@ interface DocumentCardProps {
 }
 
 export function DocumentCard({ document, topicCount, quizCount }: DocumentCardProps) {
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this document and all its quizzes?")) return;
+    const result = await deleteDocument(document.id);
+    if (result.success) router.refresh();
+  };
+
   return (
     <div className="flex items-center justify-between rounded-lg border border-border bg-card p-3.5">
       <div className="flex items-center gap-3 min-w-0">
@@ -30,6 +42,9 @@ export function DocumentCard({ document, topicCount, quizCount }: DocumentCardPr
         <Link href={`/documents/${document.id}/quiz/new`}>
           <Button size="sm" className="text-xs h-7 px-3">Quiz</Button>
         </Link>
+        <button onClick={handleDelete} className="text-muted-foreground hover:text-destructive transition-colors p-1" title="Delete document">
+          <Trash2 className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
