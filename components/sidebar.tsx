@@ -1,14 +1,18 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
-export async function Sidebar() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+export function Sidebar() {
+  const [email, setEmail] = useState("");
 
-  const email = user.email || "";
-  const initial = email.charAt(0).toUpperCase() || "U";
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) setEmail(user.email);
+    });
+  }, []);
 
   return (
     <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] flex flex-col min-h-screen">
@@ -26,7 +30,7 @@ export async function Sidebar() {
       </nav>
 
       <div className="px-4 py-4 border-t border-white/10 space-y-3">
-        <p className="text-xs text-white/50 truncate">{email}</p>
+        <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
         <form action="/auth/logout" method="post">
           <button type="submit" className="text-xs text-white/50 hover:text-white/80 transition-colors">
             Log out

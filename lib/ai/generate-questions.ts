@@ -9,19 +9,25 @@ interface GeneratedQuestion {
   topic_id: string;
 }
 
+const MAX_CHARS = 40000;
+
 export async function generateQuestions(
   topicContents: { id: string; title: string; content: string }[],
   format: "mcq" | "free_response" | "both"
 ): Promise<GeneratedQuestion[]> {
-  const topicsText = topicContents
+  let topicsText = topicContents
     .map((t) => `TOPIC: ${t.title}\nCONTENT: ${t.content}\n`)
     .join("\n");
 
+  if (topicsText.length > MAX_CHARS) {
+    topicsText = topicsText.slice(0, MAX_CHARS) + "\n\n[Content truncated due to length.]";
+  }
+
   const formatInstruction =
     format === "mcq"
-      ? "multiple choice questions (4 options each, one correct)"
+      ? "ONLY multiple choice questions (4 options each, one correct). Do NOT include any free response questions."
       : format === "free_response"
-      ? "free response questions (include a model answer)"
+      ? "ONLY free response questions (include a model answer). Do NOT include any multiple choice questions."
       : "a mix of multiple choice and free response questions";
 
   const systemPrompt = `You are an academic quiz generator. Generate ${formatInstruction} 
@@ -38,11 +44,27 @@ Return ONLY a JSON object with this structure:
   const result = await aiComplete(systemPrompt, userPrompt, "json_object");
 
   try {
-    const parsed = JSON.parse(result);
-    return (parsed.questions || []).map((q: any, i: number) => ({
+    const cleaned = result.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+    const parsed = JSON.parse(cleaned);
+    let questions: GeneratedQuestion[] = (parsed.questions || []).map((q: any, i: number) => ({
       ...q,
       topic_id: topicContents[0]?.id || "",
     }));
+
+    if (format === "mcq") {
+      questions = questions.filter(q => q.type === "mcq").map(q => {
+        if (!q.options || q.options.length < 2) return q;
+        const opts = q.options.map((opt: any, i: number) => {
+          if (typeof opt === "string") return { label: String.fromCharCode(65 + i), text: opt };
+          return opt;
+        });
+        return { ...q, options: opts };
+      }).filter(q => q.options && q.options.length >= 2 && q.options.every((o: any) => o.label));
+    } else if (format === "free_response") {
+      questions = questions.filter(q => q.type === "free_response");
+    }
+
+    return questions;
   } catch {
     throw new Error("Failed to parse AI question generation response");
   }

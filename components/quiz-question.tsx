@@ -22,7 +22,7 @@ export function QuizQuestionDisplay({ question, index, answer, onAnswer }: QuizQ
       </p>
       <p className="text-lg font-medium mb-4">{question.question_text}</p>
 
-      {question.type === "mcq" && question.options ? (
+      {question.type === "mcq" && question.options && question.options.length > 0 ? (
         <div className="space-y-2">
           {question.options.map((opt) => (
             <div

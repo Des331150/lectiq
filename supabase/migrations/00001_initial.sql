@@ -118,6 +118,16 @@ create policy "Users can read own quiz questions"
     )
   );
 
+create policy "Users can insert own quiz questions"
+  on public.quiz_questions for insert
+  with check (
+    exists (
+      select 1 from public.quizzes
+      where quizzes.id = quiz_questions.quiz_id
+      and quizzes.user_id = auth.uid()
+    )
+  );
+
 create index quiz_questions_quiz_id_idx on public.quiz_questions(quiz_id);
 
 -- Quiz Answers

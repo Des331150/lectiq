@@ -63,7 +63,9 @@ export async function POST(request: Request) {
       position: i,
     }));
 
-    await supabase.from("quiz_questions").insert(questionRows);
+    const { error: insertError } = await supabase.from("quiz_questions").insert(questionRows);
+    if (insertError) throw new Error(`Failed to insert questions: ${insertError.message}`);
+
     await supabase.from("quizzes").update({ status: "ready", question_count: questions.length }).eq("id", quiz.id);
 
     const month = getCurrentMonth();

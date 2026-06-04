@@ -1,23 +1,36 @@
-import Groq from "groq-sdk";
-
-export const ai = new Groq({
-  apiKey: process.env.GROQ_API_KEY,
-});
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const MODEL = "openrouter/free";
 
 export async function aiComplete(
   systemPrompt: string,
   userPrompt: string,
-  format: "json_object" | "text" = "text"
+  _format: "json_object" | "text" = "text"
 ) {
-  const response = await ai.chat.completions.create({
-    model: "llama-3.3-70b-versatile",
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: userPrompt },
-    ],
-    response_format: format === "json_object" ? { type: "json_object" } : undefined,
-    temperature: 0.3,
+  const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+      temperature: 0.3,
+    }),
   });
 
-  return response.choices[0]?.message?.content || "";
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content;
+  if (!content || !content.trim()) {
+    throw new Error("AI returned empty response");
+  }
+  return content;
 }

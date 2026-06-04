@@ -17,7 +17,11 @@ Provide:
 
 Consider accuracy, completeness, and clarity. Return ONLY JSON: { "score": number, "feedback": "..." }`;
 
-  const userPrompt = `SOURCE MATERIAL: ${documentContext}
+  const truncatedContext = documentContext.length > 30000
+    ? documentContext.slice(0, 30000) + "\n\n[Context truncated due to length.]"
+    : documentContext;
+
+  const userPrompt = `SOURCE MATERIAL: ${truncatedContext}
 
 QUESTION: ${questionText}
 
@@ -28,7 +32,8 @@ Grade this answer against the source material.`;
   const result = await aiComplete(systemPrompt, userPrompt, "json_object");
 
   try {
-    return JSON.parse(result) as GradedAnswer;
+    const cleaned = result.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+    return JSON.parse(cleaned) as GradedAnswer;
   } catch {
     throw new Error("Failed to parse AI grading response");
   }
