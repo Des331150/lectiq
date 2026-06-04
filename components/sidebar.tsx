@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 
 export function Sidebar() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
 
   useEffect(() => {
@@ -13,6 +15,13 @@ export function Sidebar() {
       if (user?.email) setEmail(user.email);
     });
   }, []);
+
+  const handleLogout = async () => {
+    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
 
   return (
     <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] flex flex-col min-h-screen">
@@ -31,11 +40,9 @@ export function Sidebar() {
 
       <div className="px-4 py-4 border-t border-white/10 space-y-3">
         <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
-        <form action="/auth/logout" method="post">
-          <button type="submit" className="text-xs text-white/50 hover:text-white/80 transition-colors">
-            Log out
-          </button>
-        </form>
+        <button onClick={handleLogout} className="text-xs text-white/50 hover:text-white/80 transition-colors">
+          Log out
+        </button>
       </div>
     </aside>
   );
