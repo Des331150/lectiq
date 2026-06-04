@@ -15,12 +15,16 @@ export default function UploadPage() {
     const formData = new FormData();
     formData.append("file", file);
 
-    const result = await uploadDocument(formData);
-    if (result.error) {
-      setError(result.error);
-      return;
+    try {
+      const result = await uploadDocument(formData);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      router.push(`/documents/${result.documentId}/topics`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Unexpected error uploading file");
     }
-    router.push(`/documents/${result.documentId}/topics`);
   };
 
   return (
@@ -34,7 +38,9 @@ export default function UploadPage() {
           </p>
           <UploadZone onUpload={handleUpload} />
           {error && (
-            <p className="mt-4 text-sm text-destructive">{error}</p>
+            <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+              <p className="text-sm text-destructive font-medium">{error}</p>
+            </div>
           )}
         </div>
       </div>
