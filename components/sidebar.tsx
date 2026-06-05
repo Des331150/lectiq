@@ -85,15 +85,18 @@ interface UserMenuProps {
   email: string;
   onLogout: () => void;
   className?: string;
+  variant?: "light" | "dark";
 }
 
-export function UserMenu({ email, onLogout, className }: UserMenuProps) {
+export function UserMenu({ email, onLogout, className, variant = "light" }: UserMenuProps) {
+  const textClass =
+    variant === "dark" ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground";
   return (
     <div className={className}>
-      <p className="text-xs text-muted-foreground truncate">{email || "Loading..."}</p>
+      <p className="text-xs truncate">{email || "Loading..."}</p>
       <button
         onClick={onLogout}
-        className="text-xs text-muted-foreground hover:text-foreground transition-colors min-h-[44px] inline-flex items-center"
+        className={`text-xs transition-colors min-h-[44px] inline-flex items-center ${textClass}`}
       >
         Log out
       </button>

@@ -11,6 +11,7 @@ interface SheetProps {
   side?: "left" | "right";
   className?: string;
   ariaLabel?: string;
+  tone?: "light" | "dark";
 }
 
 export function Sheet({
@@ -20,6 +21,7 @@ export function Sheet({
   side = "left",
   className,
   ariaLabel = "Navigation menu",
+  tone = "light",
 }: SheetProps) {
   React.useEffect(() => {
     if (!open) return;
@@ -38,6 +40,7 @@ export function Sheet({
   if (!open) return null;
 
   const isLeft = side === "left";
+  const isDark = tone === "dark";
 
   return (
     <div
@@ -54,7 +57,10 @@ export function Sheet({
       />
       <div
         className={cn(
-          "absolute top-0 bottom-0 w-72 max-w-[85vw] bg-background shadow-xl flex flex-col",
+          "absolute top-0 bottom-0 w-72 max-w-[85vw] shadow-xl flex flex-col",
+          isDark
+            ? "bg-[#1B2A3B] text-[#F5F2EB]"
+            : "bg-background text-foreground",
           isLeft ? "left-0" : "right-0",
           className
         )}
@@ -63,7 +69,12 @@ export function Sheet({
           type="button"
           onClick={onClose}
           aria-label="Close menu"
-          className="absolute top-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-md text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+          className={cn(
+            "absolute top-3 right-3 inline-flex h-10 w-10 items-center justify-center rounded-md transition-colors",
+            isDark
+              ? "text-white/70 hover:bg-white/10 hover:text-white"
+              : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )}
         >
           <X className="h-5 w-5" />
         </button>

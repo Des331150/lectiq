@@ -50,8 +50,14 @@ export function AppShell({ children, title }: AppShellProps) {
         <span className="w-10" aria-hidden="true" />
       </header>
 
-      <Sheet open={open} onClose={() => setOpen(false)} side="left" ariaLabel="Main navigation">
-        <div className="px-4 py-5 border-b border-border">
+      <Sheet
+        open={open}
+        onClose={() => setOpen(false)}
+        side="left"
+        tone="dark"
+        ariaLabel="Main navigation"
+      >
+        <div className="px-4 py-5 border-b border-white/10">
           <Link
             href="/dashboard"
             onClick={() => setOpen(false)}
@@ -61,12 +67,12 @@ export function AppShell({ children, title }: AppShellProps) {
           </Link>
         </div>
         <SidebarNav
-          variant="light"
-          className="flex-1 py-2"
+          variant="dark"
+          className="flex-1 py-2 overflow-y-auto"
           onNavigate={() => setOpen(false)}
         />
-        <div className="px-4 py-4 border-t border-border space-y-3">
-          <UserMenu email={email} onLogout={handleLogout} />
+        <div className="px-4 py-4 border-t border-white/10 space-y-3">
+          <UserMenu email={email} onLogout={handleLogout} variant="dark" />
         </div>
       </Sheet>
 
