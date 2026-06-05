@@ -1,51 +1,55 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
   return (
     <div className="flex min-h-screen flex-col bg-background text-foreground">
-      <header className="flex items-center justify-between px-7 py-4 border-b border-border">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border">
         <div className="text-lg font-bold tracking-tight">Lectiq</div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <Link href="/auth/login">
-            <Button variant="ghost" className="text-sm">Sign In</Button>
+            <Button variant="ghost" size="sm">Sign In</Button>
           </Link>
           <Link href="/auth/register">
-            <Button className="text-sm font-medium">Get Started</Button>
+            <Button size="sm" className="font-medium">Get Started</Button>
           </Link>
         </div>
       </header>
 
       <main className="flex-1">
-        <div className="flex flex-col md:flex-row gap-10 items-center px-7 py-16 max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row gap-10 items-center px-4 sm:px-6 py-12 sm:py-16 max-w-5xl mx-auto">
           <div className="flex-1">
             <h1 className="text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.15] tracking-tight text-balance mb-4">
-              Turn your lecture notes<br />
+              Turn your lecture notes<br className="hidden sm:inline" />
               <span className="text-accent">into quizzes</span>
             </h1>
             <p className="text-base leading-relaxed text-muted-foreground max-w-[65ch] mb-7">
               Upload your PDFs and slides. Lectiq extracts the topics and generates
               custom quiz questions — so you can study smarter, not longer.
             </p>
-            <div className="flex gap-2.5">
+            <div className="flex flex-wrap gap-2.5">
               <Link href="/auth/register">
-                <Button size="lg" className="text-sm font-medium">Start Studying Free</Button>
+                <Button size="lg" className="font-medium">Start Studying Free</Button>
               </Link>
               <Link href="/auth/login">
-                <Button variant="outline" size="lg" className="text-sm font-medium">Sign In</Button>
+                <Button variant="outline" size="lg" className="font-medium">Sign In</Button>
               </Link>
             </div>
           </div>
           <div className="flex-1 w-full">
-            <img
+            <Image
               src="/dashboard-screenshot.png"
               alt="Lectiq dashboard"
+              width={1200}
+              height={800}
+              sizes="(max-width: 768px) 100vw, 50vw"
               className="rounded-xl border border-border w-full h-auto shadow-sm"
             />
           </div>
         </div>
 
-        <div className="border-t border-border py-12 px-7">
+        <div className="border-t border-border py-12 px-4 sm:px-6">
           <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-8">
             How it works
           </h2>

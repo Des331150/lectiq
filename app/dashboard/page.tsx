@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DashboardStats } from "@/components/dashboard-stats";
 import { DocumentCard } from "@/components/document-card";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 import { getCurrentMonth } from "@/lib/utils";
 
 export default async function DashboardPage() {
@@ -69,60 +69,55 @@ export default async function DashboardPage() {
   const isPro = userData?.subscription_status === "pro";
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex-1 flex justify-center">
-        <div className="w-full py-6 px-6 max-w-4xl">
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h1 className="text-2xl font-bold">Dashboard</h1>
-              <p className="text-muted-foreground text-sm">
-                {isPro ? "Pro plan" : `Free plan \u2014 ${documents?.length || 0}/10 documents used`}
-              </p>
-            </div>
-            <Link href="/upload">
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Upload Document
-              </Button>
-            </Link>
-          </div>
-
-          <div className="mb-8">
-            <DashboardStats
-              documentsUsed={documents?.length || 0}
-              documentsLimit={10}
-              quizzesUsed={usage?.quizzes_used || 0}
-              quizzesLimit={10}
-              averageScore={avgScore}
-              topicsExtracted={topicsExtracted}
-              isPro={isPro}
-            />
-          </div>
-
-          <h2 className="text-lg font-semibold mb-4">Documents</h2>
-
-          {documents && documents.length > 0 ? (
-            <div className="space-y-3">
-              {documents.map((doc) => (
-                <DocumentCard
-                  key={doc.id}
-                  document={doc}
-                  topicCount={topicCountMap.get(doc.id) || 0}
-                  quizCount={quizCountMap.get(doc.id) || 0}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-12 border rounded-lg bg-muted/30">
-              <p className="text-muted-foreground mb-4">No documents yet</p>
-              <Link href="/upload">
-                <Button variant="outline">Upload your first document</Button>
-              </Link>
-            </div>
-          )}
+    <AppShell title="Dashboard">
+      <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 mb-8">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            {isPro ? "Pro plan" : `Free plan \u2014 ${documents?.length || 0}/10 documents used`}
+          </p>
         </div>
+        <Link href="/upload">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Upload Document
+          </Button>
+        </Link>
       </div>
-    </div>
+
+      <div className="mb-8">
+        <DashboardStats
+          documentsUsed={documents?.length || 0}
+          documentsLimit={10}
+          quizzesUsed={usage?.quizzes_used || 0}
+          quizzesLimit={10}
+          averageScore={avgScore}
+          topicsExtracted={topicsExtracted}
+          isPro={isPro}
+        />
+      </div>
+
+      <h2 className="text-lg font-semibold mb-4">Documents</h2>
+
+      {documents && documents.length > 0 ? (
+        <div className="space-y-3">
+          {documents.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              document={doc}
+              topicCount={topicCountMap.get(doc.id) || 0}
+              quizCount={quizCountMap.get(doc.id) || 0}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 border rounded-lg bg-muted/30">
+          <p className="text-muted-foreground mb-4">No documents yet</p>
+          <Link href="/upload">
+            <Button variant="outline">Upload your first document</Button>
+          </Link>
+        </div>
+      )}
+    </AppShell>
   );
 }

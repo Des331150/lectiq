@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { uploadDocument } from "./actions";
 import { createClient } from "@/lib/supabase/client";
 import { UploadZone } from "@/components/upload-zone";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -50,22 +50,17 @@ export default function UploadPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex-1 flex justify-center">
-        <div className="w-full py-6 px-6 max-w-2xl">
-          <h1 className="text-2xl font-bold mb-2">Upload Document</h1>
-          <p className="text-muted-foreground mb-8">
-            Upload a PDF or PowerPoint file. We&apos;ll extract the topics so you can start quizzing.
-          </p>
-          <UploadZone onUpload={handleUpload} />
-          {error && (
-            <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
-              <p className="text-sm text-destructive font-medium">{error}</p>
-            </div>
-          )}
+    <AppShell title="Upload">
+      <h1 className="text-2xl font-bold mb-2">Upload Document</h1>
+      <p className="text-muted-foreground mb-8">
+        Upload a PDF or PowerPoint file. We&apos;ll extract the topics so you can start quizzing.
+      </p>
+      <UploadZone onUpload={handleUpload} />
+      {error && (
+        <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+          <p className="text-sm text-destructive font-medium">{error}</p>
         </div>
-      </div>
-    </div>
+      )}
+    </AppShell>
   );
 }
