@@ -5,7 +5,7 @@ import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 function NewQuizContent() {
   const router = useRouter();
@@ -44,50 +44,42 @@ function NewQuizContent() {
 
   if (topicIds.length === 0) {
     return (
-      <div className="flex min-h-screen bg-background">
-        <Sidebar />
-        <div className="flex-1 flex justify-center">
-          <div className="w-full px-6 max-w-2xl text-center py-12">
-            <p className="text-muted-foreground mb-4">No topics selected</p>
-            <Link href={`/documents/${docId}/topics`}>
-              <Button variant="outline">Go back and select topics</Button>
-            </Link>
-          </div>
+      <AppShell title="New Quiz">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">No topics selected</p>
+          <Link href={`/documents/${docId}/topics`}>
+            <Button variant="outline">Go back and select topics</Button>
+          </Link>
         </div>
-      </div>
+      </AppShell>
     );
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex-1 flex justify-center">
-        <div className="w-full py-6 px-6 max-w-2xl">
-          <div className="text-center py-12">
-            <h1 className="text-2xl font-bold mb-2">Ready to generate your quiz</h1>
-            <p className="text-muted-foreground mb-2">
-              {topicIds.length} topic{topicIds.length !== 1 ? "s" : ""} selected
-            </p>
-            <p className="text-muted-foreground mb-8 capitalize">
-              Format: {formatParam.replace("_", " ")}
-            </p>
-            <Button size="lg" onClick={handleGenerate} disabled={generating}>
-              {generating ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Generating questions...
-                </>
-              ) : (
-                "Generate Quiz"
-              )}
-            </Button>
-            {error && (
-              <p className="mt-4 text-sm text-destructive">{error}</p>
-            )}
-          </div>
-        </div>
+    <AppShell title="New Quiz">
+      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold mb-2">Ready to generate your quiz</h1>
+        <p className="text-muted-foreground mb-2">
+          {topicIds.length} topic{topicIds.length !== 1 ? "s" : ""} selected
+        </p>
+        <p className="text-muted-foreground mb-8 capitalize">
+          Format: {formatParam.replace("_", " ")}
+        </p>
+        <Button size="lg" onClick={handleGenerate} disabled={generating}>
+          {generating ? (
+            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Generating questions...
+            </>
+          ) : (
+            "Generate Quiz"
+          )}
+        </Button>
+        {error && (
+          <p className="mt-4 text-sm text-destructive">{error}</p>
+        )}
       </div>
-    </div>
+    </AppShell>
   );
 }
 

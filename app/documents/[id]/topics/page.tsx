@@ -2,7 +2,7 @@ import { notFound, redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { TopicSelector } from "@/components/topic-selector";
 import { ProcessingStatus } from "@/components/processing-status";
-import { Sidebar } from "@/components/sidebar";
+import { AppShell } from "@/components/app-shell";
 
 export default async function TopicsPage({
   params,
@@ -29,12 +29,9 @@ export default async function TopicsPage({
   if (doc.status !== "ready") {
     if (processing === "true") {
       return (
-        <div className="flex min-h-screen bg-background">
-          <Sidebar />
-          <div className="flex-1 flex justify-center">
-            <ProcessingStatus documentId={id} />
-          </div>
-        </div>
+        <AppShell title="Processing">
+          <ProcessingStatus documentId={id} />
+        </AppShell>
       );
     }
     redirect(`/documents/${id}/topics?processing=true`);
@@ -47,17 +44,12 @@ export default async function TopicsPage({
     .order("position");
 
   return (
-    <div className="flex min-h-screen bg-background">
-      <Sidebar />
-      <div className="flex-1 flex justify-center">
-        <div className="w-full py-6 px-6 max-w-2xl">
-          <h1 className="text-2xl font-bold mb-1">{doc.title}</h1>
-          <p className="text-muted-foreground mb-6">
-            Select the topics you want to be quizzed on and choose your question format.
-          </p>
-          <TopicSelector topics={topics || []} documentId={id} />
-        </div>
-      </div>
-    </div>
+    <AppShell title={doc.title}>
+      <h1 className="text-2xl font-bold mb-1 break-words">{doc.title}</h1>
+      <p className="text-muted-foreground mb-6">
+        Select the topics you want to be quizzed on and choose your question format.
+      </p>
+      <TopicSelector topics={topics || []} documentId={id} />
+    </AppShell>
   );
 }

@@ -24,23 +24,21 @@ export function Sidebar() {
   };
 
   return (
-    <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] flex flex-col min-h-screen">
+    <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] hidden md:flex flex-col min-h-screen">
       <div className="px-4 py-5 border-b border-white/10">
         <Link href="/dashboard" className="font-bold text-base tracking-tight">
           Lectiq
         </Link>
       </div>
 
-      <nav className="flex-1 py-4 space-y-0.5">
-        <SidebarLink href="/dashboard" label="Dashboard" />
-        <SidebarLink href="/upload" label="Upload" />
-        <SidebarLink href="/history" label="History" />
-        <SidebarLink href="/billing" label="Billing" />
-      </nav>
+      <SidebarNav variant="dark" className="flex-1 py-4" />
 
       <div className="px-4 py-4 border-t border-white/10 space-y-3">
         <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
-        <button onClick={handleLogout} className="text-xs text-white/50 hover:text-white/80 transition-colors">
+        <button
+          onClick={handleLogout}
+          className="text-xs text-white/50 hover:text-white/80 transition-colors min-h-[44px] inline-flex items-center"
+        >
           Log out
         </button>
       </div>
@@ -48,18 +46,60 @@ export function Sidebar() {
   );
 }
 
-interface SidebarLinkProps {
-  href: string;
-  label: string;
+interface SidebarNavProps {
+  variant?: "dark" | "light";
+  className?: string;
+  onNavigate?: () => void;
 }
 
-function SidebarLink({ href, label }: SidebarLinkProps) {
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/upload", label: "Upload" },
+  { href: "/history", label: "History" },
+  { href: "/billing", label: "Billing" },
+] as const;
+
+export function SidebarNav({ variant = "light", className, onNavigate }: SidebarNavProps) {
+  const base =
+    variant === "dark"
+      ? "block px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+      : "block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors";
+
   return (
-    <Link
-      href={href}
-      className="block px-4 py-2 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
-    >
-      {label}
-    </Link>
+    <nav className={className}>
+      {NAV_ITEMS.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onNavigate}
+          className={base}
+        >
+          {item.label}
+        </Link>
+      ))}
+    </nav>
+  );
+}
+
+interface UserMenuProps {
+  email: string;
+  onLogout: () => void;
+  className?: string;
+  variant?: "light" | "dark";
+}
+
+export function UserMenu({ email, onLogout, className, variant = "light" }: UserMenuProps) {
+  const textClass =
+    variant === "dark" ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground";
+  return (
+    <div className={className}>
+      <p className="text-xs truncate">{email || "Loading..."}</p>
+      <button
+        onClick={onLogout}
+        className={`text-xs transition-colors min-h-[44px] inline-flex items-center ${textClass}`}
+      >
+        Log out
+      </button>
+    </div>
   );
 }
