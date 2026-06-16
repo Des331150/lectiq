@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         const isActive = subscription.status === "active" || subscription.status === "trialing";
         await supabase
           .from("users")
-          .update({ subscription_status: isActive ? "pro" : "free" })
+          .update({ subscription_status: isActive ? "pro" : "basic" })
           .eq("stripe_customer_id", customerId);
       }
       break;

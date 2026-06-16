@@ -2,7 +2,7 @@ export interface User {
   id: string;
   email: string | null;
   stripe_customer_id: string | null;
-  subscription_status: "free" | "pro";
+  subscription_status: "basic" | "pro";
   quiz_quota_reset_at: string;
   created_at: string;
 }

@@ -74,7 +74,7 @@ export default async function DashboardPage() {
         <div className="min-w-0">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground text-sm">
-            {isPro ? "Pro plan" : `Free plan \u2014 ${documents?.length || 0}/10 documents used`}
+            {isPro ? "Pro plan" : `Basic plan \u2014 ${documents?.length || 0}/10 documents used`}
           </p>
         </div>
         <Link href="/upload">
