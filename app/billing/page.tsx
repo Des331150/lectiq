@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useActionState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Check, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { BillingToggle } from "@/components/billing-toggle";
 import { checkoutAction } from "./actions";
 
-export const dynamic = "force-dynamic";
-
 export default function BillingPage() {
   const [currentPlan, setCurrentPlan] = useState<string>("basic");
   const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isYearly = searchParams.get("interval") === "yearly";
 
   useEffect(() => {
     async function load() {
@@ -35,14 +35,10 @@ export default function BillingPage() {
   const [state, formAction, isPending] = useActionState(checkoutAction, null);
 
   useEffect(() => {
-    if (state?.url) {
+    if (state?.success && state.url) {
       window.location.href = state.url;
     }
-  }, [state?.url]);
-
-  const isYearly = typeof window !== "undefined"
-    ? new URLSearchParams(window.location.search).get("interval") === "yearly"
-    : false;
+  }, [state]);
 
   const plans = [
     {
@@ -72,7 +68,15 @@ export default function BillingPage() {
     },
   ];
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <AppShell title="Billing">
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </AppShell>
+    );
+  }
 
   return (
     <AppShell title="Billing">
