@@ -15,17 +15,35 @@ export function getStripe(): Stripe {
   return _stripe;
 }
 
-export const PRO_PRICE_ID = "price_pro_monthly";
+export const BASIC_PRICE_ID_MONTHLY = "price_basic_monthly";
+export const BASIC_PRICE_ID_YEARLY = "price_basic_yearly";
+export const PRO_PRICE_ID_MONTHLY = "price_pro_monthly";
+export const PRO_PRICE_ID_YEARLY = "price_pro_yearly";
 
-export async function createCheckoutSession(userId: string, userEmail: string) {
+const PRICE_IDS: Record<string, Record<string, string>> = {
+  basic: { monthly: BASIC_PRICE_ID_MONTHLY, yearly: BASIC_PRICE_ID_YEARLY },
+  pro: { monthly: PRO_PRICE_ID_MONTHLY, yearly: PRO_PRICE_ID_YEARLY },
+};
+
+export function getPriceId(plan: "basic" | "pro", interval: "monthly" | "yearly"): string {
+  return PRICE_IDS[plan][interval];
+}
+
+export async function createCheckoutSession(
+  userId: string,
+  userEmail: string,
+  plan: "basic" | "pro",
+  interval: "monthly" | "yearly" = "monthly"
+) {
+  const priceId = getPriceId(plan, interval);
   return await getStripe().checkout.sessions.create({
     mode: "subscription",
     customer_email: userEmail,
     client_reference_id: userId,
-    line_items: [{ price: PRO_PRICE_ID, quantity: 1 }],
+    line_items: [{ price: priceId, quantity: 1 }],
     success_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true`,
     cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true`,
-    metadata: { userId },
+    metadata: { userId, plan },
   });
 }
 
