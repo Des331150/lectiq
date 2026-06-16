@@ -1,28 +1,48 @@
-import { redirect } from "next/navigation";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Check } from "lucide-react";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useActionState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Check, Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
-import { createCheckoutSession } from "@/lib/stripe";
 import { BillingToggle } from "@/components/billing-toggle";
+import { checkoutAction } from "./actions";
 
 export const dynamic = "force-dynamic";
 
-export default async function BillingPage(props: {
-  searchParams: Promise<{ interval?: string }>;
-}) {
-  const searchParams = await props.searchParams;
-  const isYearly = searchParams.interval === "yearly";
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) redirect("/auth/login");
+export default function BillingPage() {
+  const [currentPlan, setCurrentPlan] = useState<string>("basic");
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  const { data: userData } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .single();
+  useEffect(() => {
+    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+      const { data: userData } = await supabase
+        .from("users")
+        .select("subscription_status")
+        .eq("id", user.id)
+        .single();
+      setCurrentPlan(userData?.subscription_status || "basic");
+      setLoading(false);
+    }
+    load();
+  }, [router]);
 
-  const currentPlan = userData?.subscription_status || "basic";
+  const [state, formAction, isPending] = useActionState(checkoutAction, null);
+
+  useEffect(() => {
+    if (state?.url) {
+      window.location.href = state.url;
+    }
+  }, [state?.url]);
+
+  const isYearly = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("interval") === "yearly"
+    : false;
 
   const plans = [
     {
@@ -52,18 +72,7 @@ export default async function BillingPage(props: {
     },
   ];
 
-  async function checkoutAction(formData: FormData) {
-    "use server";
-    const plan = formData.get("plan") as string;
-    if (!user?.email) throw new Error("Not authenticated");
-    const session = await createCheckoutSession(
-      user.id,
-      user.email,
-      plan as "basic" | "pro",
-      isYearly ? "yearly" : "monthly"
-    );
-    redirect(session.url!);
-  }
+  if (loading) return null;
 
   return (
     <AppShell title="Billing">
@@ -71,6 +80,10 @@ export default async function BillingPage(props: {
       <p className="text-muted-foreground mb-8">Manage your subscription</p>
 
       <BillingToggle interval={isYearly ? "yearly" : "monthly"} />
+
+      {state?.error && (
+        <p className="text-sm text-destructive mb-4">{state.error}</p>
+      )}
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
         {plans.map((plan) => {
@@ -113,17 +126,28 @@ export default async function BillingPage(props: {
               {isCurrent ? (
                 <p className="text-sm text-muted-foreground text-center pt-1">Current plan</p>
               ) : (
-                <form action={checkoutAction}>
+                <form action={formAction}>
                   <input type="hidden" name="plan" value={plan.id} />
+                  <input type="hidden" name="interval" value={isYearly ? "yearly" : "monthly"} />
                   <button
                     type="submit"
-                    className={`w-full rounded-lg py-2 text-sm font-medium text-center ${
+                    disabled={isPending}
+                    className={`w-full rounded-lg py-2 text-sm font-medium text-center disabled:opacity-50 ${
                       plan.popular
                         ? "bg-primary text-primary-foreground"
                         : "border border-primary text-foreground"
                     }`}
                   >
-                    {plan.id === "pro" ? "Go Pro" : "Get Basic"}
+                    {isPending ? (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Redirecting...
+                      </span>
+                    ) : plan.id === "pro" ? (
+                      "Go Pro"
+                    ) : (
+                      "Get Basic"
+                    )}
                   </button>
                 </form>
               )}
