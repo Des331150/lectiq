@@ -25,18 +25,26 @@ export default function LandingPage() {
               Turn your lecture notes<br className="hidden sm:inline" />
               <span className="text-accent">into quizzes</span>
             </h1>
-            <p className="text-base leading-relaxed text-muted-foreground max-w-[65ch] mb-7">
-              Upload your PDFs and slides. Lectiq extracts the topics and generates
-              custom quiz questions — so you can study smarter, not longer.
+            <p className="text-base leading-relaxed text-muted-foreground max-w-[65ch] mb-4">
+              The lectures you already have → quizzes that actually test
+              understanding, not just recognition.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground max-w-[65ch] mb-7">
+              No generic question banks. Lectiq builds practice quizzes from your
+              lecture PDFs and slides using active recall — the study method with
+              the strongest evidence for long-term retention.
             </p>
             <div className="flex flex-wrap gap-2.5">
               <Link href="/auth/register">
-                <Button size="lg" className="font-medium">Start Studying Free</Button>
+                <Button size="lg" className="font-medium">Start Studying</Button>
               </Link>
               <Link href="/auth/login">
                 <Button variant="outline" size="lg" className="font-medium">Sign In</Button>
               </Link>
             </div>
+            <p className="text-xs text-muted-foreground mt-4">
+              Built on active recall — the study method proven by decades of cognitive science research.
+            </p>
           </div>
           <div className="flex-1 w-full">
             <Image
@@ -152,10 +160,54 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        <div className="border-t border-border py-12 px-4 sm:px-6">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-8">
+            FAQ
+          </h2>
+          <div className="max-w-2xl mx-auto space-y-6">
+            {[
+              {
+                q: "How does the AI grading work?",
+                a: "Free-response answers are scored against your lecture material, not a fixed answer key. You get feedback on what you missed and why — like a tutor who actually read your notes.",
+              },
+              {
+                q: "What file types can I upload?",
+                a: "PDF and PowerPoint. Your slides, your lecture notes, your readings — we handle the rest.",
+              },
+              {
+                q: "How is Lectiq different from Quizlet or Anki?",
+                a: "Those tools test recognition. Lectiq tests understanding. You can't guess your way through a free-response question, and our AI grades it against your actual material.",
+              },
+              {
+                q: "Can I export my quizzes?",
+                a: "Basic plan includes PDF export. Pro subscribers get additional export formats as we roll them out.",
+              },
+            ].map((faq) => (
+              <div key={faq.q}>
+                <h3 className="font-semibold text-base mb-1">{faq.q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-border py-12 px-4 sm:px-6 text-center">
+          <h2 className="text-xl font-bold mb-2">Ready to study smarter?</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Stop re-reading. Start recalling.
+          </p>
+          <Link href="/auth/register">
+            <Button size="lg" className="font-medium">Get Basic — $7.99/mo</Button>
+          </Link>
+        </div>
       </main>
 
-      <footer className="py-5 text-center text-sm text-muted-foreground border-t border-border">
-        Lectiq — Study smarter
+      <footer className="py-5 px-4 sm:px-6 text-center text-sm text-muted-foreground border-t border-border">
+        <div className="flex items-center justify-center gap-4 mb-1">
+          <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+        </div>
+        <p>Lectiq — Study smarter</p>
       </footer>
     </div>
   );
