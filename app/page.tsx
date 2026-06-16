@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function LandingPage() {
@@ -67,6 +68,88 @@ export default function LandingPage() {
                 <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mx-auto">{step.desc}</p>
               </div>
             ))}
+          </div>
+        </div>
+
+        <div className="border-t border-border py-12 px-4 sm:px-6">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-2">
+            Pricing
+          </h2>
+          <p className="text-center text-muted-foreground text-sm mb-8">
+            Start with Basic. Upgrade when you need more.
+          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {/* Basic card */}
+            <div className="rounded-lg border border-border bg-card p-6">
+              <h3 className="text-lg font-bold mb-1">Basic</h3>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-4">
+                For getting started
+              </p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$7.99</span>
+                <span className="text-sm text-muted-foreground ml-1">/month</span>
+                <div className="text-xs text-muted-foreground">or $69.99 /year <span className="text-green-700 font-medium">Save 27%</span></div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  10 quizzes per month
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  MCQ + Free Response
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  AI-graded feedback
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  PDF export
+                </li>
+              </ul>
+              <Link href="/auth/register">
+                <Button className="w-full font-medium">Get Basic</Button>
+              </Link>
+            </div>
+
+            {/* Pro card */}
+            <div className="rounded-lg border border-border bg-card p-6 relative ring-2 ring-primary">
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs font-medium uppercase tracking-wide bg-accent text-accent-foreground px-3 py-0.5 rounded-full">
+                Popular
+              </span>
+              <h3 className="text-lg font-bold mb-1">Pro</h3>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-4">
+                For power learners
+              </p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$14.99</span>
+                <span className="text-sm text-muted-foreground ml-1">/month</span>
+                <div className="text-xs text-muted-foreground">or $129.99 /year <span className="text-green-700 font-medium">Save 28%</span></div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  Unlimited quizzes (fair use)
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  MCQ + Free Response
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  AI-graded feedback
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  All export formats (coming)
+                </li>
+              </ul>
+              <Link href="/auth/register">
+                <Button variant="outline" className="w-full font-medium">Go Pro</Button>
+              </Link>
+            </div>
           </div>
         </div>
       </main>
