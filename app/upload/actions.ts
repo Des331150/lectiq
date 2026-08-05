@@ -13,7 +13,7 @@ async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
   const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
   const texts: string[] = [];
 
-  for (let i = 1; i <= Math.min(pdf.numPages, 50); i++) {
+  for (let i = 1; i <= pdf.numPages; i++) {
     const page = await pdf.getPage(i);
     const content = await page.getTextContent();
     texts.push(content.items.map((item: any) => item.str).join(" "));
@@ -92,6 +92,7 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
       document_id: doc.id,
       title: t.title,
       content: t.content,
+      source_content: t.source,
       position: i,
     }));
 

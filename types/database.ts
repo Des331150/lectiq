@@ -23,6 +23,7 @@ export interface Topic {
   document_id: string;
   title: string;
   content: string;
+  source_content: string | null;
   position: number;
   created_at: string;
 }

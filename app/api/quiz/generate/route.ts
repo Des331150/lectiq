@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
   try {
     const questions = await generateQuestions(
-      topics.map((t) => ({ id: t.id, title: t.title, content: t.content })),
+      topics.map((t) => ({ id: t.id, title: t.title, content: t.content, source_content: t.source_content })),
       format
     );
 
