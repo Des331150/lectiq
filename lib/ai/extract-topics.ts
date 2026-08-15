@@ -8,6 +8,8 @@ interface ExtractedTopic {
 
 const CHUNK_CHARS = 10000;
 const MAX_TOPICS = 60;
+const MAX_TOTAL_CHUNKS = 30;
+const TIME_BUDGET_MS = 90_000;
 const SLIDE_MARKER = /^\[Slide (\d+)\]/;
 
 const MAP_PROMPT = `You are an academic assistant. Extract the distinct, substantive topics from the provided section of a lecture document.
@@ -143,21 +145,31 @@ export async function extractTopics(documentText: string): Promise<ExtractedTopi
   const slideSegments = splitBySlides(documentText);
   const sections =
     slideSegments.length > 0 ? slideSegments : documentText.split(/\n{2,}/).filter((s) => s.trim());
-  const chunks = groupIntoChunks(sections, CHUNK_CHARS);
+  const chunks = groupIntoChunks(sections, CHUNK_CHARS).slice(0, MAX_TOTAL_CHUNKS);
+  const deadline = Date.now() + TIME_BUDGET_MS;
 
   const mapResults: ExtractedTopic[][] = [];
   for (const chunk of chunks) {
-    const result = await aiComplete(MAP_PROMPT, chunk, "json_object");
-    mapResults.push(parseTopics(result));
+    if (Date.now() >= deadline) break;
+    try {
+      const result = await aiComplete(MAP_PROMPT, chunk, "json_object");
+      mapResults.push(parseTopics(result));
+    } catch (err) {
+      console.error("Failed to extract topics for a chunk; skipping it:", err);
+    }
   }
 
   const mergedTopics = mapResults.flat();
   if (mergedTopics.length === 0) return [];
 
-  const reduced: ExtractedTopic[] = mergedTopics.length === 1 ? mergedTopics : parseTopics(
-    await aiComplete(REDUCE_PROMPT, JSON.stringify(mergedTopics), "json_object")
-  );
-
-  const filtered = reduced.filter((t) => !isJunkTopic(t));
-  return filtered.slice(0, MAX_TOPICS);
+  try {
+    const reduced: ExtractedTopic[] =
+      mergedTopics.length === 1
+        ? mergedTopics
+        : parseTopics(await aiComplete(REDUCE_PROMPT, JSON.stringify(mergedTopics), "json_object"));
+    return reduced.filter((t) => !isJunkTopic(t)).slice(0, MAX_TOPICS);
+  } catch (err) {
+    console.error("Failed to reduce topics; returning merged chunk output:", err);
+    return mergedTopics.filter((t) => !isJunkTopic(t)).slice(0, MAX_TOPICS);
+  }
 }

@@ -6,7 +6,7 @@ interface GeneratedQuestion {
   options?: { label: string; text: string }[];
   correct_answer?: string;
   model_answer?: string;
-  topic_id: string;
+  topic_id: string | null;
 }
 
 interface ParsedQuestion {
@@ -26,6 +26,7 @@ interface TopicInput {
 }
 
 const MAX_CHARS_PER_CALL = 30000;
+const TIME_BUDGET_MS = 90_000;
 
 export async function generateQuestions(
   topicContents: TopicInput[],
@@ -33,8 +34,10 @@ export async function generateQuestions(
 ): Promise<GeneratedQuestion[]> {
   const batches = groupTopicBatches(topicContents);
   const all: GeneratedQuestion[] = [];
+  const deadline = Date.now() + TIME_BUDGET_MS;
 
   for (const batch of batches) {
+    if (Date.now() >= deadline) break;
     all.push(...(await generateBatch(batch, format)));
   }
 
@@ -99,9 +102,8 @@ Return ONLY a JSON object with this structure:
 
   const userPrompt = `Generate questions based on these topics:\n\n${topicsText}\n\nGenerate as many distinct, high-quality questions as the source content warrants — do not undershoot. Cover all the material provided.`;
 
-  const result = await aiComplete(systemPrompt, userPrompt, "json_object");
-
   try {
+    const result = await aiComplete(systemPrompt, userPrompt, "json_object");
     const cleaned = result.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
     const parsed = JSON.parse(cleaned) as { questions?: ParsedQuestion[] };
     const rawQuestions: ParsedQuestion[] = Array.isArray(parsed.questions) ? parsed.questions : [];
@@ -129,8 +131,9 @@ Return ONLY a JSON object with this structure:
     }
 
     return questions;
-  } catch {
-    throw new Error("Failed to parse AI question generation response");
+  } catch (err) {
+    console.error("Failed to generate questions for a batch; returning none:", err);
+    return [];
   }
 }
 
@@ -138,11 +141,16 @@ function normalize(text: string): string {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-function matchTopicId(topicTitle: string | undefined, batch: TopicInput[]): string {
-  if (topicTitle) {
-    const target = normalize(String(topicTitle));
-    const match = batch.find((t) => normalize(t.title) === target);
-    if (match) return match.id;
-  }
-  return batch[0]?.id || "";
+function matchTopicId(topicTitle: string | undefined, batch: TopicInput[]): string | null {
+  if (!topicTitle) return null;
+  const target = normalize(String(topicTitle));
+  if (!target) return null;
+
+  const exact = batch.find((t) => normalize(t.title) === target);
+  if (exact) return exact.id;
+
+  const loose = batch.find(
+    (t) => normalize(t.title).includes(target) || target.includes(normalize(t.title))
+  );
+  return loose ? loose.id : null;
 }
