@@ -6,6 +6,13 @@ import { deleteDocument } from "@/app/dashboard/actions";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { Document } from "@/types/database";
+import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
+
+const TRUNCATION_MESSAGES: Record<TruncationReason, string> = {
+  [TRUNCATION_REASON.PDF_PAGES_CAPPED]: "PDF was long; only the first pages were analyzed.",
+  [TRUNCATION_REASON.TOPICS_TRUNCATED]: "Document was large; some content may have been skipped during topic extraction.",
+  [TRUNCATION_REASON.DEADLINE_HIT]: "Processing stopped early; some content may be missing.",
+};
 
 interface DocumentCardProps {
   document: Document;
@@ -30,6 +37,11 @@ export function DocumentCard({ document, topicCount, quizCount }: DocumentCardPr
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-medium truncate">{document.title}</p>
+          {document.processing_warnings?.map((code) => (
+            <p key={code} className="text-xs text-amber-600 dark:text-amber-400">
+              {TRUNCATION_MESSAGES[code as TruncationReason] ?? code}
+            </p>
+          ))}
           <p className="text-xs text-muted-foreground">
             {topicCount} topic{topicCount !== 1 ? "s" : ""} &middot; {quizCount} quiz{quizCount !== 1 ? "zes" : ""}
           </p>

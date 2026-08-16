@@ -2,27 +2,41 @@
 
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { extractTopics } from "@/lib/ai/extract-topics";
+import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
 import { checkUploadQuota } from "@/lib/quota";
 import { getCurrentMonth } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
-async function extractTextFromPdf(buffer: ArrayBuffer): Promise<string> {
-  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
-  const workerModule = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
-  (globalThis as any).pdfjsWorker = workerModule;
-  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
-  const texts: string[] = [];
+const MAX_PDF_PAGES = 200;
 
-  for (let i = 1; i <= pdf.numPages; i++) {
-    const page = await pdf.getPage(i);
-    const content = await page.getTextContent();
-    texts.push(content.items.map((item: any) => item.str).join(" "));
-  }
-
-  return texts.join("\n\n");
+interface ExtractionOutput {
+  text: string;
+  pageCount: number;
+  reasons: TruncationReason[];
 }
 
-async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
+async function extractTextFromPdf(buffer: ArrayBuffer): Promise<ExtractionOutput> {
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+  const workerModule = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
+  (globalThis as unknown as { pdfjsWorker: unknown }).pdfjsWorker = workerModule;
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  const pagesToRead = Math.min(pdf.numPages, MAX_PDF_PAGES);
+  const texts: string[] = [];
+
+  for (let i = 1; i <= pagesToRead; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    texts.push(content.items.map((item: { str: string }) => item.str).join(" "));
+  }
+
+  return {
+    text: texts.join("\n\n"),
+    pageCount: pdf.numPages,
+    reasons: pdf.numPages > MAX_PDF_PAGES ? [TRUNCATION_REASON.PDF_PAGES_CAPPED] : [],
+  };
+}
+
+async function extractTextFromPptx(buffer: ArrayBuffer): Promise<ExtractionOutput> {
   const JSZip = (await import("jszip")).default;
   const zip = await JSZip.loadAsync(buffer);
   const slides: string[] = [];
@@ -44,7 +58,7 @@ async function extractTextFromPptx(buffer: ArrayBuffer): Promise<string> {
     }
   }
 
-  return slides.join("\n\n");
+  return { text: slides.join("\n\n"), pageCount: slides.length, reasons: [] };
 }
 
 export async function uploadDocument(filePath: string, fileName: string, fileType: string) {
@@ -79,7 +93,8 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
     if (downloadError || !fileData) throw new Error(`Failed to read uploaded file: ${downloadError?.message}`);
 
     const buffer = await fileData.arrayBuffer();
-    const text = fileType === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
+    const { text, pageCount, reasons: extractReasons } =
+      fileType === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
 
     if (!text.trim()) {
       await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
@@ -87,7 +102,9 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
       return { error: reason };
     }
 
-    const topics = await extractTopics(text);
+    const { topics, reasons: topicReasons } = await extractTopics(text);
+    const warnings = Array.from(new Set([...extractReasons, ...topicReasons]));
+
     const topicRows = topics.map((t, i) => ({
       document_id: doc.id,
       title: t.title,
@@ -97,7 +114,14 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
     }));
 
     await supabase.from("topics").insert(topicRows);
-    await supabase.from("documents").update({ status: "ready", page_count: text.split("\n\n").length }).eq("id", doc.id);
+    await supabase
+      .from("documents")
+      .update({
+        status: "ready",
+        page_count: pageCount,
+        processing_warnings: warnings.length > 0 ? warnings : null,
+      })
+      .eq("id", doc.id);
 
     await supabase.storage.from("Documents").remove([filePath]);
 

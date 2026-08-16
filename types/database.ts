@@ -15,6 +15,7 @@ export interface Document {
   file_type: "pdf" | "pptx";
   status: "processing" | "ready" | "error";
   page_count: number | null;
+  processing_warnings: string[] | null;
   created_at: string;
 }
 

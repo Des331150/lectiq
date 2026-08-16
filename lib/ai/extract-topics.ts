@@ -1,4 +1,5 @@
 import { aiComplete } from "./client";
+import { TRUNCATION_REASON, type TruncationReason } from "./limits";
 
 interface ExtractedTopic {
   title: string;
@@ -10,6 +11,9 @@ const CHUNK_CHARS = 10000;
 const MAX_TOPICS = 60;
 const MAX_TOTAL_CHUNKS = 30;
 const TIME_BUDGET_MS = 90_000;
+const MIN_SLIDE_MARKERS = 2;
+const MAP_TEMPERATURE = 0.2;
+const REDUCE_TEMPERATURE = 0.2;
 const SLIDE_MARKER = /^\[Slide (\d+)\]/;
 
 const MAP_PROMPT = `You are an academic assistant. Extract the distinct, substantive topics from the provided section of a lecture document.
@@ -74,6 +78,12 @@ function splitBySlides(documentText: string): string[] {
   }
   if (current.trim()) slides.push(current);
   return slides;
+}
+
+function isSlideDeck(documentText: string): boolean {
+  const numbers = Array.from(documentText.matchAll(SLIDE_MARKER), (m) => Number(m[1]));
+  if (numbers.length < MIN_SLIDE_MARKERS) return false;
+  return numbers.every((n, i) => i === 0 || n > numbers[i - 1]);
 }
 
 function groupIntoChunks(segments: string[], maxChars: number): string[] {
@@ -141,18 +151,28 @@ function isJunkTopic(topic: ExtractedTopic): boolean {
   return false;
 }
 
-export async function extractTopics(documentText: string): Promise<ExtractedTopic[]> {
-  const slideSegments = splitBySlides(documentText);
+export interface ExtractionResult {
+  topics: ExtractedTopic[];
+  reasons: TruncationReason[];
+}
+
+export async function extractTopics(documentText: string): Promise<ExtractionResult> {
+  const slideSegments = isSlideDeck(documentText) ? splitBySlides(documentText) : [];
   const sections =
     slideSegments.length > 0 ? slideSegments : documentText.split(/\n{2,}/).filter((s) => s.trim());
-  const chunks = groupIntoChunks(sections, CHUNK_CHARS).slice(0, MAX_TOTAL_CHUNKS);
+  const chunks = groupIntoChunks(sections, CHUNK_CHARS);
+  const reasons: TruncationReason[] = [];
+  if (chunks.length > MAX_TOTAL_CHUNKS) reasons.push(TRUNCATION_REASON.TOPICS_TRUNCATED);
   const deadline = Date.now() + TIME_BUDGET_MS;
 
   const mapResults: ExtractedTopic[][] = [];
-  for (const chunk of chunks) {
-    if (Date.now() >= deadline) break;
+  for (const chunk of chunks.slice(0, MAX_TOTAL_CHUNKS)) {
+    if (Date.now() >= deadline) {
+      reasons.push(TRUNCATION_REASON.DEADLINE_HIT);
+      break;
+    }
     try {
-      const result = await aiComplete(MAP_PROMPT, chunk, "json_object");
+      const result = await aiComplete(MAP_PROMPT, chunk, "json_object", MAP_TEMPERATURE);
       mapResults.push(parseTopics(result));
     } catch (err) {
       console.error("Failed to extract topics for a chunk; skipping it:", err);
@@ -160,16 +180,20 @@ export async function extractTopics(documentText: string): Promise<ExtractedTopi
   }
 
   const mergedTopics = mapResults.flat();
-  if (mergedTopics.length === 0) return [];
+  if (mergedTopics.length === 0) return { topics: [], reasons };
 
+  let final: ExtractedTopic[];
   try {
-    const reduced: ExtractedTopic[] =
+    final =
       mergedTopics.length === 1
         ? mergedTopics
-        : parseTopics(await aiComplete(REDUCE_PROMPT, JSON.stringify(mergedTopics), "json_object"));
-    return reduced.filter((t) => !isJunkTopic(t)).slice(0, MAX_TOPICS);
+        : parseTopics(await aiComplete(REDUCE_PROMPT, JSON.stringify(mergedTopics), "json_object", REDUCE_TEMPERATURE));
   } catch (err) {
     console.error("Failed to reduce topics; returning merged chunk output:", err);
-    return mergedTopics.filter((t) => !isJunkTopic(t)).slice(0, MAX_TOPICS);
+    final = mergedTopics;
   }
+
+  final = final.filter((t) => !isJunkTopic(t));
+  if (final.length > MAX_TOPICS) reasons.push(TRUNCATION_REASON.TOPICS_TRUNCATED);
+  return { topics: final.slice(0, MAX_TOPICS), reasons };
 }

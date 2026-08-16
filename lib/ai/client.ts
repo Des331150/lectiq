@@ -27,7 +27,8 @@ function sleep(ms: number): Promise<void> {
 export async function aiComplete(
   systemPrompt: string,
   userPrompt: string,
-  format: "json_object" | "text" = "text"
+  format: "json_object" | "text" = "text",
+  temperature = 0
 ) {
   const body: Record<string, unknown> = {
     model: MODEL,
@@ -35,7 +36,7 @@ export async function aiComplete(
       { role: "system", content: systemPrompt },
       { role: "user", content: userPrompt },
     ],
-    temperature: 0,
+    temperature,
   };
   if (format === "json_object") {
     body.response_format = { type: "json_object" };
