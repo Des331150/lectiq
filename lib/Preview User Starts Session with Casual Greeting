@@ -1,0 +1,3917 @@
+## User
+
+hi
+
+## Assistant
+
+<thinking>
+The user just said "hi" - a simple greeting. I should respond in a friendly, concise way and offer to help with their software engineering tasks. I can see from the git status they have a project called "lectiq" with some work in progress around documents, AI extraction, subscriptions, etc.
+
+</thinking>
+
+Hi — what do you want to work on in lectiq? I can see some in-progress changes around document processing, AI topic extraction, and subscriptions.
+
+## User
+
+what model are you using?
+
+## Assistant
+
+<thinking>
+The user is asking what model I am using. According to the communication instructions:
+
+</thinking>
+
+I’m **Grok 4.6**, a language model jointly trained and owned by SpaceXAI and Tesla.
+
+## User
+
+oh cool, what can you tell me about this codebase?
+
+## Assistant
+
+<thinking>
+The user wants to know about the lectiq codebase. I should explore the project structure, README, key config files, and understand what the app does. Let me explore the codebase thoroughly.
+</thinking>
+
+I’ll look through the repo structure, docs, and main app entry points so I can give you a clear picture of what lectiq is and how it’s put together.
+
+**Tool Call: List `C:\Users\Lenovo\Desktop\lectiq`**
+Status: Completed
+
+```json
+{
+  "type": "ListDir",
+  "Content": {
+    "content": "- C:\\Users\\Lenovo\\Desktop\\lectiq/\n  - app/\n    - api/\n      - quiz/\n        - generate/\n          - route.ts\n        - submit/\n          - route.ts\n      - webhooks/\n        - stripe/\n          - route.ts\n    - auth/\n      - callback/\n        - route.ts\n      - confirm/\n        - route.ts\n      - login/\n        - page.tsx\n      - logout/\n        - route.ts\n      - register/\n        - page.tsx\n      - signout/\n        - route.ts\n    - billing/\n      - actions.ts\n      - page.tsx\n    - dashboard/\n      - actions.ts\n      - page.tsx\n    - documents/\n      - [id]/\n        - quiz/\n          - new/\n            - page.tsx\n        - topics/\n          - page.tsx\n    - error.tsx\n    - favicon.ico\n    - globals.css\n    - history/\n      - page.tsx\n    - layout.tsx\n    - loading.tsx\n    - not-found.tsx\n    - page.tsx\n    - quizzes/\n      - [id]/\n        - page.tsx\n        - results/\n          - page.tsx\n    - upload/\n      - actions.ts\n      - page.tsx\n  - components/\n    - app-shell.tsx\n    - billing-toggle.tsx\n    - dashboard-stats.tsx\n    - document-card.tsx\n    - processing-status.tsx\n    - quiz-question.tsx\n    - quiz-results.tsx\n    - sidebar.tsx\n    - topic-selector.tsx\n    - ui/\n      - button.tsx\n      - card.tsx\n      - checkbox.tsx\n      - input.tsx\n      - label.tsx\n      - select.tsx\n      - sheet.tsx\n      - textarea.tsx\n    - upload-zone.tsx\n  - DESIGN.md\n  - docs/\n    - superpowers/\n      - plans/\n        - 2026-06-02-dashboard-redesign.md\n        - 2026-06-02-landing-page-redesign.md\n        - 2026-06-16-pricing-section.md\n      - specs/\n        - 2026-06-02-landing-page-design.md\n        - 2026-06-16-pricing-section-design.md\n  - eslint.config.mjs\n  - lib/\n    - ai/\n      - client.ts\n      - extract-topics.ts\n      - generate-questions.ts\n      - grade-answer.ts\n      - limits.ts\n    - quota.ts\n    - stripe.ts\n    - supabase/\n      - admin.ts\n      - client.ts\n      - server.ts\n      - session.ts\n    - utils.ts\n  - next-env.d.ts\n  - next.config.ts\n  - node_modules/\n    [15576 files in subtree: 13512 *.js, 696 *.ts, 319 *.json, ...]\n  - opencode.json\n  - package.json\n  - pnpm-lock.yaml\n  - postcss.config.js\n  - PRODUCT.md\n  - proxy.ts\n  - public/\n    - dashboard-screenshot.png\n    - file.svg\n    - globe.svg\n    - next.svg\n    - vercel.svg\n    - window.svg\n  - README.md\n  - supabase/\n    - migrations/\n      - 00001_initial.sql\n      - 00002_delete_policies.sql\n      - 00003_quizzes_status_error.sql\n      - 00004_subscription_status_basic.sql\n      - 00005_topics_source_content.sql\n      - 00006_documents_processing_warning.sql\n  - tailwind.config.ts\n  - tsc_out.txt\n  - tsconfig.json\n  - tsconfig.tsbuildinfo\n  - types/\n    - database.ts\n    - index.ts\n    - pdfjs-dist.d.ts\n  - vercel.json",
+    "absolute_root_path": "C:\\Users\\Lenovo\\Desktop\\lectiq"
+  }
+}
+```
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\package.json`**
+Status: Completed
+
+1→{
+  "name": "lectiq",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@10.20.0",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+10→    "lint": "eslint"
+  },
+  "dependencies": {
+    "@stripe/stripe-js": "^7.1.0",
+    "@supabase/ssr": "^0.6.1",
+    "@supabase/supabase-js": "^2.49.4",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
+    "jszip": "^3.10.1",
+20→    "lucide-react": "^0.510.0",
+    "next": "16.2.7",
+    "pdfjs-dist": "^4.0.379",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-dropzone": "^14.3.8",
+    "stripe": "^18.0.0",
+    "tailwind-merge": "^3.2.0"
+  },
+  "devDependencies": {
+30→    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "autoprefixer": "^10",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.7",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5"
+  }
+40→}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\README.md`**
+Status: Completed
+
+1→This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+10→yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+20→
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+30→You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+## Assistant
+
+<thinking>
+Good, I found PRODUCT.md and DESIGN.md which should give me a clear picture. Let me also read the key source files - layout, landing page, dashboard, types, and the AI/lib modules.
+</thinking>
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\PRODUCT.md`**
+Status: Completed
+
+1→# Product
+
+## Register
+
+brand + product
+
+## Users
+
+University students who want to study more effectively. They have lecture materials (PDFs, PowerPoint slides) and need to transform them into active recall practice. Their context: self-directed study sessions, exam prep, quiz-based learning at their own pace.
+10→
+## Product Purpose
+
+Lectiq turns uploaded lecture materials into AI-extracted topics and generates custom quiz questions (MCQ, free response, or both) with AI-graded feedback. It helps students study smarter by making active recall frictionless — upload a lecture file and get a practice quiz in minutes.
+
+## Brand Personality
+
+**Academic · Clean · Modern**
+
+Voice: confident but approachable. Knowledgeable like a tutor, not dry like a textbook. Direct, no marketing fluff.
+20→
+## Anti-references
+
+Avoid the generic SaaS template at all costs. No cookie-cutter hero sections with purple-blue gradients, no identical card grids with icon + heading + body, no "streamline / empower / supercharge" language. This should not look like a boilerplate startup landing page.
+
+## Design Principles
+
+1. **Academic authenticity** — looks and feels like a serious study tool. Scholarly but not stuffy. Think well-designed course materials, not gamified quiz app.
+2. **Clean clarity** — every element earns its place. Minimal decoration, maximum signal. Spacing and typography do the work.
+3. **Confident restraint** — use color and motion deliberately, not decoratively. The design fades into the background so the content leads.
+30→
+## Accessibility & Inclusion
+
+WCAG AA as baseline. Sufficient contrast on all text. Reduced motion support. Keyboard-navigable interactive elements.
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\DESIGN.md`**
+Status: Completed
+
+1→# Design
+
+## Visual Theme
+
+**Register:** brand + product
+
+Warm Academic — a palette inspired by well-bound books, warm paper, and scholarly confidence. Clean sans-serif typography throughout for a modern feel that doesn't sacrifice warmth.
+
+## Color Palette
+10→
+### Light mode (default)
+
+| Token | HSL | Usage |
+|---|---|---|
+| `--background` | `40 20% 95%` | Warm paper page background `#F5F2EB` |
+| `--foreground` | `20 15% 12%` | Body text — warm near-black `#2C1810` |
+| `--card` | `40 15% 90%` | Card / surface background `#E8E2D4` |
+| `--card-foreground` | `20 12% 18%` | Text on card surfaces |
+| `--primary` | `215 40% 17%` | Deep navy — buttons, links, key UI `#1B2A3B` |
+20→| `--primary-foreground` | `40 10% 95%` | Text on primary backgrounds |
+| `--accent` | `30 45% 60%` | Gold accent — highlights, badges `#C4956A` |
+| `--accent-foreground` | `20 15% 12%` | Text on accent backgrounds |
+| `--muted` | `40 12% 88%` | Muted backgrounds, hover states |
+| `--muted-foreground` | `35 10% 40%` | Secondary text — muted but readable |
+| `--border` | `40 12% 82%` | Borders, dividers `#D6CEBB` |
+| `--ring` | `215 40% 17%` | Focus rings (matches primary) |
+| `--destructive` | `0 70% 55%` | Errors, destructive actions |
+| `--destructive-foreground` | `0 0% 98%` | Text on destructive backgrounds |
+| `--radius` | `0.5rem` | Border radius |
+30→
+### Dark mode
+
+Anticipated: invert the lightness axis while preserving the warm hue rotation. Background becomes a deep warm charcoal (~20 15% 8%), surfaces step up. Primary navy shifts lighter for contrast on dark. Accent gold holds its hue but gains saturation. Dark mode deferred until light mode is shipped.
+
+## Typography
+
+### Font family
+
+All sans-serif — one family for headings and body.
+40→
+**Primary choice:** Inter (variable weight, excellent readability, academic without being stuffy).  
+**Fallback:** system-ui stack.
+
+### Scale
+
+| Level | Size / Weight | Usage |
+|---|---|---|
+| Hero heading | `clamp(2rem, 5vw, 3.25rem)` w700 | Landing page hero |
+| h1 | `clamp(1.5rem, 3vw, 2rem)` w700 | Page titles |
+50→| h2 | `1.25rem` w600 | Section headings |
+| h3 | `1.05rem` w600 | Card / sub-section headings |
+| Body | `0.9375rem` w400 | Paragraphs, general text |
+| Small | `0.8125rem` w400 | Captions, metadata |
+| Label | `0.75rem` w500 uppercase 1.5px tracking | Eyebrow / kicker text |
+| Button | `0.875rem` w500 | Button labels |
+
+Line height: 1.5 for body, 1.15–1.2 for headings.  
+Max body width: 65ch.
+
+60→## Spacing
+
+Based on a 4px grid. Key spacing values used in the landing page:
+
+- Section padding: `3rem` vertical
+- Card padding: `1.25rem`
+- Gap between features: `2rem`
+- Button padding: `0.75rem 1.5rem`
+- Nav padding: `1rem 1.75rem`
+
+70→## Component Style
+
+### Buttons
+- `border-radius: 0.5rem`
+- Solid primary: navy bg, warm paper text
+- Outline: 1px solid border, warm foreground text
+- Hover: subtle brightness shift (lighten navy by 10% for solid, darken border for outline)
+
+### Cards / Surfaces
+- `border-radius: 0.5rem`
+80→- Background: `--card` or `--background`
+- Border: 1px solid `--border`
+- No shadow by default — rely on background and border contrast for depth
+
+### Links
+- Navy color, underline on hover (not by default)
+- Accent gold for decorative / highlight links
+
+## Motion
+
+90→- Transition duration: 200ms ease-out for hover/focus states
+- Page transitions: 300ms ease-out
+- `prefers-reduced-motion: reduce` → 0ms transitions, no animations
+- Staggered reveals: 50ms delay between items, max 300ms
+
+## Notes
+
+- Dark mode TBD after light mode ships
+- Additional accent colors (for quiz results, progress indicators) TBD per feature context
+- This DESIGN.md should be kept in sync as new components and pages are added
+100→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\types\database.ts`**
+Status: Completed
+
+1→export interface User {
+  id: string;
+  email: string | null;
+  stripe_customer_id: string | null;
+  subscription_status: "basic" | "pro";
+  quiz_quota_reset_at: string;
+  created_at: string;
+}
+
+10→export interface Document {
+  id: string;
+  user_id: string;
+  title: string;
+  file_path: string;
+  file_type: "pdf" | "pptx";
+  status: "processing" | "ready" | "error";
+  page_count: number | null;
+  processing_warnings: string[] | null;
+  created_at: string;
+20→}
+
+export interface Topic {
+  id: string;
+  document_id: string;
+  title: string;
+  content: string;
+  source_content: string | null;
+  position: number;
+  created_at: string;
+30→}
+
+export interface Quiz {
+  id: string;
+  user_id: string;
+  document_id: string;
+  format: "mcq" | "free_response" | "both";
+  status: "generating" | "ready" | "completed";
+  question_count: number;
+  score: number | null;
+40→  created_at: string;
+}
+
+export interface QuizQuestion {
+  id: string;
+  quiz_id: string;
+  type: "mcq" | "free_response";
+  question_text: string;
+  options: { label: string; text: string }[] | null;
+  correct_answer: string | null;
+50→  model_answer: string | null;
+  topic_id: string | null;
+  position: number;
+}
+
+export interface QuizAnswer {
+  id: string;
+  question_id: string;
+  user_answer: string;
+  is_correct: boolean | null;
+60→  ai_score: number | null;
+  ai_feedback: string | null;
+  created_at: string;
+}
+
+export interface UsageRecord {
+  id: string;
+  user_id: string;
+  month: string;
+  quizzes_used: number;
+70→  documents_uploaded: number;
+  questions_generated: number;
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\layout.tsx`**
+Status: Completed
+
+1→import type { Metadata, Viewport } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Lectiq - Study Smarter",
+  description: "Turn your lecture notes into quizzes",
+};
+
+export const viewport: Viewport = {
+10→  width: "device-width",
+  initialScale: 1,
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+20→    <html lang="en">
+      <body className="font-sans">{children}</body>
+    </html>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\page.tsx`**
+Status: Completed
+
+1→import Image from "next/image";
+import Link from "next/link";
+import { Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+export default function LandingPage() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background text-foreground">
+      <header className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-border">
+10→        <div className="text-lg font-bold tracking-tight">Lectiq</div>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <Link href="/auth/login">
+            <Button variant="ghost" size="sm">Sign In</Button>
+          </Link>
+          <Link href="/auth/register">
+            <Button size="sm" className="font-medium">Get Started</Button>
+          </Link>
+        </div>
+      </header>
+20→
+      <main className="flex-1">
+        <div className="flex flex-col md:flex-row gap-10 items-center px-4 sm:px-6 py-12 sm:py-16 max-w-5xl mx-auto">
+          <div className="flex-1">
+            <h1 className="text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.15] tracking-tight text-balance mb-4">
+              Turn your lecture notes<br className="hidden sm:inline" />
+              <span className="text-accent">into quizzes</span>
+            </h1>
+            <p className="text-base leading-relaxed text-muted-foreground max-w-[65ch] mb-4">
+              The lectures you already have → quizzes that actually test
+30→              understanding, not just recognition.
+            </p>
+            <p className="text-sm leading-relaxed text-muted-foreground max-w-[65ch] mb-7">
+              No generic question banks. Lectiq builds practice quizzes from your
+              lecture PDFs and slides using active recall — the study method with
+              the strongest evidence for long-term retention.
+            </p>
+            <div className="flex flex-wrap gap-2.5">
+              <Link href="/auth/register">
+                <Button size="lg" className="font-medium">Start Studying</Button>
+40→              </Link>
+              <Link href="/auth/login">
+                <Button variant="outline" size="lg" className="font-medium">Sign In</Button>
+              </Link>
+            </div>
+            <p className="text-xs text-muted-foreground mt-4">
+              Built on active recall — the study method proven by decades of cognitive science research.
+            </p>
+          </div>
+          <div className="flex-1 w-full">
+50→            <Image
+              src="/dashboard-screenshot.png"
+              alt="Lectiq dashboard"
+              width={1200}
+              height={800}
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="rounded-xl border border-border w-full h-auto shadow-sm"
+            />
+          </div>
+        </div>
+60→
+        <div className="border-t border-border py-12 px-4 sm:px-6">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-8">
+            How it works
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+            {[
+              { num: "1", title: "Upload", desc: "Drop your PDF or PowerPoint. We extract the key topics automatically." },
+              { num: "2", title: "Generate", desc: "Pick the topics you want to study. Choose MCQ, free response, or both." },
+              { num: "3", title: "Learn", desc: "Take the quiz, get AI-graded feedback, and track your progress." },
+70→            ].map((step) => (
+              <div key={step.num} className="text-center">
+                <div className="w-11 h-11 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-semibold text-base mx-auto mb-3">
+                  {step.num}
+                </div>
+                <h3 className="font-semibold text-base mb-1.5">{step.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed max-w-[240px] mx-auto">{step.desc}</p>
+              </div>
+            ))}
+          </div>
+80→        </div>
+
+## Assistant
+
+<thinking>
+I have a good picture of the product. Let me read more about the architecture - AI client, upload flow, auth, billing, and the main app flows.
+</thinking>
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\client.ts`**
+Status: Completed
+
+1→const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const MODEL = process.env.AI_MODEL || "openrouter/free";
+
+async function fetchWithRetry(url: string, init: RequestInit, retries = 3): Promise<Response> {
+  let lastError: Error | null = null;
+  for (let attempt = 0; attempt < retries; attempt++) {
+    try {
+      const response = await fetch(url, init);
+      if (response.status === 429 || response.status >= 500) {
+10→        lastError = new Error(`HTTP ${response.status}`);
+        await sleep(1000 * 2 ** attempt);
+        continue;
+      }
+      return response;
+    } catch (err) {
+      lastError = err instanceof Error ? err : new Error(String(err));
+      await sleep(1000 * 2 ** attempt);
+    }
+  }
+20→  throw lastError ?? new Error("Request failed");
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+export async function aiComplete(
+  systemPrompt: string,
+  userPrompt: string,
+30→  format: "json_object" | "text" = "text",
+  temperature = 0
+) {
+  const body: Record<string, unknown> = {
+    model: MODEL,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userPrompt },
+    ],
+    temperature,
+40→  };
+  if (format === "json_object") {
+    body.response_format = { type: "json_object" };
+  }
+
+  const response = await fetchWithRetry("https://openrouter.ai/api/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+50→    },
+    body: JSON.stringify(body),
+  });
+
+  if (!response.ok) {
+    const err = await response.text();
+    throw new Error(`OpenRouter API error (${response.status}): ${err}`);
+  }
+
+  const data = await response.json();
+60→  const content = data.choices?.[0]?.message?.content;
+  if (!content || !content.trim()) {
+    throw new Error("AI returned empty response");
+  }
+  return content;
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\extract-topics.ts`**
+Status: Completed
+
+1→import { aiComplete } from "./client";
+import { TRUNCATION_REASON, type TruncationReason } from "./limits";
+
+interface ExtractedTopic {
+  title: string;
+  content: string;
+  source: string;
+}
+
+10→const CHUNK_CHARS = 10000;
+const MAX_TOPICS = 60;
+const MAX_TOTAL_CHUNKS = 30;
+const TIME_BUDGET_MS = 90_000;
+const MIN_SLIDE_MARKERS = 2;
+const MAP_TEMPERATURE = 0.2;
+const REDUCE_TEMPERATURE = 0.2;
+const SLIDE_MARKER = /^\[Slide (\d+)\]/;
+
+const MAP_PROMPT = `You are an academic assistant. Extract the distinct, substantive topics from the provided section of a lecture document.
+20→
+The section may be from a slide deck (marked with [Slide N]) or a PDF (paragraph-separated). Group related slides or paragraphs that cover the same subject into a single topic, and use a descriptive topic name.
+
+For each topic, return:
+- title: a concise, descriptive topic name
+- content: a comprehensive summary of everything covered in that topic (2-5 sentences)
+- source: the VERBATIM raw text from the section that this topic covers. Copy the exact original wording of the relevant slides/paragraphs word for word — do NOT paraphrase, summarize, rewrite, or edit. Include all detail that could be quizzed on: definitions, formulas, examples, bullet points, names, dates. This field is used to generate quiz questions, so the more original detail it retains, the better.
+
+STRICT RULES:
+- Only extract REAL study topics — actual subject matter a student could be quizzed on.
+30→- DO NOT create topics for front matter or administrative content such as: learning objectives, "what you will learn" lists, agendas, outlines, tables of contents, schedules, course overviews, introductions, welcome slides, grading/rubrics/policies, contact info, thank-you slides, or reference/bibliography/review-question slides.
+- If a group of slides/paragraphs is only front matter or a divider, skip it entirely — do not emit a topic for it.
+- Cover ALL real subject material in the section. Do not skip genuine topics.
+- Use consistent topic granularity: group closely-related concepts into one topic rather than fragmenting into many small ones.
+
+Return ONLY a JSON object with this structure: { "topics": [{ "title": "...", "content": "...", "source": "..." }] }`;
+
+const REDUCE_PROMPT = `You are an academic assistant. Below are topics extracted from separate chunks of a single lecture document.
+
+Merge and clean this list:
+40→- Combine near-duplicate topics that refer to the same subject into a single topic (keep the best title, merge the content).
+- REMOVE any topics that are NOT real study topics, especially: learning objectives, agendas, outlines, tables of contents, course overviews, introductions, welcome content, grading/policies/administrative content, thank-you slides, references/bibliographies, or review-question lists.
+- Keep every genuine, distinct topic. Do not drop real subject matter.
+- Preserve the original document order as much as possible.
+
+For each topic, return:
+- title: a concise, descriptive topic name
+- content: a comprehensive summary of everything covered in that topic (2-5 sentences)
+- source: the combined VERBATIM raw text from all topics being merged (concatenate their source text exactly, do NOT paraphrase, summarize, rewrite, or edit). Keep every original detail.
+
+50→Return ONLY a JSON object with this structure: { "topics": [{ "title": "...", "content": "...", "source": "..." }] }`;
+
+function parseTopics(jsonText: string): ExtractedTopic[] {
+  const cleaned = jsonText.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+  const parsed = JSON.parse(cleaned);
+  const raw: unknown[] = Array.isArray(parsed?.topics) ? parsed.topics : [];
+  return raw
+    .filter((t): t is Record<string, unknown> => !!t && typeof t === "object")
+    .map((t) => ({
+      title: String(t.title ?? "").trim(),
+60→      content: String(t.content ?? "").trim(),
+      source: String(t.source ?? t.content ?? "").trim(),
+    }))
+    .filter((t) => t.title.length > 0 && t.content.length > 0);
+}
+
+function splitBySlides(documentText: string): string[] {
+  const slides: string[] = [];
+  let current = "";
+
+70→  for (const line of documentText.split("\n")) {
+    const match = line.match(SLIDE_MARKER);
+    if (match) {
+      if (current.trim()) slides.push(current);
+      current = `${line}\n`;
+    } else {
+      current += `${line}\n`;
+    }
+  }
+  if (current.trim()) slides.push(current);
+80→  return slides;
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\quota.ts`**
+Status: Completed
+
+1→import { createServerSupabaseClient } from "./supabase/server";
+import { getCurrentMonth } from "./utils";
+
+export async function checkUploadQuota(userId: string): Promise<{ allowed: boolean; reason?: string }> {
+  return { allowed: true };
+}
+
+export async function checkQuizQuota(userId: string): Promise<{ allowed: boolean; reason?: string }> {
+  const supabase = await createServerSupabaseClient();
+10→  const month = getCurrentMonth();
+
+  const { data: user } = await supabase
+    .from("users")
+    .select("subscription_status")
+    .eq("id", userId)
+    .single();
+
+  if (user?.subscription_status === "pro") {
+    return { allowed: true };
+20→  }
+
+  const { data: usage } = await supabase
+    .from("usage_records")
+    .select("quizzes_used")
+    .eq("user_id", userId)
+    .eq("month", month)
+    .single();
+
+  if (usage && usage.quizzes_used >= 10) {
+30→    return { allowed: false, reason: "Basic plan limited to 10 quizzes per month. Upgrade to Pro for unlimited quizzes." };
+  }
+
+  return { allowed: true };
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations\00001_initial.sql`**
+Status: Completed
+
+1→-- Enable UUID extension
+create extension if not exists "uuid-ossp";
+
+-- Users table (managed by Supabase Auth, extended with subscription data)
+create table public.users (
+  id uuid references auth.users not null primary key,
+  email text,
+  stripe_customer_id text,
+  subscription_status text not null default 'free' check (subscription_status in ('free', 'pro')),
+10→  quiz_quota_reset_at timestamptz not null default now(),
+  created_at timestamptz not null default now()
+);
+
+alter table public.users enable row level security;
+
+create policy "Users can read own data"
+  on public.users for select
+  using (auth.uid() = id);
+
+20→-- Documents
+create table public.documents (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  title text not null,
+  file_path text not null,
+  file_type text not null check (file_type in ('pdf', 'pptx')),
+  status text not null default 'processing' check (status in ('processing', 'ready', 'error')),
+  page_count int,
+  created_at timestamptz not null default now()
+30→);
+
+alter table public.documents enable row level security;
+
+create policy "Users can CRUD own documents"
+  on public.documents for all
+  using (auth.uid() = user_id);
+
+create index documents_user_id_idx on public.documents(user_id);
+
+40→-- Topics
+create table public.topics (
+  id uuid primary key default uuid_generate_v4(),
+  document_id uuid not null references public.documents(id) on delete cascade,
+  title text not null,
+  content text not null,
+  position int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+50→alter table public.topics enable row level security;
+
+create policy "Users can read own document topics"
+  on public.topics for select
+  using (
+    exists (
+      select 1 from public.documents
+      where documents.id = topics.document_id
+      and documents.user_id = auth.uid()
+    )
+60→  );
+
+create policy "Users can insert own document topics"
+  on public.topics for insert
+  with check (
+    exists (
+      select 1 from public.documents
+      where documents.id = topics.document_id
+      and documents.user_id = auth.uid()
+    )
+70→  );
+
+create index topics_document_id_idx on public.topics(document_id);
+
+-- Quizzes
+create table public.quizzes (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  document_id uuid not null references public.documents(id) on delete cascade,
+  format text not null check (format in ('mcq', 'free_response', 'both')),
+80→  status text not null default 'generating' check (status in ('generating', 'ready', 'completed')),
+  question_count int not null default 0,
+  score numeric,
+  created_at timestamptz not null default now()
+);
+
+alter table public.quizzes enable row level security;
+
+create policy "Users can CRUD own quizzes"
+  on public.quizzes for all
+90→  using (auth.uid() = user_id);
+
+create index quizzes_user_id_idx on public.quizzes(user_id);
+create index quizzes_document_id_idx on public.quizzes(document_id);
+
+-- Quiz Questions
+create table public.quiz_questions (
+  id uuid primary key default uuid_generate_v4(),
+  quiz_id uuid not null references public.quizzes(id) on delete cascade,
+  type text not null check (type in ('mcq', 'free_response')),
+100→  question_text text not null,
+  options jsonb,
+  correct_answer text,
+  model_answer text,
+  topic_id uuid references public.topics(id),
+  position int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.quiz_questions enable row level security;
+110→
+create policy "Users can read own quiz questions"
+  on public.quiz_questions for select
+  using (
+    exists (
+      select 1 from public.quizzes
+      where quizzes.id = quiz_questions.quiz_id
+      and quizzes.user_id = auth.uid()
+    )
+  );
+120→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\dashboard\page.tsx`**
+Status: Completed
+
+1→import { redirect } from "next/navigation";
+import Link from "next/link";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
+import { DashboardStats } from "@/components/dashboard-stats";
+import { DocumentCard } from "@/components/document-card";
+import { AppShell } from "@/components/app-shell";
+import { getCurrentMonth } from "@/lib/utils";
+10→
+export default async function DashboardPage() {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+  const { data: userData } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", user.id)
+20→    .single();
+
+  const { data: documents } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
+
+  const { data: topicCounts } = await supabase
+    .from("topics")
+30→    .select("document_id, id")
+    .in("document_id", documents?.map((d) => d.id) || []);
+
+  const topicCountMap = new Map<string, number>();
+  topicCounts?.forEach((t) => {
+    topicCountMap.set(t.document_id, (topicCountMap.get(t.document_id) || 0) + 1);
+  });
+
+  const topicsExtracted = topicCounts?.length || 0;
+
+40→  const { data: quizCounts } = await supabase
+    .from("quizzes")
+    .select("document_id, id")
+    .in("document_id", documents?.map((d) => d.id) || []);
+
+  const quizCountMap = new Map<string, number>();
+  quizCounts?.forEach((q) => {
+    quizCountMap.set(q.document_id, (quizCountMap.get(q.document_id) || 0) + 1);
+  });
+
+50→  const month = getCurrentMonth();
+  const { data: usage } = await supabase
+    .from("usage_records")
+    .select("*")
+    .eq("user_id", user.id)
+    .eq("month", month)
+    .single();
+
+  const { data: quizData } = await supabase
+    .from("quizzes")
+60→    .select("score")
+    .eq("user_id", user.id)
+    .not("score", "is", null);
+
+  const avgScore =
+    quizData && quizData.length > 0
+      ? quizData.reduce((acc, q) => acc + (q.score || 0), 0) / quizData.length
+      : null;
+
+  const isPro = userData?.subscription_status === "pro";
+70→
+  return (
+    <AppShell title="Dashboard">
+      <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 mb-8">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            {isPro ? "Pro plan" : `Basic plan \u2014 ${documents?.length || 0}/10 documents used`}
+          </p>
+        </div>
+80→        <Link href="/upload">
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\proxy.ts`**
+Status: Completed
+
+1→import { type NextRequest } from "next/server";
+import { updateSession } from "@/lib/supabase/session";
+
+export async function proxy(request: NextRequest) {
+  return await updateSession(request);
+}
+
+export const config = {
+  matcher: [
+10→    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+  ],
+};
+
+
+## Assistant
+
+<thinking>
+I have a solid picture. Let me quickly peek at a few more key files to understand the current WIP and the main user flows better - upload actions, quiz generation, billing.
+</thinking>
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\upload\actions.ts`**
+Status: Completed
+
+1→"use server";
+
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { extractTopics } from "@/lib/ai/extract-topics";
+import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
+import { checkUploadQuota } from "@/lib/quota";
+import { getCurrentMonth } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
+
+10→const MAX_PDF_PAGES = 200;
+
+interface ExtractionOutput {
+  text: string;
+  pageCount: number;
+  reasons: TruncationReason[];
+}
+
+async function extractTextFromPdf(buffer: ArrayBuffer): Promise<ExtractionOutput> {
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+20→  const workerModule = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
+  (globalThis as unknown as { pdfjsWorker: unknown }).pdfjsWorker = workerModule;
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  const pagesToRead = Math.min(pdf.numPages, MAX_PDF_PAGES);
+  const texts: string[] = [];
+
+  for (let i = 1; i <= pagesToRead; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    texts.push(content.items.map((item: { str: string }) => item.str).join(" "));
+30→  }
+
+  return {
+    text: texts.join("\n\n"),
+    pageCount: pdf.numPages,
+    reasons: pdf.numPages > MAX_PDF_PAGES ? [TRUNCATION_REASON.PDF_PAGES_CAPPED] : [],
+  };
+}
+
+async function extractTextFromPptx(buffer: ArrayBuffer): Promise<ExtractionOutput> {
+40→  const JSZip = (await import("jszip")).default;
+  const zip = await JSZip.loadAsync(buffer);
+  const slides: string[] = [];
+
+  const slideFiles = Object.keys(zip.files)
+    .filter((name) => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"))
+    .sort();
+
+  for (const file of slideFiles) {
+    const content = await zip.files[file].async("text");
+50→    const text = content
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z]+;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text) {
+      const slideNum = slideFiles.indexOf(file) + 1;
+      slides.push(`[Slide ${slideNum}]\n${text}`);
+    }
+  }
+60→
+  return { text: slides.join("\n\n"), pageCount: slides.length, reasons: [] };
+}
+
+export async function uploadDocument(filePath: string, fileName: string, fileType: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const quota = await checkUploadQuota(user.id);
+70→  if (!quota.allowed) return { error: quota.reason };
+
+  if (!["pdf", "pptx"].includes(fileType)) return { error: "Only PDF and PPTX files are supported" };
+
+  const { data: doc, error: docError } = await supabase
+    .from("documents")
+    .insert({
+      user_id: user.id,
+      title: fileName,
+      file_path: filePath,
+80→      file_type: fileType,
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\generate-questions.ts`**
+Status: Completed
+
+1→import { aiComplete } from "./client";
+
+interface GeneratedQuestion {
+  type: "mcq" | "free_response";
+  question_text: string;
+  options?: { label: string; text: string }[];
+  correct_answer?: string;
+  model_answer?: string;
+  topic_id: string | null;
+10→}
+
+interface ParsedQuestion {
+  type?: string;
+  topic?: string;
+  question_text?: string;
+  options?: Array<string | { label?: string; text?: string }>;
+  correct_answer?: string;
+  model_answer?: string;
+}
+20→
+interface TopicInput {
+  id: string;
+  title: string;
+  content: string;
+  source_content?: string | null;
+}
+
+const MAX_CHARS_PER_CALL = 30000;
+const TIME_BUDGET_MS = 90_000;
+30→
+export async function generateQuestions(
+  topicContents: TopicInput[],
+  format: "mcq" | "free_response" | "both"
+): Promise<GeneratedQuestion[]> {
+  const batches = groupTopicBatches(topicContents);
+  const all: GeneratedQuestion[] = [];
+  const deadline = Date.now() + TIME_BUDGET_MS;
+
+  for (const batch of batches) {
+40→    if (Date.now() >= deadline) break;
+    all.push(...(await generateBatch(batch, format)));
+  }
+
+  return all;
+}
+
+function materialFor(topic: TopicInput): string {
+  return (topic.source_content || topic.content || "").trim();
+}
+50→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\limits.ts`**
+Status: Completed
+
+1→export const TRUNCATION_REASON = {
+  PDF_PAGES_CAPPED: "pdf_pages_capped",
+  TOPICS_TRUNCATED: "topics_truncated",
+  DEADLINE_HIT: "deadline_hit",
+} as const;
+
+export type TruncationReason = (typeof TRUNCATION_REASON)[keyof typeof TRUNCATION_REASON];
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\billing\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useEffect, useState } from "react";
+import { useActionState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Check, Loader2 } from "lucide-react";
+import { AppShell } from "@/components/app-shell";
+import { BillingToggle } from "@/components/billing-toggle";
+10→import { checkoutAction } from "./actions";
+
+export default function BillingPage() {
+  const [currentPlan, setCurrentPlan] = useState<string>("basic");
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const isYearly = searchParams.get("interval") === "yearly";
+
+  useEffect(() => {
+20→    async function load() {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { router.push("/auth/login"); return; }
+      const { data: userData } = await supabase
+        .from("users")
+        .select("subscription_status")
+        .eq("id", user.id)
+        .single();
+      setCurrentPlan(userData?.subscription_status || "basic");
+30→      setLoading(false);
+    }
+    load();
+  }, [router]);
+
+  const [state, formAction, isPending] = useActionState(checkoutAction, null);
+
+  useEffect(() => {
+    if (state?.success && state.url) {
+      window.location.href = state.url;
+40→    }
+  }, [state]);
+
+  const plans = [
+    {
+      id: "basic",
+      name: "Basic",
+      monthly: { price: "$7.99", label: "/month" },
+      yearly: { price: "$69.99", label: "/yr" },
+      features: [
+50→        "10 quizzes per month",
+        "MCQ + Free Response questions",
+        "AI-graded feedback",
+        "PDF export",
+      ],
+    },
+    {
+      id: "pro",
+      name: "Pro",
+      monthly: { price: "$14.99", label: "/month" },
+60→      yearly: { price: "$129.99", label: "/yr" },
+
+**Tool Call: List `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations`**
+Status: Completed
+
+```json
+{
+  "type": "ListDir",
+  "Content": {
+    "content": "- C:\\Users\\Lenovo\\Desktop\\lectiq\\supabase\\migrations/\n  - 00001_initial.sql\n  - 00002_delete_policies.sql\n  - 00003_quizzes_status_error.sql\n  - 00004_subscription_status_basic.sql\n  - 00005_topics_source_content.sql\n  - 00006_documents_processing_warning.sql",
+    "absolute_root_path": "C:\\Users\\Lenovo\\Desktop\\lectiq\\supabase\\migrations"
+  }
+}
+```
+
+## Assistant
+
+<thinking>
+I have a comprehensive picture of the codebase. Let me write a clear, well-structured overview for the user. No need to dump raw file listings - they asked what I can tell them about the codebase.
+
+</thinking>
+
+**Lectiq** is a study app for university students: upload lecture PDFs or PowerPoint decks, extract topics with AI, then generate MCQ / free-response quizzes with AI grading.
+
+The product pitch is *active recall with low friction* — academic, clean, not a gamified quiz toy. That’s spelled out in `PRODUCT.md` and `DESIGN.md` (warm paper palette, navy + gold, Inter).
+
+## Stack
+
+| Layer | Choice |
+|---|---|
+| App | Next.js 16 App Router, React 19, TypeScript |
+| Styling | Tailwind + a small `components/ui` kit (button, card, input, etc.) |
+| Auth + data | Supabase (Auth, Postgres, RLS, storage) |
+| Payments | Stripe |
+| AI | OpenRouter (`lib/ai/client.ts`), model from `AI_MODEL` (defaults to `openrouter/free`) |
+| File parsing | `pdfjs-dist` for PDFs, `jszip` for `.pptx` XML |
+| Package manager | pnpm |
+
+## User flow
+
+1. **Landing** (`/`) → register / login
+2. **Upload** a PDF or PPTX (`/upload`)
+3. Server extracts text, then AI **map-reduces** it into topics
+4. Student picks topics and format (`/documents/[id]/quiz/new`)
+5. AI generates questions; student takes the quiz (`/quizzes/[id]`)
+6. Free-response answers are AI-graded; results + history live at `/quizzes/[id]/results` and `/history`
+7. **Billing** is Basic vs Pro via Stripe (`/billing`)
+
+The signed-in chrome is `AppShell` + sidebar. Session refresh is in `proxy.ts` (Next 16’s proxy, not the older `middleware.ts`).
+
+## Domain model
+
+The core tables in `types/database.ts` / `supabase/migrations`:
+
+- **users** — email, Stripe customer, `subscription_status` (`basic` | `pro`)
+- **documents** — file, type (`pdf` | `pptx`), status (`processing` | `ready` | `error`), optional `processing_warnings`
+- **topics** — title, summary `content`, verbatim `source_content` (used for quiz generation)
+- **quizzes** — format, status, score
+- **quiz_questions** / **quiz_answers**
+- **usage_records** — monthly quiz / document / question counts
+
+RLS is per-user throughout. Migrations go `00001` → `00006`; later ones add quiz error status, rename free→basic, topic source text, and processing warnings.
+
+## AI pipeline
+
+`lib/ai/` is the interesting part:
+
+- **`extract-topics.ts`** — chunks lecture text (slide-aware for PPTX), map-extracts topics, then reduce-merges them. Skips agendas, learning objectives, thank-you slides. Caps: 60 topics, 30 chunks, 90s budget.
+- **`generate-questions.ts`** — batches topics, prefers `source_content` over the summary so questions stay close to the original lecture.
+- **`grade-answer.ts`** — free-response grading + feedback.
+- **`limits.ts`** (new, untracked) — truncation reasons: PDF page cap, topic truncation, deadline.
+
+Uploads currently cap PDFs at **200 pages**. Quota: Basic is **10 quizzes/month**; Pro is unlimited. `checkUploadQuota` is currently a no-op (`allowed: true`).
+
+## What’s in flight
+
+Your working tree is ahead of `origin/main` by 2 commits, with local work on:
+
+- document processing warnings
+- topic extraction / AI client
+- subscription status (`basic`)
+- `lib/ai/limits.ts`
+
+So the product is a real, fairly complete study loop — auth, upload, extract, quiz, grade, bill — with the current work tightening extraction reliability and how partial/truncated processing is surfaced to the user.
+
+Want a deeper walkthrough of one slice (upload pipeline, quiz generation, billing, or the current uncommitted changes)?
+
+## User
+
+i see, what can be improved upon?
+
+## Assistant
+
+<thinking>
+The user wants to know what can be improved in the lectiq codebase. This is a review/analysis question - I should look at the codebase more carefully to give a grounded, specific assessment rather than generic advice.
+
+</thinking>
+
+I’ll look through the main product paths and the current uncommitted work so the suggestions are grounded in what’s actually there, not generic cleanup.
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\upload\actions.ts`**
+Status: Completed
+
+1→"use server";
+
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { extractTopics } from "@/lib/ai/extract-topics";
+import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
+import { checkUploadQuota } from "@/lib/quota";
+import { getCurrentMonth } from "@/lib/utils";
+import { revalidatePath } from "next/cache";
+
+10→const MAX_PDF_PAGES = 200;
+
+interface ExtractionOutput {
+  text: string;
+  pageCount: number;
+  reasons: TruncationReason[];
+}
+
+async function extractTextFromPdf(buffer: ArrayBuffer): Promise<ExtractionOutput> {
+  const pdfjsLib = await import("pdfjs-dist/legacy/build/pdf");
+20→  const workerModule = await import("pdfjs-dist/legacy/build/pdf.worker.min.mjs");
+  (globalThis as unknown as { pdfjsWorker: unknown }).pdfjsWorker = workerModule;
+  const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+  const pagesToRead = Math.min(pdf.numPages, MAX_PDF_PAGES);
+  const texts: string[] = [];
+
+  for (let i = 1; i <= pagesToRead; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    texts.push(content.items.map((item: { str: string }) => item.str).join(" "));
+30→  }
+
+  return {
+    text: texts.join("\n\n"),
+    pageCount: pdf.numPages,
+    reasons: pdf.numPages > MAX_PDF_PAGES ? [TRUNCATION_REASON.PDF_PAGES_CAPPED] : [],
+  };
+}
+
+async function extractTextFromPptx(buffer: ArrayBuffer): Promise<ExtractionOutput> {
+40→  const JSZip = (await import("jszip")).default;
+  const zip = await JSZip.loadAsync(buffer);
+  const slides: string[] = [];
+
+  const slideFiles = Object.keys(zip.files)
+    .filter((name) => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"))
+    .sort();
+
+  for (const file of slideFiles) {
+    const content = await zip.files[file].async("text");
+50→    const text = content
+      .replace(/<[^>]+>/g, " ")
+      .replace(/&[a-z]+;/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+    if (text) {
+      const slideNum = slideFiles.indexOf(file) + 1;
+      slides.push(`[Slide ${slideNum}]\n${text}`);
+    }
+  }
+60→
+  return { text: slides.join("\n\n"), pageCount: slides.length, reasons: [] };
+}
+
+export async function uploadDocument(filePath: string, fileName: string, fileType: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+
+  const quota = await checkUploadQuota(user.id);
+70→  if (!quota.allowed) return { error: quota.reason };
+
+  if (!["pdf", "pptx"].includes(fileType)) return { error: "Only PDF and PPTX files are supported" };
+
+  const { data: doc, error: docError } = await supabase
+    .from("documents")
+    .insert({
+      user_id: user.id,
+      title: fileName,
+      file_path: filePath,
+80→      file_type: fileType,
+      status: "processing",
+    })
+    .select()
+    .single();
+
+  if (docError || !doc) return { error: `Failed to create document record: ${docError?.message}` };
+
+  try {
+    const { data: fileData, error: downloadError } = await supabase.storage
+90→      .from("Documents")
+      .download(filePath);
+
+    if (downloadError || !fileData) throw new Error(`Failed to read uploaded file: ${downloadError?.message}`);
+
+    const buffer = await fileData.arrayBuffer();
+    const { text, pageCount, reasons: extractReasons } =
+      fileType === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
+
+    if (!text.trim()) {
+100→      await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
+      const reason = fileType === "pdf" ? "Scanned PDFs or image-based PDFs are not supported yet." : "Could not extract text from this PowerPoint file. It may be image-only or password-protected.";
+      return { error: reason };
+    }
+
+    const { topics, reasons: topicReasons } = await extractTopics(text);
+    const warnings = Array.from(new Set([...extractReasons, ...topicReasons]));
+
+    const topicRows = topics.map((t, i) => ({
+      document_id: doc.id,
+110→      title: t.title,
+      content: t.content,
+      source_content: t.source,
+      position: i,
+    }));
+
+    await supabase.from("topics").insert(topicRows);
+    await supabase
+      .from("documents")
+      .update({
+120→        status: "ready",
+        page_count: pageCount,
+        processing_warnings: warnings.length > 0 ? warnings : null,
+      })
+      .eq("id", doc.id);
+
+    await supabase.storage.from("Documents").remove([filePath]);
+
+    const month = getCurrentMonth();
+    const { data: existing } = await supabase
+130→      .from("usage_records")
+      .select("documents_uploaded")
+      .eq("user_id", user.id)
+      .eq("month", month)
+      .single();
+
+    if (existing) {
+      await supabase
+        .from("usage_records")
+        .update({ documents_uploaded: (existing.documents_uploaded || 0) + 1 })
+140→        .eq("user_id", user.id)
+        .eq("month", month);
+    } else {
+      await supabase
+        .from("usage_records")
+        .insert({ user_id: user.id, month, documents_uploaded: 1 });
+    }
+
+  } catch (err) {
+    await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
+150→    const message = err instanceof Error ? err.message : "Unknown error";
+    return { error: `Failed to process document: ${message}` };
+  }
+
+  revalidatePath("/dashboard");
+  return { documentId: doc.id };
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\extract-topics.ts`**
+Status: Completed
+
+1→import { aiComplete } from "./client";
+import { TRUNCATION_REASON, type TruncationReason } from "./limits";
+
+interface ExtractedTopic {
+  title: string;
+  content: string;
+  source: string;
+}
+
+10→const CHUNK_CHARS = 10000;
+const MAX_TOPICS = 60;
+const MAX_TOTAL_CHUNKS = 30;
+const TIME_BUDGET_MS = 90_000;
+const MIN_SLIDE_MARKERS = 2;
+const MAP_TEMPERATURE = 0.2;
+const REDUCE_TEMPERATURE = 0.2;
+const SLIDE_MARKER = /^\[Slide (\d+)\]/;
+
+const MAP_PROMPT = `You are an academic assistant. Extract the distinct, substantive topics from the provided section of a lecture document.
+20→
+The section may be from a slide deck (marked with [Slide N]) or a PDF (paragraph-separated). Group related slides or paragraphs that cover the same subject into a single topic, and use a descriptive topic name.
+
+For each topic, return:
+- title: a concise, descriptive topic name
+- content: a comprehensive summary of everything covered in that topic (2-5 sentences)
+- source: the VERBATIM raw text from the section that this topic covers. Copy the exact original wording of the relevant slides/paragraphs word for word — do NOT paraphrase, summarize, rewrite, or edit. Include all detail that could be quizzed on: definitions, formulas, examples, bullet points, names, dates. This field is used to generate quiz questions, so the more original detail it retains, the better.
+
+STRICT RULES:
+- Only extract REAL study topics — actual subject matter a student could be quizzed on.
+30→- DO NOT create topics for front matter or administrative content such as: learning objectives, "what you will learn" lists, agendas, outlines, tables of contents, schedules, course overviews, introductions, welcome slides, grading/rubrics/policies, contact info, thank-you slides, or reference/bibliography/review-question slides.
+- If a group of slides/paragraphs is only front matter or a divider, skip it entirely — do not emit a topic for it.
+- Cover ALL real subject material in the section. Do not skip genuine topics.
+- Use consistent topic granularity: group closely-related concepts into one topic rather than fragmenting into many small ones.
+
+Return ONLY a JSON object with this structure: { "topics": [{ "title": "...", "content": "...", "source": "..." }] }`;
+
+const REDUCE_PROMPT = `You are an academic assistant. Below are topics extracted from separate chunks of a single lecture document.
+
+Merge and clean this list:
+40→- Combine near-duplicate topics that refer to the same subject into a single topic (keep the best title, merge the content).
+- REMOVE any topics that are NOT real study topics, especially: learning objectives, agendas, outlines, tables of contents, course overviews, introductions, welcome content, grading/policies/administrative content, thank-you slides, references/bibliographies, or review-question lists.
+- Keep every genuine, distinct topic. Do not drop real subject matter.
+- Preserve the original document order as much as possible.
+
+For each topic, return:
+- title: a concise, descriptive topic name
+- content: a comprehensive summary of everything covered in that topic (2-5 sentences)
+- source: the combined VERBATIM raw text from all topics being merged (concatenate their source text exactly, do NOT paraphrase, summarize, rewrite, or edit). Keep every original detail.
+
+50→Return ONLY a JSON object with this structure: { "topics": [{ "title": "...", "content": "...", "source": "..." }] }`;
+
+function parseTopics(jsonText: string): ExtractedTopic[] {
+  const cleaned = jsonText.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+  const parsed = JSON.parse(cleaned);
+  const raw: unknown[] = Array.isArray(parsed?.topics) ? parsed.topics : [];
+  return raw
+    .filter((t): t is Record<string, unknown> => !!t && typeof t === "object")
+    .map((t) => ({
+      title: String(t.title ?? "").trim(),
+60→      content: String(t.content ?? "").trim(),
+      source: String(t.source ?? t.content ?? "").trim(),
+    }))
+    .filter((t) => t.title.length > 0 && t.content.length > 0);
+}
+
+function splitBySlides(documentText: string): string[] {
+  const slides: string[] = [];
+  let current = "";
+
+70→  for (const line of documentText.split("\n")) {
+    const match = line.match(SLIDE_MARKER);
+    if (match) {
+      if (current.trim()) slides.push(current);
+      current = `${line}\n`;
+    } else {
+      current += `${line}\n`;
+    }
+  }
+  if (current.trim()) slides.push(current);
+80→  return slides;
+}
+
+function isSlideDeck(documentText: string): boolean {
+  const numbers = Array.from(documentText.matchAll(SLIDE_MARKER), (m) => Number(m[1]));
+  if (numbers.length < MIN_SLIDE_MARKERS) return false;
+  return numbers.every((n, i) => i === 0 || n > numbers[i - 1]);
+}
+
+function groupIntoChunks(segments: string[], maxChars: number): string[] {
+90→  const chunks: string[] = [];
+  let current = "";
+  for (const segment of segments) {
+    if (current.length > 0 && current.length + segment.length > maxChars) {
+      chunks.push(current);
+      current = segment;
+    } else {
+      current += current ? `\n${segment}` : segment;
+    }
+  }
+100→  if (current.trim()) chunks.push(current);
+  return chunks;
+}
+
+function normalizeTitle(title: string): string {
+  return title.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim();
+}
+
+const JUNK_TITLE_TOKENS = new Set([
+  "introduction",
+110→  "introduction to",
+  "overview",
+  "learning objectives",
+  "objectives",
+  "agenda",
+  "outline",
+  "table of contents",
+  "contents",
+  "schedule",
+  "welcome",
+120→  "welcome to",
+  "about this course",
+  "course overview",
+  "this course",
+  "course information",
+  "course logistics",
+  "grading",
+  "syllabus",
+  "references",
+  "references and further reading",
+130→  "further reading",
+  "bibliography",
+  "thank you",
+  "questions",
+  "review questions",
+  "homework",
+  "assignment",
+  "contact",
+  "administrative details",
+]);
+140→
+function isJunkTopic(topic: ExtractedTopic): boolean {
+  const norm = normalizeTitle(topic.title);
+  if (JUNK_TITLE_TOKENS.has(norm)) return true;
+  const low = topic.content.toLowerCase();
+  if (
+    low.length < 40 &&
+    (low.startsWith("this slide") || low.startsWith("this section") || low.startsWith("this document"))
+  ) {
+    return true;
+150→  }
+  return false;
+}
+
+export interface ExtractionResult {
+  topics: ExtractedTopic[];
+  reasons: TruncationReason[];
+}
+
+export async function extractTopics(documentText: string): Promise<ExtractionResult> {
+160→  const slideSegments = isSlideDeck(documentText) ? splitBySlides(documentText) : [];
+  const sections =
+    slideSegments.length > 0 ? slideSegments : documentText.split(/\n{2,}/).filter((s) => s.trim());
+  const chunks = groupIntoChunks(sections, CHUNK_CHARS);
+  const reasons: TruncationReason[] = [];
+  if (chunks.length > MAX_TOTAL_CHUNKS) reasons.push(TRUNCATION_REASON.TOPICS_TRUNCATED);
+  const deadline = Date.now() + TIME_BUDGET_MS;
+
+  const mapResults: ExtractedTopic[][] = [];
+  for (const chunk of chunks.slice(0, MAX_TOTAL_CHUNKS)) {
+170→    if (Date.now() >= deadline) {
+      reasons.push(TRUNCATION_REASON.DEADLINE_HIT);
+      break;
+    }
+    try {
+      const result = await aiComplete(MAP_PROMPT, chunk, "json_object", MAP_TEMPERATURE);
+      mapResults.push(parseTopics(result));
+    } catch (err) {
+      console.error("Failed to extract topics for a chunk; skipping it:", err);
+    }
+180→  }
+
+  const mergedTopics = mapResults.flat();
+  if (mergedTopics.length === 0) return { topics: [], reasons };
+
+  let final: ExtractedTopic[];
+  try {
+    final =
+      mergedTopics.length === 1
+        ? mergedTopics
+190→        : parseTopics(await aiComplete(REDUCE_PROMPT, JSON.stringify(mergedTopics), "json_object", REDUCE_TEMPERATURE));
+  } catch (err) {
+    console.error("Failed to reduce topics; returning merged chunk output:", err);
+    final = mergedTopics;
+  }
+
+  final = final.filter((t) => !isJunkTopic(t));
+  if (final.length > MAX_TOPICS) reasons.push(TRUNCATION_REASON.TOPICS_TRUNCATED);
+  return { topics: final.slice(0, MAX_TOPICS), reasons };
+}
+200→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\generate-questions.ts`**
+Status: Completed
+
+1→import { aiComplete } from "./client";
+
+interface GeneratedQuestion {
+  type: "mcq" | "free_response";
+  question_text: string;
+  options?: { label: string; text: string }[];
+  correct_answer?: string;
+  model_answer?: string;
+  topic_id: string | null;
+10→}
+
+interface ParsedQuestion {
+  type?: string;
+  topic?: string;
+  question_text?: string;
+  options?: Array<string | { label?: string; text?: string }>;
+  correct_answer?: string;
+  model_answer?: string;
+}
+20→
+interface TopicInput {
+  id: string;
+  title: string;
+  content: string;
+  source_content?: string | null;
+}
+
+const MAX_CHARS_PER_CALL = 30000;
+const TIME_BUDGET_MS = 90_000;
+30→
+export async function generateQuestions(
+  topicContents: TopicInput[],
+  format: "mcq" | "free_response" | "both"
+): Promise<GeneratedQuestion[]> {
+  const batches = groupTopicBatches(topicContents);
+  const all: GeneratedQuestion[] = [];
+  const deadline = Date.now() + TIME_BUDGET_MS;
+
+  for (const batch of batches) {
+40→    if (Date.now() >= deadline) break;
+    all.push(...(await generateBatch(batch, format)));
+  }
+
+  return all;
+}
+
+function materialFor(topic: TopicInput): string {
+  return (topic.source_content || topic.content || "").trim();
+}
+50→
+function topicText(topic: TopicInput): string {
+  return `TOPIC: ${topic.title}\nSOURCE CONTENT: ${materialFor(topic)}\n`;
+}
+
+function groupTopicBatches(topicContents: TopicInput[]): TopicInput[][] {
+  const batches: TopicInput[][] = [];
+  let current: TopicInput[] = [];
+  let currentChars = 0;
+
+60→  for (const topic of topicContents) {
+    const chars = topicText(topic).length;
+    if (current.length > 0 && currentChars + chars > MAX_CHARS_PER_CALL) {
+      batches.push(current);
+      current = [];
+      currentChars = 0;
+    }
+    current.push(topic);
+    currentChars += chars;
+  }
+70→
+  if (current.length > 0) batches.push(current);
+  return batches;
+}
+
+async function generateBatch(
+  batch: TopicInput[],
+  format: "mcq" | "free_response" | "both"
+): Promise<GeneratedQuestion[]> {
+  let topicsText = batch.map(topicText).join("\n");
+80→
+  if (topicsText.length > MAX_CHARS_PER_CALL) {
+    topicsText = topicsText.slice(0, MAX_CHARS_PER_CALL) + "\n\n[Content truncated due to length.]";
+  }
+
+  const formatInstruction =
+    format === "mcq"
+      ? "ONLY multiple choice questions (4 options each, one correct). Do NOT include any free response questions."
+      : format === "free_response"
+      ? "ONLY free response questions (include a model answer). Do NOT include any multiple choice questions."
+90→      : "a mix of multiple choice and free response questions";
+
+  const systemPrompt = `You are an academic quiz generator. Generate ${formatInstruction} 
+based on the provided topic content. 
+
+For MCQ questions, include: question_text, type ("mcq"), options (array of {label: "A"/"B"/"C"/"D", text: string}), correct_answer (the correct label).
+For free response questions, include: question_text, type ("free_response"), model_answer (the expected answer).
+
+For EVERY question, include a "topic" field set to the EXACT title of the topic it is based on (one of the TOPIC: labels above).
+
+100→Return ONLY a JSON object with this structure:
+{ "questions": [{ "type": "mcq"|"free_response", "topic": "...", "question_text": "...", "options"?: [...], "correct_answer"?: "...", "model_answer"?: "..." }] }`;
+
+  const userPrompt = `Generate questions based on these topics:\n\n${topicsText}\n\nGenerate as many distinct, high-quality questions as the source content warrants — do not undershoot. Cover all the material provided.`;
+
+  try {
+    const result = await aiComplete(systemPrompt, userPrompt, "json_object");
+    const cleaned = result.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+    const parsed = JSON.parse(cleaned) as { questions?: ParsedQuestion[] };
+    const rawQuestions: ParsedQuestion[] = Array.isArray(parsed.questions) ? parsed.questions : [];
+110→
+    const toOption = (opt: string | { label?: string; text?: string }, i: number): { label: string; text: string } =>
+      typeof opt === "string"
+        ? { label: String.fromCharCode(65 + i), text: opt }
+        : { label: opt.label ?? "", text: opt.text ?? "" };
+
+    let questions: GeneratedQuestion[] = rawQuestions.map((q) => ({
+      type: q.type === "free_response" ? "free_response" : "mcq",
+      question_text: q.question_text ?? "",
+      options: q.options ? q.options.map(toOption) : undefined,
+120→      correct_answer: q.correct_answer,
+      model_answer: q.model_answer,
+      topic_id: matchTopicId(q.topic, batch),
+    }));
+
+    if (format === "mcq") {
+      questions = questions.filter(
+        (q) => q.type === "mcq" && q.options && q.options.length >= 2 && q.options.every((o) => o.label)
+      );
+    } else if (format === "free_response") {
+130→      questions = questions.filter((q) => q.type === "free_response");
+    }
+
+    return questions;
+  } catch (err) {
+    console.error("Failed to generate questions for a batch; returning none:", err);
+    return [];
+  }
+}
+
+140→function normalize(text: string): string {
+  return text.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+function matchTopicId(topicTitle: string | undefined, batch: TopicInput[]): string | null {
+  if (!topicTitle) return null;
+  const target = normalize(String(topicTitle));
+  if (!target) return null;
+
+  const exact = batch.find((t) => normalize(t.title) === target);
+150→  if (exact) return exact.id;
+
+  const loose = batch.find(
+    (t) => normalize(t.title).includes(target) || target.includes(normalize(t.title))
+  );
+  return loose ? loose.id : null;
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\ai\grade-answer.ts`**
+Status: Completed
+
+1→import { aiComplete } from "./client";
+
+interface GradedAnswer {
+  score: number;
+  feedback: string;
+}
+
+export async function gradeFreeResponse(
+  questionText: string,
+10→  userAnswer: string,
+  documentContext: string
+): Promise<GradedAnswer> {
+  const systemPrompt = `You are an academic grader. Grade the student's answer against the source material.
+Provide:
+- score: a number between 0 and 100
+- feedback: brief, constructive feedback (1-3 sentences)
+
+Consider accuracy, completeness, and clarity. Return ONLY JSON: { "score": number, "feedback": "..." }`;
+
+20→  const truncatedContext = documentContext.length > 30000
+    ? documentContext.slice(0, 30000) + "\n\n[Context truncated due to length.]"
+    : documentContext;
+
+  const userPrompt = `SOURCE MATERIAL: ${truncatedContext}
+
+QUESTION: ${questionText}
+
+STUDENT ANSWER: ${userAnswer}
+
+30→Grade this answer against the source material.`;
+
+  const result = await aiComplete(systemPrompt, userPrompt, "json_object");
+
+  try {
+    const cleaned = result.replace(/```json\s*/g, "").replace(/\s*```/g, "").trim();
+    return JSON.parse(cleaned) as GradedAnswer;
+  } catch {
+    throw new Error("Failed to parse AI grading response");
+  }
+40→}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\stripe.ts`**
+Status: Completed
+
+1→import Stripe from "stripe";
+
+let _stripe: Stripe | null = null;
+
+export function getStripe(): Stripe {
+  if (!_stripe) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      throw new Error("STRIPE_SECRET_KEY is not set");
+    }
+10→    _stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+      apiVersion: "2025-02-24" as any,
+      typescript: true,
+    });
+  }
+  return _stripe;
+}
+
+export const BASIC_PRICE_ID_MONTHLY = "price_basic_monthly";
+export const BASIC_PRICE_ID_YEARLY = "price_basic_yearly";
+20→export const PRO_PRICE_ID_MONTHLY = "price_pro_monthly";
+export const PRO_PRICE_ID_YEARLY = "price_pro_yearly";
+
+const PRICE_IDS: Record<string, Record<string, string>> = {
+  basic: { monthly: BASIC_PRICE_ID_MONTHLY, yearly: BASIC_PRICE_ID_YEARLY },
+  pro: { monthly: PRO_PRICE_ID_MONTHLY, yearly: PRO_PRICE_ID_YEARLY },
+};
+
+export function getPriceId(plan: "basic" | "pro", interval: "monthly" | "yearly"): string {
+  return PRICE_IDS[plan][interval];
+30→}
+
+export async function createCheckoutSession(
+  userId: string,
+  userEmail: string,
+  plan: "basic" | "pro",
+  interval: "monthly" | "yearly" = "monthly"
+) {
+  const priceId = getPriceId(plan, interval);
+  return await getStripe().checkout.sessions.create({
+40→    mode: "subscription",
+    customer_email: userEmail,
+    client_reference_id: userId,
+    line_items: [{ price: priceId, quantity: 1 }],
+    success_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?success=true`,
+    cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing?canceled=true`,
+    metadata: { userId, plan },
+  });
+}
+
+50→export async function createPortalSession(customerId: string) {
+  return await getStripe().billingPortal.sessions.create({
+    customer: customerId,
+    return_url: `${process.env.NEXT_PUBLIC_APP_URL}/billing`,
+  });
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\api\webhooks\stripe\route.ts`**
+Status: Completed
+
+1→import { NextResponse } from "next/server";
+import { getStripe } from "@/lib/stripe";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+export async function POST(request: Request) {
+  const body = await request.text();
+  const signature = request.headers.get("stripe-signature")!;
+
+  let event;
+10→  try {
+    event = getStripe().webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!);
+  } catch {
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
+  }
+
+  const supabase = createAdminClient();
+
+  switch (event.type) {
+    case "checkout.session.completed": {
+20→      const session = event.data.object as any;
+      const userId = session.client_reference_id || session.metadata?.userId;
+      const customerId = session.customer as string;
+      if (userId) {
+        await supabase.from("users").upsert({
+          id: userId,
+          stripe_customer_id: customerId,
+          subscription_status: "pro",
+        });
+      }
+30→      break;
+    }
+    case "customer.subscription.updated":
+    case "customer.subscription.deleted": {
+      const subscription = event.data.object as any;
+      const customerId = subscription.customer as string;
+      const { data: users } = await supabase
+        .from("users")
+        .select("id")
+        .eq("stripe_customer_id", customerId);
+40→      if (users && users.length > 0) {
+        const isActive = subscription.status === "active" || subscription.status === "trialing";
+        await supabase
+          .from("users")
+          .update({ subscription_status: isActive ? "pro" : "basic" })
+          .eq("stripe_customer_id", customerId);
+      }
+      break;
+    }
+  }
+50→
+  return NextResponse.json({ received: true });
+}
+
+
+## Assistant
+
+<thinking>
+Good findings already. Let me continue looking at more critical areas: quiz generate/submit routes, auth, quota inconsistencies, document card, processing status, delete, tests, error handling.
+</thinking>
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\api\quiz\generate\route.ts`**
+Status: Completed
+
+1→import { NextResponse } from "next/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { generateQuestions } from "@/lib/ai/generate-questions";
+import { checkQuizQuota } from "@/lib/quota";
+import { getCurrentMonth } from "@/lib/utils";
+
+export async function POST(request: Request) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+10→  if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+  const { documentId, topicIds, format } = await request.json();
+  if (!documentId || !topicIds || !format) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  const { data: doc } = await supabase
+    .from("documents")
+    .select("id")
+20→    .eq("id", documentId)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!doc) return NextResponse.json({ error: "Document not found" }, { status: 404 });
+
+  const quota = await checkQuizQuota(user.id);
+  if (!quota.allowed) return NextResponse.json({ error: quota.reason }, { status: 403 });
+
+  const { data: topics } = await supabase
+30→    .from("topics")
+    .select("*")
+    .in("id", topicIds)
+    .eq("document_id", documentId);
+
+  if (!topics || topics.length === 0) {
+    return NextResponse.json({ error: "No topics found" }, { status: 400 });
+  }
+
+  const { data: quiz, error: quizError } = await supabase
+40→    .from("quizzes")
+    .insert({ user_id: user.id, document_id: documentId, format, status: "generating" })
+    .select()
+    .single();
+
+  if (quizError || !quiz) {
+    return NextResponse.json({ error: "Failed to create quiz" }, { status: 500 });
+  }
+
+  try {
+50→    const questions = await generateQuestions(
+      topics.map((t) => ({ id: t.id, title: t.title, content: t.content, source_content: t.source_content })),
+      format
+    );
+
+    const questionRows = questions.map((q, i) => ({
+      quiz_id: quiz.id,
+      type: q.type,
+      question_text: q.question_text,
+      options: q.options || null,
+60→      correct_answer: q.correct_answer || null,
+      model_answer: q.model_answer || null,
+      topic_id: q.topic_id,
+      position: i,
+    }));
+
+    const { error: insertError } = await supabase.from("quiz_questions").insert(questionRows);
+    if (insertError) throw new Error(`Failed to insert questions: ${insertError.message}`);
+
+    await supabase.from("quizzes").update({ status: "ready", question_count: questions.length }).eq("id", quiz.id);
+70→
+    const month = getCurrentMonth();
+    const { data: existing } = await supabase
+      .from("usage_records")
+      .select("quizzes_used, questions_generated")
+      .eq("user_id", user.id)
+      .eq("month", month)
+      .single();
+
+    if (existing) {
+80→      await supabase
+        .from("usage_records")
+        .update({
+          quizzes_used: (existing.quizzes_used || 0) + 1,
+          questions_generated: (existing.questions_generated || 0) + questions.length,
+        })
+        .eq("user_id", user.id)
+        .eq("month", month);
+    } else {
+      await supabase
+90→        .from("usage_records")
+        .insert({ user_id: user.id, month, quizzes_used: 1, questions_generated: questions.length });
+    }
+
+    return NextResponse.json({ quizId: quiz.id });
+  } catch (err) {
+    await supabase.from("quizzes").update({ status: "error" }).eq("id", quiz.id);
+    return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 });
+  }
+}
+100→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\api\quiz\submit\route.ts`**
+Status: Completed
+
+1→import { NextResponse } from "next/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { gradeFreeResponse } from "@/lib/ai/grade-answer";
+
+export async function POST(request: Request) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+
+10→  const { quizId, answers } = await request.json();
+  if (!quizId || !answers) {
+    return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
+  }
+
+  const { data: quiz } = await supabase
+    .from("quizzes")
+    .select("*")
+    .eq("id", quizId)
+    .eq("user_id", user.id)
+20→    .single();
+
+  if (!quiz) return NextResponse.json({ error: "Quiz not found" }, { status: 404 });
+
+  const { data: questions } = await supabase
+    .from("quiz_questions")
+    .select("*")
+    .eq("quiz_id", quizId)
+    .order("position");
+
+30→  if (!questions) return NextResponse.json({ error: "No questions found" }, { status: 404 });
+
+  const answerRows = [];
+
+  for (const question of questions) {
+    const userAnswer = answers[question.id];
+    if (!userAnswer) continue;
+
+    const answerRow: any = {
+      question_id: question.id,
+40→      user_answer: userAnswer,
+    };
+
+    if (question.type === "mcq") {
+      answerRow.is_correct = userAnswer === question.correct_answer;
+    } else {
+      let context = "";
+      if (question.topic_id) {
+        const { data: topic } = await supabase
+          .from("topics")
+50→          .select("content")
+          .eq("id", question.topic_id)
+          .single();
+        context = topic?.content || "";
+      }
+      try {
+        const grading = await gradeFreeResponse(
+          question.question_text,
+          userAnswer,
+          context || question.model_answer || ""
+60→        );
+        answerRow.ai_score = grading.score;
+        answerRow.ai_feedback = grading.feedback;
+      } catch {
+        answerRow.ai_score = 0;
+        answerRow.ai_feedback = "Grading failed. Please review manually.";
+      }
+    }
+    answerRows.push(answerRow);
+  }
+70→
+  await supabase.from("quiz_answers").insert(answerRows);
+
+  const { data: savedAnswers } = await supabase
+    .from("quiz_answers")
+    .select("is_correct, ai_score")
+    .in("question_id", questions.map((q) => q.id));
+
+  let finalScore = 0;
+  if (savedAnswers) {
+80→    let mcqCorrect = 0, mcqTotal = 0, frScore = 0, frTotal = 0;
+    for (const ans of savedAnswers) {
+      if (ans.is_correct !== null) { mcqTotal++; if (ans.is_correct) mcqCorrect++; }
+      if (ans.ai_score !== null) { frTotal++; frScore += ans.ai_score; }
+    }
+    const mcqPct = mcqTotal > 0 ? mcqCorrect / mcqTotal : 0;
+    const frPct = frTotal > 0 ? frScore / (frTotal * 100) : 0;
+    if (mcqTotal > 0 && frTotal > 0) finalScore = (mcqPct * 50 + frPct * 50);
+    else if (mcqTotal > 0) finalScore = mcqPct * 100;
+    else finalScore = frPct * 100;
+90→  }
+
+  await supabase.from("quizzes").update({ status: "completed", score: Math.round(finalScore) }).eq("id", quizId);
+  return NextResponse.json({ success: true, score: Math.round(finalScore) });
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\billing\actions.ts`**
+Status: Completed
+
+1→"use server";
+
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createCheckoutSession } from "@/lib/stripe";
+import { revalidatePath } from "next/cache";
+
+export async function checkoutAction(_prevState: unknown, formData: FormData) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+10→  if (!user) return { error: "Not authenticated" };
+  if (!user.email) return { error: "No email on account" };
+
+  const plan = formData.get("plan") as string;
+  const interval = formData.get("interval") as string;
+
+  try {
+    const session = await createCheckoutSession(
+      user.id,
+      user.email,
+20→      plan as "basic" | "pro",
+      interval === "yearly" ? "yearly" : "monthly"
+    );
+
+    if (!session.url) return { error: "Failed to create checkout session" };
+
+    revalidatePath("/billing");
+
+    return { success: true, url: session.url };
+  } catch (err) {
+30→    return { error: err instanceof Error ? err.message : "Checkout failed" };
+  }
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\components\document-card.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { Trash2, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { deleteDocument } from "@/app/dashboard/actions";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import type { Document } from "@/types/database";
+import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
+10→
+const TRUNCATION_MESSAGES: Record<TruncationReason, string> = {
+  [TRUNCATION_REASON.PDF_PAGES_CAPPED]: "PDF was long; only the first pages were analyzed.",
+  [TRUNCATION_REASON.TOPICS_TRUNCATED]: "Document was large; some content may have been skipped during topic extraction.",
+  [TRUNCATION_REASON.DEADLINE_HIT]: "Processing stopped early; some content may be missing.",
+};
+
+interface DocumentCardProps {
+  document: Document;
+  topicCount: number;
+20→  quizCount: number;
+}
+
+export function DocumentCard({ document, topicCount, quizCount }: DocumentCardProps) {
+  const router = useRouter();
+
+  const handleDelete = async () => {
+    if (!confirm("Delete this document and all its quizzes?")) return;
+    const result = await deleteDocument(document.id);
+    if (result.success) router.refresh();
+30→  };
+
+  return (
+    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 rounded-lg border border-border bg-card p-3.5">
+      <div className="flex items-center gap-3 min-w-0">
+        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-muted shrink-0">
+          <FileText className="h-4 w-4 text-muted-foreground" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-medium truncate">{document.title}</p>
+40→          {document.processing_warnings?.map((code) => (
+            <p key={code} className="text-xs text-amber-600 dark:text-amber-400">
+              {TRUNCATION_MESSAGES[code as TruncationReason] ?? code}
+            </p>
+          ))}
+          <p className="text-xs text-muted-foreground">
+            {topicCount} topic{topicCount !== 1 ? "s" : ""} &middot; {quizCount} quiz{quizCount !== 1 ? "zes" : ""}
+          </p>
+        </div>
+      </div>
+50→      <div className="flex flex-wrap items-center gap-1.5 sm:shrink-0">
+        <Link href={`/documents/${document.id}/topics`}>
+          <Button variant="outline" size="sm">Topics</Button>
+        </Link>
+        <Link href={`/documents/${document.id}/quiz/new`}>
+          <Button size="sm">Quiz</Button>
+        </Link>
+        <button
+          onClick={handleDelete}
+          className="text-muted-foreground hover:text-destructive transition-colors min-h-[44px] min-w-[44px] inline-flex items-center justify-center rounded-md"
+60→          title="Delete document"
+          aria-label="Delete document"
+        >
+          <Trash2 className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\components\processing-status.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Loader2 } from "lucide-react";
+
+interface ProcessingStatusProps {
+  documentId: string;
+10→}
+
+export function ProcessingStatus({ documentId }: ProcessingStatusProps) {
+  const router = useRouter();
+  const [message, setMessage] = useState("Processing your document...");
+
+  useEffect(() => {
+    const supabase = createClient();
+    let attempts = 0;
+
+20→    const interval = setInterval(async () => {
+      attempts++;
+      setMessage(
+        attempts > 5
+          ? "Still processing... AI extraction can take a minute"
+          : "Processing your document..."
+      );
+
+      const { data } = await supabase
+        .from("documents")
+30→        .select("status")
+        .eq("id", documentId)
+        .single();
+
+      if (data?.status === "ready") {
+        clearInterval(interval);
+        router.refresh();
+      }
+    }, 3000);
+
+40→    return () => clearInterval(interval);
+  }, [documentId, router]);
+
+  return (
+    <div className="text-center py-12">
+      <Loader2 className="h-8 w-8 animate-spin text-accent mx-auto mb-4" />
+      <h1 className="text-xl font-bold mb-2">Extracting Topics</h1>
+      <p className="text-muted-foreground">{message}</p>
+    </div>
+  );
+50→}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\supabase\admin.ts`**
+Status: Completed
+
+1→import { createClient } from "@supabase/supabase-js";
+
+export function createAdminClient() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    {
+      auth: {
+        autoRefreshToken: false,
+10→        persistSession: false,
+      },
+    }
+  );
+}
+
+
+## Assistant
+
+<thinking>
+Let me look at more areas: auth, quiz taking UX, topics page, dashboard actions, upload page, quiz results, storage policies, and any missing tests. Also look at the subscription migration and dashboard quota messaging inconsistency.
+</thinking>
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\dashboard\actions.ts`**
+Status: Completed
+
+1→"use server";
+
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { revalidatePath } from "next/cache";
+
+export async function deleteDocument(documentId: string) {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Not authenticated" };
+10→
+  const { error } = await supabase
+    .from("documents")
+    .delete()
+    .eq("id", documentId)
+    .eq("user_id", user.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/dashboard");
+20→  return { success: true };
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\upload\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { uploadDocument } from "./actions";
+import { createClient } from "@/lib/supabase/client";
+import { UploadZone } from "@/components/upload-zone";
+import { AppShell } from "@/components/app-shell";
+
+10→export default function UploadPage() {
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+
+  const handleUpload = async (file: File) => {
+    setError(null);
+
+    const ext = file.name.endsWith(".pptx") ? "pptx" : "pdf";
+    if (!["pdf", "pptx"].includes(ext)) {
+      setError("Only PDF and PPTX files are supported");
+20→      return;
+    }
+    if (file.size > 40 * 1024 * 1024) {
+      setError("File must be under 40MB");
+      return;
+    }
+
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setError("Not authenticated"); return; }
+30→
+    const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("Documents")
+      .upload(filePath, file);
+
+    if (uploadError) {
+      setError(`Failed to upload: ${uploadError.message}`);
+      return;
+40→    }
+
+    const result = await uploadDocument(filePath, file.name, ext);
+
+    if (result.error) {
+      setError(result.error);
+      return;
+    }
+
+    router.push(`/documents/${result.documentId}/topics`);
+50→  };
+
+  return (
+    <AppShell title="Upload">
+      <h1 className="text-2xl font-bold mb-2">Upload Document</h1>
+      <p className="text-muted-foreground mb-8">
+        Upload a PDF or PowerPoint file. We&apos;ll extract the topics so you can start quizzing.
+      </p>
+      <UploadZone onUpload={handleUpload} />
+      {error && (
+60→        <div className="mt-6 rounded-lg border border-destructive/50 bg-destructive/5 p-4">
+          <p className="text-sm text-destructive font-medium">{error}</p>
+        </div>
+      )}
+    </AppShell>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\documents\[id]\quiz\new\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useRouter, useSearchParams, useParams } from "next/navigation";
+import { useState, Suspense } from "react";
+import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { AppShell } from "@/components/app-shell";
+
+10→function NewQuizContent() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const params = useParams();
+  const docId = params.id as string;
+  const topicsParam = searchParams.get("topics") || "";
+  const formatParam = searchParams.get("format") || "mcq";
+  const topicIds = topicsParam.split(",").filter(Boolean);
+
+  const [generating, setGenerating] = useState(false);
+20→  const [error, setError] = useState<string | null>(null);
+
+  const handleGenerate = async () => {
+    setGenerating(true);
+    setError(null);
+
+    const res = await fetch("/api/quiz/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+30→        documentId: docId,
+        topicIds,
+        format: formatParam,
+      }),
+    });
+
+    const data = await res.json();
+    if (!res.ok) {
+      setError(data.error);
+      setGenerating(false);
+40→      return;
+    }
+    router.push(`/quizzes/${data.quizId}`);
+  };
+
+  if (topicIds.length === 0) {
+    return (
+      <AppShell title="New Quiz">
+        <div className="text-center py-12">
+          <p className="text-muted-foreground mb-4">No topics selected</p>
+50→          <Link href={`/documents/${docId}/topics`}>
+            <Button variant="outline">Go back and select topics</Button>
+          </Link>
+        </div>
+      </AppShell>
+    );
+  }
+
+  return (
+    <AppShell title="New Quiz">
+60→      <div className="text-center py-12">
+        <h1 className="text-2xl font-bold mb-2">Ready to generate your quiz</h1>
+        <p className="text-muted-foreground mb-2">
+          {topicIds.length} topic{topicIds.length !== 1 ? "s" : ""} selected
+        </p>
+        <p className="text-muted-foreground mb-8 capitalize">
+          Format: {formatParam.replace("_", " ")}
+        </p>
+        <Button size="lg" onClick={handleGenerate} disabled={generating}>
+          {generating ? (
+70→            <>
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              Generating questions...
+            </>
+          ) : (
+            "Generate Quiz"
+          )}
+        </Button>
+        {error && (
+          <p className="mt-4 text-sm text-destructive">{error}</p>
+80→        )}
+      </div>
+    </AppShell>
+  );
+}
+
+export default function NewQuizPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+      <NewQuizContent />
+90→    </Suspense>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\quizzes\[id]\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { QuizQuestionDisplay } from "@/components/quiz-question";
+import { Button } from "@/components/ui/button";
+import { Loader2, AlertCircle } from "lucide-react";
+import type { Quiz, QuizQuestion } from "@/types/database";
+10→
+export default function QuizPage({ params }: { params: Promise<{ id: string }> }) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [quizId, setQuizId] = useState<string | null>(null);
+20→
+  useEffect(() => { params.then((p) => setQuizId(p.id)); }, [params]);
+
+  useEffect(() => {
+    if (!quizId) return;
+    let interval: NodeJS.Timeout;
+
+    async function loadQuiz() {
+      const supabase = createClient();
+      const { data: q } = await supabase.from("quizzes").select("*").eq("id", quizId).single();
+30→      if (!q) { setError("Quiz not found"); setLoading(false); return; }
+      if (q.status === "generating") {
+        interval = setInterval(async () => {
+          const { data: updated } = await supabase.from("quizzes").select("status").eq("id", quizId).single();
+          if (updated?.status === "ready") {
+            clearInterval(interval);
+            loadQuiz();
+          }
+        }, 2000);
+        return;
+40→      }
+      if (q.status !== "ready") { setError("Quiz is not ready"); setLoading(false); return; }
+      setQuiz(q);
+      const { data: qs } = await supabase.from("quiz_questions").select("*").eq("quiz_id", quizId).order("position");
+      setQuestions(qs || []);
+      setLoading(false);
+    }
+    loadQuiz();
+    return () => { if (interval) clearInterval(interval); };
+  }, [quizId]);
+50→
+  const handleAnswer = (questionId: string, answer: string) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: answer }));
+  };
+
+  const handleSubmit = async () => {
+    setSubmitting(true);
+    setError(null);
+    const res = await fetch("/api/quiz/submit", {
+      method: "POST",
+60→      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ quizId, answers }),
+    });
+    const data = await res.json();
+    if (!res.ok) { setError(data.error || "Failed to submit"); setSubmitting(false); return; }
+    router.push(`/quizzes/${quizId}/results`);
+  };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  if (error) return <div className="min-h-screen flex items-center justify-center"><div className="text-center"><AlertCircle className="h-8 w-8 text-destructive mx-auto mb-4" /><p className="text-destructive">{error}</p></div></div>;
+70→
+  const answeredCount = Object.keys(answers).length;
+  const allAnswered = questions.every((q) => answers[q.id]?.trim().length > 0);
+
+  return (
+    <div className="min-h-screen p-6 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-1">Quiz</h1>
+      <p className="text-muted-foreground mb-6">{questions.length} questions &middot; {answeredCount} answered</p>
+      {questions.map((q, i) => (
+        <QuizQuestionDisplay key={q.id} question={q} index={i} answer={answers[q.id] || ""} onAnswer={(a) => handleAnswer(q.id, a)} />
+80→      ))}
+      <Button className="w-full mt-4" onClick={handleSubmit} disabled={submitting || !allAnswered}>
+        {submitting ? <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</> : `Submit Quiz (${answeredCount}/${questions.length} answered)`}
+      </Button>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\auth\register\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+10→  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+
+export default function RegisterPage() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+20→  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const supabase = createClient();
+
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+30→    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+40→      setLoading(false);
+      return;
+    }
+
+    router.push("/auth/login?registered=true");
+  };
+
+  return (
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <Card className="w-full max-w-sm">
+50→        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">Lectiq</CardTitle>
+          <CardDescription>Create your account</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+60→                type="email"
+                placeholder="you@university.edu"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+70→                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+              />
+              <p className="text-xs text-muted-foreground">
+                At least 6 characters
+              </p>
+80→            </div>
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? "Creating account..." : "Create Account"}
+            </Button>
+            <p className="text-center text-sm text-muted-foreground">
+              Already have an account?{" "}
+              <a href="/auth/login" className="underline underline-offset-4 hover:text-primary">
+90→                Sign in
+              </a>
+            </p>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations\00004_subscription_status_basic.sql`**
+Status: Completed
+
+1→-- Update subscription_status to use 'basic' instead of 'free'.
+-- Coerce any value that is not 'pro' (including legacy 'free', null, or any
+-- unexpected value) to 'basic' so the re-added CHECK constraint can never fail
+-- on unmapped legacy data.
+alter table public.users drop constraint if exists users_subscription_status_check;
+
+update public.users set subscription_status = 'basic'
+  where subscription_status is distinct from 'pro';
+
+10→alter table public.users add constraint users_subscription_status_check
+  check (subscription_status in ('basic', 'pro'));
+
+alter table public.users alter column subscription_status set default 'basic';
+
+## Assistant
+
+<thinking>
+Let me look at a few more things: user creation trigger, topics page, history, dashboard stats, quiz results, storage, next.config, and whether there are tests. Also look at how users get created in the users table.
+</thinking>
+
+**Tool Call: from\("users"\)\.(insert|upsert)**
+Status: Completed
+
+found 1 matches
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\auth\callback\route.ts`**
+Status: Completed
+
+1→import { NextResponse } from "next/server";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { safeRedirectPath } from "@/lib/utils";
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const code = searchParams.get("code");
+  const next = safeRedirectPath(searchParams.get("next"));
+
+10→  if (code) {
+    const supabase = await createServerSupabaseClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+    }
+  }
+
+  return NextResponse.redirect(`${origin}/auth/login?error=auth_failed`);
+}
+20→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\documents\[id]\topics\page.tsx`**
+Status: Completed
+
+1→import { notFound, redirect } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { TopicSelector } from "@/components/topic-selector";
+import { ProcessingStatus } from "@/components/processing-status";
+import { AppShell } from "@/components/app-shell";
+
+export default async function TopicsPage({
+  params,
+  searchParams,
+10→}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ processing?: string }>;
+}) {
+  const { id } = await params;
+  const { processing } = await searchParams;
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) redirect("/auth/login");
+
+20→  const { data: doc } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (!doc) notFound();
+
+  if (doc.status !== "ready") {
+30→    if (processing === "true") {
+      return (
+        <AppShell title="Processing">
+          <ProcessingStatus documentId={id} />
+        </AppShell>
+      );
+    }
+    redirect(`/documents/${id}/topics?processing=true`);
+  }
+
+40→  const { data: topics } = await supabase
+    .from("topics")
+    .select("*")
+    .eq("document_id", id)
+    .order("position");
+
+  return (
+    <AppShell title={doc.title}>
+      <h1 className="text-2xl font-bold mb-1 break-words">{doc.title}</h1>
+      <p className="text-muted-foreground mb-6">
+50→        Select the topics you want to be quizzed on and choose your question format.
+      </p>
+      <TopicSelector topics={topics || []} documentId={id} />
+    </AppShell>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\components\quiz-question.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useState } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import type { QuizQuestion } from "@/types/database";
+
+interface QuizQuestionProps {
+  question: QuizQuestion;
+  index: number;
+10→  answer: string;
+  onAnswer: (answer: string) => void;
+}
+
+export function QuizQuestionDisplay({ question, index, answer, onAnswer }: QuizQuestionProps) {
+  return (
+    <div className="rounded-lg border p-6 mb-4">
+      <p className="text-sm text-muted-foreground mb-1">
+        Question {index + 1}
+        <span className="ml-2 uppercase text-xs font-medium">
+20→          {question.type === "mcq" ? "Multiple Choice" : "Free Response"}
+        </span>
+      </p>
+      <p className="text-lg font-medium mb-4">{question.question_text}</p>
+
+      {question.type === "mcq" && question.options && question.options.length > 0 ? (
+        <div className="space-y-2">
+          {question.options.map((opt) => (
+            <div
+              key={opt.label}
+30→              className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+                answer === opt.label
+                  ? "border-primary bg-primary/5"
+                  : "hover:border-primary/50"
+              }`}
+              onClick={() => onAnswer(opt.label)}
+            >
+              <div
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium ${
+                  answer === opt.label
+40→                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground"
+                }`}
+              >
+                {opt.label}
+              </div>
+              <p>{opt.text}</p>
+            </div>
+          ))}
+        </div>
+50→      ) : (
+        <Textarea
+          placeholder="Type your answer here..."
+          value={answer}
+          onChange={(e) => onAnswer(e.target.value)}
+          rows={4}
+        />
+      )}
+    </div>
+  );
+60→}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\history\page.tsx`**
+Status: Completed
+
+1→import { redirect } from "next/navigation";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { AppShell } from "@/components/app-shell";
+
+export default async function HistoryPage() {
+  const supabase = await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser();
+10→  if (!user) redirect("/auth/login");
+
+  const { data: quizzes } = await supabase
+    .from("quizzes")
+    .select(`
+      id, format, status, question_count, score, created_at,
+      document:documents(title)
+    `)
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+20→    .limit(50);
+
+  return (
+    <AppShell title="Quiz History">
+      <h1 className="text-2xl font-bold mb-6">Quiz History</h1>
+
+      {quizzes && quizzes.length > 0 ? (
+        <div className="space-y-2">
+          {quizzes.map((quiz: any) => (
+            <Link key={quiz.id} href={`/quizzes/${quiz.id}/results`}>
+30→              <div className="flex items-center justify-between gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
+                <div className="min-w-0 flex-1">
+                  <p className="font-medium truncate">{quiz.document?.title || "Unknown document"}</p>
+                  <p className="text-sm text-muted-foreground break-words">
+                    {new Date(quiz.created_at).toLocaleDateString()} &middot;{" "}
+                    {quiz.question_count} questions &middot;{" "}
+                    <span className="capitalize">{quiz.format.replace("_", " + ")}</span>
+                  </p>
+                </div>
+                <div className="text-right shrink-0">
+40→                  {quiz.score !== null ? (
+                    <p className="text-lg font-bold">{Math.round(quiz.score)}%</p>
+                  ) : (
+                    <p className="text-sm text-muted-foreground capitalize">{quiz.status}</p>
+                  )}
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+50→      ) : (
+        <div className="text-center py-12 border rounded-lg bg-muted/30">
+          <p className="text-muted-foreground mb-4">No quizzes taken yet</p>
+          <Link href="/upload">
+            <Button variant="outline">Upload a document to get started</Button>
+          </Link>
+        </div>
+      )}
+    </AppShell>
+  );
+60→}
+
+
+**Tool Call: create policy|storage**
+Status: Completed
+
+found 30 matches
+
+## Assistant
+
+<thinking>
+Important finding: users table is only upserted from Stripe webhook. How do users get created? Let me search for user row creation more thoroughly.
+</thinking>
+
+**Tool Call: users**
+Status: Completed
+
+found 19 matches
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\auth\confirm\route.ts`**
+Status: Completed
+
+1→import { NextResponse } from "next/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { safeRedirectPath } from "@/lib/utils";
+
+export async function GET(request: Request) {
+  const { searchParams, origin } = new URL(request.url);
+  const token_hash = searchParams.get("token_hash");
+  const type = searchParams.get("type") as "signup" | "email" | null;
+  const next = safeRedirectPath(searchParams.get("next"));
+10→
+  if (token_hash && type) {
+    const supabase = createAdminClient();
+    const { error } = await supabase.auth.verifyOtp({
+      token_hash,
+      type: type === "signup" ? "signup" : "email",
+    });
+
+    if (!error) {
+      return NextResponse.redirect(`${origin}${next}`);
+20→    }
+  }
+
+  return NextResponse.redirect(`${origin}/auth/login?error=verification_failed`);
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations\00001_initial.sql`**
+Status: Completed
+
+180→
+alter table public.usage_records enable row level security;
+
+create policy "Users can read own usage records"
+  on public.usage_records for select
+  using (auth.uid() = user_id);
+
+create policy "Users can insert own usage records"
+  on public.usage_records for insert
+  with check (auth.uid() = user_id);
+190→
+create policy "Users can update own usage records"
+  on public.usage_records for update
+  using (auth.uid() = user_id);
+
+create index usage_records_user_id_idx on public.usage_records(user_id);
+
+-- Auto-create user record on signup
+-- Create documents storage bucket
+insert into storage.buckets (id, name, public)
+200→values ('Documents', 'Documents', false)
+on conflict (id) do nothing;
+
+-- Storage RLS for documents bucket
+create policy "Users can upload own files"
+  on storage.objects for insert
+  with check (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+210→  );
+
+create policy "Users can read own files"
+  on storage.objects for select
+  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+220→create policy "Users can update own files"
+  on storage.objects for update
+  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "Users can delete own files"
+  on storage.objects for delete
+230→  using (
+    bucket_id = 'Documents'
+    and auth.role() = 'authenticated'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create or replace function public.handle_new_user()
+returns trigger
+language plpgsql
+security definer set search_path = ''
+240→as $$
+begin
+  insert into public.users (id, email)
+  values (new.id, new.email);
+  return new;
+end;
+$$;
+
+create or replace trigger on_auth_user_created
+  after insert on auth.users
+250→  for each row execute function public.handle_new_user();
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\quizzes\[id]\results\page.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useEffect, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
+import { QuizResults } from "@/components/quiz-results";
+import { Button } from "@/components/ui/button";
+import { Loader2, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import type { Quiz, QuizQuestion, QuizAnswer } from "@/types/database";
+10→
+export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
+  const [loading, setLoading] = useState(true);
+  const [quiz, setQuiz] = useState<Quiz | null>(null);
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
+  const [answers, setAnswers] = useState<QuizAnswer[]>([]);
+  const [quizId, setQuizId] = useState<string | null>(null);
+
+  useEffect(() => { params.then((p) => setQuizId(p.id)); }, [params]);
+
+20→  useEffect(() => {
+    if (!quizId) return;
+    async function loadResults() {
+      const supabase = createClient();
+      const { data: q } = await supabase.from("quizzes").select("*").eq("id", quizId).single();
+      if (!q || q.status !== "completed") { setLoading(false); return; }
+      setQuiz(q);
+      const { data: qs } = await supabase.from("quiz_questions").select("*").eq("quiz_id", quizId).order("position");
+      setQuestions(qs || []);
+      const questionIds = qs?.map((q) => q.id) || [];
+30→      const { data: ans } = await supabase.from("quiz_answers").select("*").in("question_id", questionIds);
+      setAnswers(ans || []);
+      setLoading(false);
+    }
+    loadResults();
+  }, [quizId]);
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+  if (!quiz) return <div className="min-h-screen flex items-center justify-center"><div className="text-center"><AlertCircle className="h-8 w-8 text-destructive mx-auto mb-4" /><p className="text-destructive">Results not available yet</p></div></div>;
+
+40→  const mcqAnswers = answers.filter((a) => a.is_correct !== null);
+  const frAnswers = answers.filter((a) => a.ai_score !== null);
+  const correctMcq = mcqAnswers.filter((a) => a.is_correct).length;
+  const avgFrScore = frAnswers.length > 0 ? frAnswers.reduce((acc, a) => acc + (a.ai_score || 0), 0) / frAnswers.length : null;
+
+  return (
+    <div className="min-h-screen p-6 max-w-2xl mx-auto">
+      <QuizResults score={quiz.score || 0} totalQuestions={questions.length} correctMcq={correctMcq} totalMcq={mcqAnswers.length} averageFrScore={avgFrScore} />
+
+      <div className="mt-8 space-y-4">
+50→        {questions.map((question, i) => {
+          const answer = answers.find((a) => a.question_id === question.id);
+          return (
+            <div key={question.id} className="rounded-lg border p-4">
+              <div className="flex items-start justify-between gap-2 mb-2">
+                <p className="font-medium">Question {i + 1}</p>
+                {question.type === "mcq" ? (
+                  <span className={`text-sm font-medium shrink-0 ${answer?.is_correct ? "text-green-600" : "text-red-600"}`}>
+                    {answer?.is_correct ? "Correct" : "Incorrect"}
+                  </span>
+60→                ) : (
+                  <span className="text-sm font-medium shrink-0">{answer && answer.ai_score !== null ? `${answer.ai_score}%` : "\u2014"}</span>
+                )}
+              </div>
+              <p className="text-sm mb-2 break-words">{question.question_text}</p>
+              {question.type === "mcq" && question.options && (
+                <div className="text-sm text-muted-foreground mb-1 break-words">
+                  Your answer: {answer?.user_answer || "\u2014"} &middot; Correct: {question.correct_answer}
+                </div>
+              )}
+70→              {question.type === "free_response" && (
+                <div className="space-y-2">
+                  <div className="text-sm break-words"><span className="font-medium text-muted-foreground">Your answer: </span>{answer?.user_answer}</div>
+                  {answer?.ai_feedback && <div className="text-sm rounded-md bg-muted p-3 break-words"><span className="font-medium text-muted-foreground">Feedback: </span>{answer.ai_feedback}</div>}
+                  {question.model_answer && <div className="text-sm text-muted-foreground break-words"><span className="font-medium">Model answer: </span>{question.model_answer}</div>}
+                </div>
+              )}
+            </div>
+          );
+        })}
+80→      </div>
+
+      <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mt-8">
+        <Link href="/dashboard" className="flex-1"><Button variant="outline" className="w-full">Back to Dashboard</Button></Link>
+        <Link href={`/documents/${quiz.document_id}/topics`} className="flex-1"><Button className="w-full">Take Another Quiz</Button></Link>
+      </div>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\components\topic-selector.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useState } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+10→  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import type { Topic } from "@/types/database";
+import type { QuestionFormat } from "@/types";
+
+interface TopicSelectorProps {
+  topics: Topic[];
+20→  documentId: string;
+}
+
+export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
+  const router = useRouter();
+  const [selected, setSelected] = useState<Set<string>>(new Set(topics.map((t) => t.id)));
+  const [format, setFormat] = useState<QuestionFormat>("mcq");
+
+  const toggleTopic = (id: string) => {
+    const next = new Set(selected);
+30→    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSelected(next);
+  };
+
+  const selectAll = () => setSelected(new Set(topics.map((t) => t.id)));
+  const deselectAll = () => setSelected(new Set());
+
+  const handleGenerate = () => {
+    const params = new URLSearchParams();
+40→    params.set("topics", Array.from(selected).join(","));
+    params.set("format", format);
+    router.push(`/documents/${documentId}/quiz/new?${params.toString()}`);
+  };
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={selectAll}>
+50→            Select All
+          </Button>
+          <Button variant="outline" size="sm" onClick={deselectAll}>
+            Deselect All
+          </Button>
+        </div>
+        <Select value={format} onValueChange={(v) => setFormat(v as QuestionFormat)}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Question format" />
+          </SelectTrigger>
+60→          <SelectContent>
+            <SelectItem value="mcq">Multiple Choice</SelectItem>
+            <SelectItem value="free_response">Free Response</SelectItem>
+            <SelectItem value="both">Mixed</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2 mb-6">
+        {topics.map((topic) => (
+70→          <div
+            key={topic.id}
+            className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
+              selected.has(topic.id) ? "border-primary/50 bg-primary/5" : ""
+            }`}
+            onClick={() => toggleTopic(topic.id)}
+          >
+            <Checkbox
+              checked={selected.has(topic.id)}
+              onCheckedChange={() => toggleTopic(topic.id)}
+80→              className="mt-0.5"
+            />
+            <div className="flex-1">
+              <Label className="font-medium cursor-pointer">{topic.title}</Label>
+              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{topic.content}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+90→      <Button
+        className="w-full"
+        disabled={selected.size === 0}
+        onClick={handleGenerate}
+      >
+        Generate Quiz ({selected.size} topic{selected.size !== 1 ? "s" : ""})
+      </Button>
+    </div>
+  );
+}
+100→
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\next.config.ts`**
+Status: Completed
+
+1→import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "40mb",
+    },
+    proxyClientMaxBodySize: "40mb",
+  },
+10→};
+
+export default nextConfig;
+
+
+## Assistant
+
+<thinking>
+I have a solid picture now. Let me also quickly check a few more issues I noticed:
+Here are the biggest things I see that could be improved:
+
+1. **Upload blocking** – the server action waits for full processing before redirecting, so the ProcessingStatus UI is basically dead in the happy path. Consider making upload non-blocking and showing a progress indicator.
+
+2. **Quota mismatch** – dashboard says “ 10 documents” but billing talks about 10 quizzes. Pick one and make it consistent.
+
+3. **Stripe webhook** – checkout.session.completed always sets “pro” regardless of price tier. Add price ID check so basic vs pro is respected.
+
+4.
+</thinking>
+
+**Tool Call: pdf export|exportPdf|password.?reset|forgot|createPortalSession|portal**
+Status: Completed
+
+found 9 matches
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\page.tsx`**
+Status: Completed
+
+80→        </div>
+
+        <div className="border-t border-border py-12 px-4 sm:px-6">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-2">
+            Pricing
+          </h2>
+          <p className="text-center text-muted-foreground text-sm mb-8">
+            Start with Basic. Upgrade when you need more.
+          </p>
+
+90→          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            {/* Basic card */}
+            <div className="rounded-lg border border-border bg-card p-6">
+              <h3 className="text-lg font-bold mb-1">Basic</h3>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-4">
+                For getting started
+              </p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$7.99</span>
+                <span className="text-sm text-muted-foreground ml-1">/month</span>
+100→                <div className="text-xs text-muted-foreground">or $69.99 /year <span className="text-green-700 font-medium">Save 27%</span></div>
+              </div>
+              <ul className="space-y-2 mb-6">
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  10 quizzes per month
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  MCQ + Free Response
+110→                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  AI-graded feedback
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  PDF export
+                </li>
+              </ul>
+120→              <Link href="/auth/register">
+                <Button className="w-full font-medium">Get Basic</Button>
+              </Link>
+            </div>
+
+            {/* Pro card */}
+            <div className="rounded-lg border border-border bg-card p-6 relative ring-2 ring-primary">
+              <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs font-medium uppercase tracking-wide bg-accent text-accent-foreground px-3 py-0.5 rounded-full">
+                Popular
+              </span>
+130→              <h3 className="text-lg font-bold mb-1">Pro</h3>
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-4">
+                For power learners
+              </p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">$14.99</span>
+                <span className="text-sm text-muted-foreground ml-1">/month</span>
+                <div className="text-xs text-muted-foreground">or $129.99 /year <span className="text-green-700 font-medium">Save 28%</span></div>
+              </div>
+              <ul className="space-y-2 mb-6">
+140→                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  Unlimited quizzes (fair use)
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  MCQ + Free Response
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+150→                  AI-graded feedback
+                </li>
+                <li className="flex items-center gap-2 text-sm">
+                  <Check className="h-4 w-4 text-green-600 shrink-0" />
+                  All export formats (coming)
+                </li>
+              </ul>
+              <Link href="/auth/register">
+                <Button variant="outline" className="w-full font-medium">Go Pro</Button>
+              </Link>
+160→            </div>
+          </div>
+        </div>
+        <div className="border-t border-border py-12 px-4 sm:px-6">
+          <h2 className="text-center text-xs font-medium uppercase tracking-[1.5px] text-accent mb-8">
+            FAQ
+          </h2>
+          <div className="max-w-2xl mx-auto space-y-6">
+            {[
+              {
+170→                q: "How does the AI grading work?",
+                a: "Free-response answers are scored against your lecture material, not a fixed answer key. You get feedback on what you missed and why — like a tutor who actually read your notes.",
+              },
+              {
+                q: "What file types can I upload?",
+                a: "PDF and PowerPoint. Your slides, your lecture notes, your readings — we handle the rest.",
+              },
+              {
+                q: "How is Lectiq different from Quizlet or Anki?",
+                a: "Those tools test recognition. Lectiq tests understanding. You can't guess your way through a free-response question, and our AI grades it against your actual material.",
+180→              },
+              {
+                q: "Can I export my quizzes?",
+                a: "Basic plan includes PDF export. Pro subscribers get additional export formats as we roll them out.",
+              },
+            ].map((faq) => (
+              <div key={faq.q}>
+                <h3 className="font-semibold text-base mb-1">{faq.q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
+              </div>
+190→            ))}
+          </div>
+        </div>
+
+        <div className="border-t border-border py-12 px-4 sm:px-6 text-center">
+          <h2 className="text-xl font-bold mb-2">Ready to study smarter?</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            Stop re-reading. Start recalling.
+          </p>
+          <Link href="/auth/register">
+200→            <Button size="lg" className="font-medium">Get Basic — $7.99/mo</Button>
+          </Link>
+        </div>
+      </main>
+
+      <footer className="py-5 px-4 sm:px-6 text-center text-sm text-muted-foreground border-t border-border">
+        <div className="flex items-center justify-center gap-4 mb-1">
+          <Link href="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
+          <Link href="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+        </div>
+210→        <p>Lectiq — Study smarter</p>
+      </footer>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\dashboard\page.tsx`**
+Status: Completed
+
+70→
+  return (
+    <AppShell title="Dashboard">
+      <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 mb-8">
+        <div className="min-w-0">
+          <h1 className="text-2xl font-bold">Dashboard</h1>
+          <p className="text-muted-foreground text-sm">
+            {isPro ? "Pro plan" : `Basic plan \u2014 ${documents?.length || 0}/10 documents used`}
+          </p>
+        </div>
+80→        <Link href="/upload">
+          <Button>
+            <Plus className="h-4 w-4 mr-2" />
+            Upload Document
+          </Button>
+        </Link>
+      </div>
+
+      <div className="mb-8">
+        <DashboardStats
+90→          documentsUsed={documents?.length || 0}
+          documentsLimit={10}
+          quizzesUsed={usage?.quizzes_used || 0}
+          quizzesLimit={10}
+          averageScore={avgScore}
+          topicsExtracted={topicsExtracted}
+          isPro={isPro}
+        />
+      </div>
+
+100→      <h2 className="text-lg font-semibold mb-4">Documents</h2>
+
+      {documents && documents.length > 0 ? (
+        <div className="space-y-3">
+          {documents.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              document={doc}
+              topicCount={topicCountMap.get(doc.id) || 0}
+              quizCount={quizCountMap.get(doc.id) || 0}
+110→            />
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-12 border rounded-lg bg-muted/30">
+          <p className="text-muted-foreground mb-4">No documents yet</p>
+          <Link href="/upload">
+            <Button variant="outline">Upload your first document</Button>
+          </Link>
+        </div>
+120→      )}
+    </AppShell>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\components\sidebar.tsx`**
+Status: Completed
+
+1→"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+
+export function Sidebar() {
+  const router = useRouter();
+10→  const [email, setEmail] = useState("");
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user?.email) setEmail(user.email);
+    });
+  }, []);
+
+  const handleLogout = async () => {
+20→    const supabase = createClient();
+    await supabase.auth.signOut();
+    router.push("/");
+    router.refresh();
+  };
+
+  return (
+    <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] hidden md:flex flex-col min-h-screen">
+      <div className="px-4 py-5 border-b border-white/10">
+        <Link href="/dashboard" className="font-bold text-base tracking-tight">
+30→          Lectiq
+        </Link>
+      </div>
+
+      <SidebarNav variant="dark" className="flex-1 py-4" />
+
+      <div className="px-4 py-4 border-t border-white/10 space-y-3">
+        <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
+        <button
+          onClick={handleLogout}
+40→          className="text-xs text-white/50 hover:text-white/80 transition-colors min-h-[44px] inline-flex items-center"
+        >
+          Log out
+        </button>
+      </div>
+    </aside>
+  );
+}
+
+interface SidebarNavProps {
+50→  variant?: "dark" | "light";
+  className?: string;
+  onNavigate?: () => void;
+}
+
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/upload", label: "Upload" },
+  { href: "/history", label: "History" },
+  { href: "/billing", label: "Billing" },
+60→] as const;
+
+export function SidebarNav({ variant = "light", className, onNavigate }: SidebarNavProps) {
+  const base =
+    variant === "dark"
+      ? "block px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
+      : "block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors";
+
+  return (
+    <nav className={className}>
+70→      {NAV_ITEMS.map((item) => (
+        <Link
+          key={item.href}
+          href={item.href}
+          onClick={onNavigate}
+          className={base}
+        >
+          {item.label}
+        </Link>
+      ))}
+80→    </nav>
+  );
+}
+
+interface UserMenuProps {
+  email: string;
+  onLogout: () => void;
+  className?: string;
+  variant?: "light" | "dark";
+}
+90→
+export function UserMenu({ email, onLogout, className, variant = "light" }: UserMenuProps) {
+  const textClass =
+    variant === "dark" ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground";
+  return (
+    <div className={className}>
+      <p className="text-xs truncate">{email || "Loading..."}</p>
+      <button
+        onClick={onLogout}
+        className={`text-xs transition-colors min-h-[44px] inline-flex items-center ${textClass}`}
+100→      >
+        Log out
+      </button>
+    </div>
+  );
+}
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations\00003_quizzes_status_error.sql`**
+Status: Completed
+
+1→-- Add 'error' to the quizzes.status CHECK constraint
+-- The API at app/api/quiz/generate/route.ts:96 writes status = 'error' on
+-- question generation failure, but the original constraint only allowed
+-- ('generating', 'ready', 'completed'). This caused the UPDATE to throw and
+-- left failed quizzes stuck in 'generating' indefinitely.
+
+alter table public.quizzes
+  drop constraint if exists quizzes_status_check;
+
+10→alter table public.quizzes
+  add constraint quizzes_status_check
+  check (status in ('generating', 'ready', 'completed', 'error'));
+
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\lib\supabase\session.ts`**
+Status: Completed
+
+1→import { createServerClient } from "@supabase/ssr";
+import { NextResponse, type NextRequest } from "next/server";
+
+export async function updateSession(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({ request });
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+10→    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
+          cookiesToSet.forEach(({ name, value }) =>
+            request.cookies.set(name, value)
+          );
+          supabaseResponse = NextResponse.next({ request });
+20→          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  const {
+    data: { user },
+30→  } = await supabase.auth.getUser();
+
+  const protectedPaths = ["/dashboard", "/upload", "/documents", "/quizzes", "/history", "/billing"];
+  const isProtected = protectedPaths.some((p) => request.nextUrl.pathname.startsWith(p));
+
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/auth/login";
+    return NextResponse.redirect(url);
+  }
+40→
+  if (user && request.nextUrl.pathname.startsWith("/auth")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
+  }
+
+  return supabaseResponse;
+}
+
+
+## Assistant
+
+<thinking>
+I have a thorough picture. Let me also note:
+The main things that stand out for improvement are:
+
+1. **Privacy and terms pages** – you mentioned they’re linked but the URLs (`/app/privacy` and `/app/terms`) aren’t actually in the routes or linked from the footer/header. That’s an easy fix: add the links and make sure the pages 404 gracefully if they don’t exist yet.
+
+2. **Billing flow** – the portal session is created but never wired into the billing page, and the webhook always upgrades to “pro” even if the checkout was for “basic”. Price IDs are still placeholders. Quick wins: wire the portal link, make the webhook 100 % idempotent, and swap in real price IDs.
+
+3. **Quiz generation edge cases** – when `generateQuestions` returns an empty array you still mark the quiz “ready” with zero questions and increment usage. That’s confusing for the user.
+</thinking>
+
+**Tool Call: List `C:\Users\Lenovo\Desktop\lectiq\app`**
+Status: Completed
+
+```json
+{
+  "type": "ListDir",
+  "Content": {
+    "content": "- C:\\Users\\Lenovo\\Desktop\\lectiq\\app/\n  - api/\n    - quiz/\n      - generate/\n        - route.ts\n      - submit/\n        - route.ts\n    - webhooks/\n      - stripe/\n        - route.ts\n  - auth/\n    - callback/\n      - route.ts\n    - confirm/\n      - route.ts\n    - login/\n      - page.tsx\n    - logout/\n      - route.ts\n    - register/\n      - page.tsx\n    - signout/\n      - route.ts\n  - billing/\n    - actions.ts\n    - page.tsx\n  - dashboard/\n    - actions.ts\n    - page.tsx\n  - documents/\n    - [id]/\n      - quiz/\n        - new/\n          - page.tsx\n      - topics/\n        - page.tsx\n  - error.tsx\n  - favicon.ico\n  - globals.css\n  - history/\n    - page.tsx\n  - layout.tsx\n  - loading.tsx\n  - not-found.tsx\n  - page.tsx\n  - quizzes/\n    - [id]/\n      - page.tsx\n      - results/\n        - page.tsx\n  - upload/\n    - actions.ts\n    - page.tsx",
+    "absolute_root_path": "C:\\Users\\Lenovo\\Desktop\\lectiq\\app"
+  }
+}
+```
+
+**Tool Call: createPortalSession|privacy|terms|forgot**
+Status: Completed
+
+found 3 matches
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\supabase\migrations\00001_initial.sql`**
+Status: Completed
+
+165→    )
+  );
+
+create index quiz_answers_question_id_idx on public.quiz_answers(question_id);
+
+170→-- Usage Records
+create table public.usage_records (
+  id uuid primary key default uuid_generate_v4(),
+  user_id uuid not null references public.users(id) on delete cascade,
+  month text not null,
+  quizzes_used int not null default 0,
+  documents_uploaded int not null default 0,
+  questions_generated int not null default 0,
+  unique(user_id, month)
+);
+180→
+alter table public.usage_records enable row level security;
+
+create policy "Users can read own usage records"
+  on public.usage_records for select
+
+**Tool Call: Read `C:\Users\Lenovo\Desktop\lectiq\app\billing\page.tsx`**
+Status: Completed
+
+60→      yearly: { price: "$129.99", label: "/yr" },
+      features: [
+        "Unlimited quizzes (fair use)",
+        "MCQ + Free Response questions",
+        "AI-graded feedback",
+        "All export formats (coming)",
+      ],
+      popular: true,
+    },
+  ];
+70→
+  if (loading) {
+    return (
+      <AppShell title="Billing">
+        <div className="flex items-center justify-center py-16">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      </AppShell>
+    );
+  }
+80→
+  return (
+    <AppShell title="Billing">
+      <h1 className="text-2xl font-bold mb-2">Billing</h1>
+      <p className="text-muted-foreground mb-8">Manage your subscription</p>
+
+      <BillingToggle interval={isYearly ? "yearly" : "monthly"} />
+
+      {state?.error && (
+        <p className="text-sm text-destructive mb-4">{state.error}</p>
+90→      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl">
+        {plans.map((plan) => {
+          const isCurrent = currentPlan === plan.id;
+          const pricing = isYearly ? plan.yearly : plan.monthly;
+
+          return (
+            <div
+              key={plan.id}
+100→              className={`relative rounded-lg border p-6 ${
+                isCurrent ? "ring-2 ring-primary" : ""
+              }`}
+            >
+              {plan.popular && (
+                <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 text-xs font-medium uppercase tracking-wide bg-accent text-accent-foreground px-3 py-0.5 rounded-full">
+                  Popular
+                </span>
+              )}
+              <h2 className="text-lg font-bold mb-1">{plan.name}</h2>
+110→              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-4">
+                {plan.id === "basic" ? "For getting started" : "For power learners"}
+              </p>
+              <div className="mb-4">
+                <span className="text-3xl font-bold">{pricing.price}</span>
+                <span className="text-sm text-muted-foreground ml-1">{pricing.label}</span>
+                {isYearly && (
+                  <span className="ml-2 text-xs text-green-700 font-medium">
+                    Save {plan.id === "basic" ? "27" : "28"}%
+                  </span>
+120→                )}
+              </div>
+              <ul className="space-y-2 mb-6">
+                {plan.features.map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm">
+                    <Check className="h-4 w-4 text-green-600 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+130→              {isCurrent ? (
+                <p className="text-sm text-muted-foreground text-center pt-1">Current plan</p>
+              ) : (
+                <form action={formAction}>
+                  <input type="hidden" name="plan" value={plan.id} />
+                  <input type="hidden" name="interval" value={isYearly ? "yearly" : "monthly"} />
+                  <button
+                    type="submit"
+                    disabled={isPending}
+                    className={`w-full rounded-lg py-2 text-sm font-medium text-center disabled:opacity-50 ${
+140→                      plan.popular
+                        ? "bg-primary text-primary-foreground"
+                        : "border border-primary text-foreground"
+                    }`}
+                  >
+                    {isPending ? (
+                      <span className="flex items-center justify-center gap-1.5">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                        Redirecting...
+                      </span>
+150→                    ) : plan.id === "pro" ? (
+                      "Go Pro"
+                    ) : (
+                      "Get Basic"
+                    )}
+                  </button>
+                </form>
+              )}
+            </div>
+          );
+160→        })}
+      </div>
+    </AppShell>
+  );
+}
+
+
+## Assistant
+
+<thinking>
+I have enough to write a strong, prioritized improvement assessment. I'll organize by impact and be specific to this codebase.
+
+</thinking>
+
+The core loop is in place. The highest-leverage improvements are the ones that make that loop **reliable, honest, and actually good for studying** — not more pages or polish.
+
+## 1. Production will break before the product feels unfinished
+
+**Upload is a single blocking request.** `uploadDocument` parses the PDF, then map-reduces topics with a 90s AI budget, all inside one server action. On Vercel that’s a timeout waiting to happen. `ProcessingStatus` exists, but the current path only redirects *after* processing finishes, so the spinner is mostly unused. Extract should run in the background (or a queue), persist `processing` / `ready` / `error`, and let the topics page poll.
+
+**Failed states are easy to get stuck in.**
+- `ProcessingStatus` never stops on `error` — it polls forever.
+- The quiz page only watches `generating` → `ready`. An `error` quiz just sits there.
+- Empty question batches still mark the quiz `ready` with `question_count: 0` and **still increment quota**.
+- Failed uploads leave an `error` document with no retry.
+
+**Stripe is not production-ready.**
+- Price IDs are placeholders (`price_basic_monthly`, etc.).
+- `checkout.session.completed` always writes `subscription_status: "pro"`, even if they bought Basic.
+- `createPortalSession` exists but is never wired — no way to cancel or change plan.
+- Landing / billing advertise **PDF export**. There is no export.
+
+**Quota is inconsistent.** Dashboard shows “X/10 documents used.” `checkUploadQuota` always returns `{ allowed: true }`. Landing copy only limits **quizzes**. Usage increments are read-then-write, so two parallel quizzes can both pass the 10-quiz check.
+
+**Legal / auth holes:** footer links to `/privacy` and `/terms` (404). No password reset.
+
+## 2. Question quality is the product — and it’s underspecified
+
+This is where Lectiq either beats Quizlet or doesn’t.
+
+- Generation says “as many as the source warrants.” Students can’t pick 10 / 20 / exam-length. Output size is whatever the model feels like.
+- A whole topic batch can fail silently (`return []`) and the user just gets a thin quiz.
+- Topic IDs go in the query string (`?topics=uuid,uuid,…`). Long, ugly, easy to break.
+- PPTX slides are sorted as strings, so `slide10.xml` comes before `slide2.xml`. Topic order on decks with 10+ slides is wrong.
+- PDFs get a bag of paragraphs. PPTX gets `[Slide N]` markers. PDF topic quality will be worse for no good reason — add `[Page N]`.
+- Grading uses `topic.content` (the 2–5 sentence summary), not `source_content`. Free-response grading is weaker than the FAQ claims (“against your lecture material”).
+- Default model is `openrouter/free`. Fine for scaffolding, not for “tutor who read your notes.”
+
+The recent work (verbatim `source_content`, junk-topic filter, truncation warnings) is pointed at the right problem. Next step is making generation **deterministic enough to trust**: fixed question counts, per-topic coverage, fail loudly when a batch dies, grade against source text.
+
+## 3. The study loop stops at “one-shot quiz”
+
+Right now: upload → pick topics → take quiz → see score. That’s a demo, not a study habit.
+
+What students actually need, in roughly this order:
+
+1. **A real quiz session** — one question at a time, autosave, resume if they leave. Today every question is on one page; refresh loses answers. Submit has no “already completed” guard, so they can double-submit.
+2. **MCQ results that teach** — results show `Your answer: A · Correct: B`, not the option text. Keyboard users can’t select options (click-only `div`s).
+3. **Retry / weak-topic follow-up** — history is a score list. No “quiz me again on what I missed.”
+4. **Keep the file** — storage is deleted after extract. You can’t re-extract with a better prompt or let them download the original.
+
+Spaced repetition, difficulty, and export can wait. Session reliability and “study what I got wrong” should not.
+
+## 4. Architecture that will hurt as you grow
+
+| Today | Better |
+|---|---|
+| Sequential AI calls, 90s wall clock | Parallel map chunks with a hard deadline |
+| Usage `select` then `update` | `upsert` + increment, or a DB function |
+| Client upload + long server action | Upload → enqueue job → poll |
+| No tests | Golden-file tests for topic parse, question shape, scoring |
+| `any` on Stripe webhook + quiz answers | Typed Stripe events, typed answer rows |
+
+Also: `users` has no self-update RLS (fine — webhook uses the admin client), but there are **no tests at all**. The AI JSON parsers (`parseTopics`, question mapping, grade JSON) are exactly the kind of thing that rot without fixtures.
+
+## What I would do first
+
+If this is heading toward real users, in this order:
+
+1. **Make processing async** and surface `processing` / `error` / retry on the dashboard card.
+2. **Fix billing truth** — real price IDs, plan from the Stripe product (not always `pro`), customer portal, drop or build PDF export.
+3. **Make quota one source of truth** and increment it atomically. Don’t charge a quiz that produced 0 questions.
+4. **Let the student choose question count**; generate from `source_content`; grade from `source_content`.
+5. **Autosave the quiz** and show real answer text on results.
+
+That’s the difference between “cool prototype” and “I would actually use this the week before finals.”
+
+Want me to go deep on one of those — async processing, billing/quota correctness, or the quiz session itself?
+
+## User
+
+for the billing parts, i am going to actually discard that, the rest of your submissions are interesting. Give me a better presentation of your solutions.

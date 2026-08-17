@@ -56,7 +56,6 @@ const NAV_ITEMS = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/upload", label: "Upload" },
   { href: "/history", label: "History" },
-  { href: "/billing", label: "Billing" },
 ] as const;
 
 export function SidebarNav({ variant = "light", className, onNavigate }: SidebarNavProps) {

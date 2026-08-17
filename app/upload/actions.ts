@@ -3,11 +3,15 @@
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { extractTopics } from "@/lib/ai/extract-topics";
 import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
-import { checkUploadQuota } from "@/lib/quota";
 import { getCurrentMonth } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 
 const MAX_PDF_PAGES = 200;
+
+function slideNumber(fileName: string): number {
+  const match = fileName.match(/slide(\d+)\.xml$/);
+  return match ? Number(match[1]) : 0;
+}
 
 interface ExtractionOutput {
   text: string;
@@ -43,7 +47,7 @@ async function extractTextFromPptx(buffer: ArrayBuffer): Promise<ExtractionOutpu
 
   const slideFiles = Object.keys(zip.files)
     .filter((name) => name.startsWith("ppt/slides/slide") && name.endsWith(".xml"))
-    .sort();
+    .sort((a, b) => slideNumber(a) - slideNumber(b));
 
   for (const file of slideFiles) {
     const content = await zip.files[file].async("text");
@@ -65,9 +69,6 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
   const supabase = await createServerSupabaseClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
-
-  const quota = await checkUploadQuota(user.id);
-  if (!quota.allowed) return { error: quota.reason };
 
   if (!["pdf", "pptx"].includes(fileType)) return { error: "Only PDF and PPTX files are supported" };
 

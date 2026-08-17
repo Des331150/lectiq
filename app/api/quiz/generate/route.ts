@@ -52,6 +52,11 @@ export async function POST(request: Request) {
       format
     );
 
+    if (questions.length === 0) {
+      await supabase.from("quizzes").update({ status: "error" }).eq("id", quiz.id);
+      return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 });
+    }
+
     const questionRows = questions.map((q, i) => ({
       quiz_id: quiz.id,
       type: q.type,
@@ -92,7 +97,7 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ quizId: quiz.id });
-  } catch (err) {
+  } catch {
     await supabase.from("quizzes").update({ status: "error" }).eq("id", quiz.id);
     return NextResponse.json({ error: "Failed to generate questions" }, { status: 500 });
   }

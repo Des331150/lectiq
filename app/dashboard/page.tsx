@@ -13,12 +13,6 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/auth/login");
 
-  const { data: userData } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", user.id)
-    .single();
-
   const { data: documents } = await supabase
     .from("documents")
     .select("*")
@@ -66,15 +60,13 @@ export default async function DashboardPage() {
       ? quizData.reduce((acc, q) => acc + (q.score || 0), 0) / quizData.length
       : null;
 
-  const isPro = userData?.subscription_status === "pro";
-
   return (
     <AppShell title="Dashboard">
       <div className="flex flex-wrap items-start sm:items-center justify-between gap-3 mb-8">
         <div className="min-w-0">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground text-sm">
-            {isPro ? "Pro plan" : `Basic plan \u2014 ${documents?.length || 0}/10 documents used`}
+            {documents?.length || 0}/10 documents used
           </p>
         </div>
         <Link href="/upload">
@@ -93,7 +85,6 @@ export default async function DashboardPage() {
           quizzesLimit={10}
           averageScore={avgScore}
           topicsExtracted={topicsExtracted}
-          isPro={isPro}
         />
       </div>
 
