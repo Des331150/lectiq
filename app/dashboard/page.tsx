@@ -7,6 +7,7 @@ import { DashboardStats } from "@/components/dashboard-stats";
 import { DocumentCard } from "@/components/document-card";
 import { AppShell } from "@/components/app-shell";
 import { getCurrentMonth } from "@/lib/utils";
+import { getQuotaLimits } from "@/lib/quota";
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
@@ -49,6 +50,12 @@ export default async function DashboardPage() {
     .eq("month", month)
     .single();
 
+  // Limits come from the database so the displayed cap is the same one the
+  // claim_quota function enforces. Documents are counted from this month's usage
+  // record rather than the total document list, since the cap is monthly.
+  const limits = await getQuotaLimits();
+  const documentsUsed = usage?.documents_uploaded ?? 0;
+
   const { data: quizData } = await supabase
     .from("quizzes")
     .select("score")
@@ -66,7 +73,7 @@ export default async function DashboardPage() {
         <div className="min-w-0">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <p className="text-muted-foreground text-sm">
-            {documents?.length || 0}/10 documents used
+            {documentsUsed}/{limits.document} documents used this month
           </p>
         </div>
         <Link href="/upload">
@@ -79,10 +86,10 @@ export default async function DashboardPage() {
 
       <div className="mb-8">
         <DashboardStats
-          documentsUsed={documents?.length || 0}
-          documentsLimit={10}
+          documentsUsed={documentsUsed}
+          documentsLimit={limits.document}
           quizzesUsed={usage?.quizzes_used || 0}
-          quizzesLimit={10}
+          quizzesLimit={limits.quiz}
           averageScore={avgScore}
           topicsExtracted={topicsExtracted}
         />

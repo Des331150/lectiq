@@ -31,14 +31,26 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
       if (q.status === "generating") {
         interval = setInterval(async () => {
           const { data: updated } = await supabase.from("quizzes").select("status").eq("id", quizId).single();
-          if (updated?.status === "ready") {
+          // Stop on any terminal state. Previously only "ready" cleared the
+          // interval, so a generation that ended in "error" polled forever and
+          // the spinner never resolved.
+          if (updated?.status && updated.status !== "generating") {
             clearInterval(interval);
             loadQuiz();
           }
         }, 2000);
         return;
       }
-      if (q.status !== "ready") { setError("Quiz is not ready"); setLoading(false); return; }
+      if (q.status === "error") {
+        setError("Quiz generation failed. Please try generating it again.");
+        setLoading(false);
+        return;
+      }
+      if (q.status !== "ready" && q.status !== "completed") {
+        setError("Quiz is not ready");
+        setLoading(false);
+        return;
+      }
       setQuiz(q);
       const { data: qs } = await supabase.from("quiz_questions").select("*").eq("quiz_id", quizId).order("position");
       setQuestions(qs || []);
@@ -55,14 +67,25 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
   const handleSubmit = async () => {
     setSubmitting(true);
     setError(null);
-    const res = await fetch("/api/quiz/submit", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ quizId, answers }),
-    });
-    const data = await res.json();
-    if (!res.ok) { setError(data.error || "Failed to submit"); setSubmitting(false); return; }
-    router.push(`/quizzes/${quizId}/results`);
+    try {
+      const res = await fetch("/api/quiz/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ quizId, answers }),
+      });
+      // A network drop or 5xx returns HTML, and res.json() would throw, leaving
+      // the button stuck on "Submitting..." with no feedback.
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.error || `Failed to submit (${res.status})`);
+        setSubmitting(false);
+        return;
+      }
+      router.push(`/quizzes/${quizId}/results`);
+    } catch {
+      setError("Could not reach the server. Your answers were not saved.");
+      setSubmitting(false);
+    }
   };
 
   if (loading) return <div className="min-h-screen flex items-center justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;

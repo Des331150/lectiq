@@ -39,10 +39,20 @@ export default function UploadPage() {
       return;
     }
 
-    const result = await uploadDocument(filePath, file.name, ext);
+    const result = await uploadDocument(filePath, file.name, ext).catch(() => null);
+
+    if (!result) {
+      setError("Upload failed. The file may be too large or processing timed out.");
+      return;
+    }
 
     if (result.error) {
       setError(result.error);
+      return;
+    }
+
+    if (!result.documentId) {
+      setError("Upload failed. Please try again.");
       return;
     }
 

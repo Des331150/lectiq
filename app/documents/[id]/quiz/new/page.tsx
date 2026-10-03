@@ -13,7 +13,11 @@ function NewQuizContent() {
   const params = useParams();
   const docId = params.id as string;
   const topicsParam = searchParams.get("topics") || "";
-  const formatParam = searchParams.get("format") || "mcq";
+  const FORMATS = ["mcq", "free_response", "both"] as const;
+  const rawFormat = searchParams.get("format") ?? "mcq";
+  const formatParam = (FORMATS as readonly string[]).includes(rawFormat)
+    ? (rawFormat as (typeof FORMATS)[number])
+    : "mcq";
   const topicIds = topicsParam.split(",").filter(Boolean);
 
   const [generating, setGenerating] = useState(false);
@@ -22,24 +26,27 @@ function NewQuizContent() {
   const handleGenerate = async () => {
     setGenerating(true);
     setError(null);
-
-    const res = await fetch("/api/quiz/generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        documentId: docId,
-        topicIds,
-        format: formatParam,
-      }),
-    });
-
-    const data = await res.json();
-    if (!res.ok) {
-      setError(data.error);
+    try {
+      const res = await fetch("/api/quiz/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          documentId: docId,
+          topicIds,
+          format: formatParam,
+        }),
+      });
+      const data = await res.json().catch(() => null);
+      if (!res.ok) {
+        setError(data?.error || `Generation failed (${res.status})`);
+        setGenerating(false);
+        return;
+      }
+      router.push(`/quizzes/${data.quizId}`);
+    } catch {
+      setError("Could not reach the server. Please try again.");
       setGenerating(false);
-      return;
     }
-    router.push(`/quizzes/${data.quizId}`);
   };
 
   if (topicIds.length === 0) {

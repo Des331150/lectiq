@@ -32,7 +32,7 @@ export interface Quiz {
   user_id: string;
   document_id: string;
   format: "mcq" | "free_response" | "both";
-  status: "generating" | "ready" | "completed";
+  status: "generating" | "ready" | "completed" | "error";
   question_count: number;
   score: number | null;
   created_at: string;

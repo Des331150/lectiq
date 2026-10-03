@@ -76,6 +76,7 @@ Or paste each file into the Supabase dashboard SQL editor, in order:
 | `00005_topics_source_content.sql` | Adds `topics.source_content` — verbatim slide text, so questions are generated from real material rather than a summary |
 | `00006_documents_processing_warning.sql` | Adds `documents.processing_warnings` for structured truncation notices |
 | `00007_drop_subscription_fields.sql` | Removes the now-unused billing columns |
+| `00008_quota_and_answer_integrity.sql` | Deduplicates `quiz_answers` and enforces one answer per question; adds the `quota_limits` table plus atomic `claim_quota` / `release_quota` / `record_questions` functions; revokes direct client writes to `usage_records` and `quizzes` |
 
 The `users` table is populated automatically by a `SECURITY DEFINER` trigger on
 `auth.users` insert. No backfill needed after signup.
@@ -160,7 +161,26 @@ Both AI paths are chunked and bounded so a large document can't run away:
 | Time budget, question gen | 90s | `lib/ai/generate-questions.ts` |
 | Max topics per document | 60 | `lib/ai/extract-topics.ts` |
 | Questions per AI call | 30,000 chars of source | `lib/ai/generate-questions.ts` |
-| Quizzes per month | 10 | `lib/quota.ts` |
+
+### Quotas
+
+Monthly caps are **enforced**, not just displayed. Both live in the `quota_limits`
+table so the number the dashboard shows is the number the database enforces; change
+them with a single `UPDATE`:
+
+```sql
+update public.quota_limits set monthly_limit = 25 where kind = 'quiz';
+```
+
+| Limit | Default | Enforced by |
+|---|---|---|
+| Quizzes per month | 10 | `claim_quota('quiz')` in `app/api/quiz/generate/route.ts` |
+| Documents per month | 10 | `claim_quota('document')` in `app/upload/actions.ts` |
+
+Quota is claimed atomically before the work starts and **released if that work
+fails**, so an errored generation or a scanned PDF doesn't cost the user a credit.
+`SUPABASE_SERVICE_ROLE_KEY` is not needed for quota accounting — the security-definer
+functions authorise the caller against `auth.uid()` themselves.
 
 When a limit is hit, the reason code is stored in `documents.processing_warnings` and
 surfaced on the dashboard card — the document is never silently truncated. Codes are
@@ -171,13 +191,22 @@ the rest of the document.
 
 ### Security notes
 
-- All data access goes through the anon key with RLS enabled. Every table has a policy
-  scoping rows to `auth.uid()`.
+- All data access goes through the anon key with RLS enabled, except quiz status
+  and score writes (below).
+- Every table has a policy scoping rows to `auth.uid()`. Client writes to
+  `usage_records` and `quizzes` are revoked entirely — usage counters move only via
+  security-definer functions, and a user cannot set their own `score`.
+- Quiz `status` and `score` are written via the service-role client in
+  `lib/quiz-writes.ts`, since the browser client deliberately has no UPDATE policy
+  on `quizzes`. Those queries constrain on `user_id` explicitly, because the service
+  role bypasses RLS.
+- `uploadDocument` rejects any `filePath` outside the caller's own folder rather than
+  relying on storage RLS alone.
 - The `Documents` storage bucket is private. Storage policies require the first path
   segment to equal the user's UUID, and files are deleted from storage once topics are
-  extracted — only the derived text is retained.
-- `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS. It's read in exactly one place
-  (`app/auth/confirm/route.ts`); keep it server-only.
+  extracted — only the derived text is retained. Failed uploads are cleaned up too.
+- `SUPABASE_SERVICE_ROLE_KEY` bypasses RLS. It is read only in `lib/quiz-writes.ts`;
+  keep it server-only.
 - Auth-gated routes are enforced in `lib/supabase/session.ts` via `proxy.ts`, with a
   per-page check as a second layer.
 
@@ -195,33 +224,32 @@ Add all five environment variables in the project settings. Two things to watch:
 
 ## Known issues
 
-Roughly in priority order — see git history for context on each.
+Remaining, after the fixes in migration 00008:
 
-- **Re-submitting a quiz inflates the score.** `quiz_answers` has no unique constraint
-  on `question_id`, and `app/api/quiz/submit/route.ts` inserts a new row per submission
-  then scores across all of them. The results page also reads the first matching row,
-  so it can show a stale attempt. Fix by upserting on `question_id`.
-- **The 10-document limit isn't enforced.** The dashboard shows `X/10 documents used`,
-  but nothing checks it — `uploadDocument` has no quota gate, so each upload can trigger
-  up to 30 AI calls. This is the largest unbounded-cost path.
-- **Generation blocks the request, but the client polls.** The generate endpoint runs
-  inline, so the `status === "generating"` branch in `app/quizzes/[id]/page.tsx` is
-  effectively unreachable. The 90s budget also exceeds Vercel's default 60s function
-  timeout.
-- **Request bodies aren't validated.** `request.json()` is unguarded in both quiz
-  routes, and `format` flows unvalidated from the query string into an insert.
-- **`app/auth/confirm/route.ts` sets no session cookie.** It verifies the OTP with the
-  service-role client and redirects without a session, so if that path is live users
-  land unauthenticated. Signup currently uses the `/auth/callback` code flow, so
-  `confirm` may be dead code — worth confirming against your email template.
-- **`types/database.ts` has drifted.** `Quiz["status"]` omits `"error"`, which migration
-  00003 added. These types are also unenforced — the Supabase clients aren't generic, so
-  every `.from()` returns `any`.
-- **Dead code.** `app/auth/logout/route.ts` and `app/auth/signout/route.ts` are
-  identical and unreferenced; the app shell signs out client-side. `signout` hardcodes
-  `http://localhost:3000` as its redirect origin.
-- **Quota races.** Usage increments are read-then-write rather than atomic, so
-  concurrent requests can exceed the monthly limit.
+- **Generation still blocks the request.** The generate endpoint runs the AI work
+  inline and `maxDuration = 300` is set on it, but a large deck can still come close to
+  that ceiling. The real fix is a background job with the client polling a status
+  column — the `generating` state and the polling loop in `app/quizzes/[id]/page.tsx`
+  are already there waiting for it.
+- **`types/database.ts` is unenforced.** The Supabase clients aren't generic, so every
+  `.from()` still returns `any` and the row types are documentation rather than
+  guarantees. Generating them from the schema (`supabase gen types`) would make future
+  drift a compile error.
+- **Failed uploads leave an `error`-status document row** with no way to retry it from
+  the dashboard. The spinner no longer hangs, but cleanup is manual.
+- **No tests.** `parseTopics` in `lib/ai/extract-topics.ts` and the score calculation in
+  `app/api/quiz/submit/route.ts` are the two highest-value things to cover first.
+
+Resolved:
+
+- Resubmitting a quiz no longer inflates the score — one answer per question, enforced
+  by a unique index, replaced rather than appended.
+- Both monthly caps are enforced atomically and released on failure.
+- Clients can no longer write `usage_records` or `quizzes.score` directly.
+- Request bodies are validated; bad input returns 400 instead of a generic 500.
+- Polling stops on `error`, so failed documents and quizzes no longer spin forever.
+- `app/auth/confirm` now establishes a session instead of redirecting unauthenticated.
+- Dead `logout`/`signout` routes removed.
 
 ## Conventions
 
