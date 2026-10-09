@@ -15,7 +15,10 @@
     --secondary: 40 12% 88%;
     --secondary-foreground: 20 12% 18%;
     --muted: 40 12% 88%;
-    --muted-foreground: 35 10% 40%;
+    /* 35 10% 40% measured 4.44:1 on --card, under the 4.5:1 AA floor for
+       body-size text. Two points of lightness clears it on every surface
+       without altering the palette's character. */
+    --muted-foreground: 35 12% 38%;
     --accent: 30 45% 42%;
     --accent-foreground: 20 15% 12%;
     --destructive: 0 70% 55%;
@@ -33,5 +36,18 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* PRODUCT.md: "Reduced motion support." DESIGN.md: prefers-reduced-motion
+   reduce -> 0ms transitions, no animations. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }

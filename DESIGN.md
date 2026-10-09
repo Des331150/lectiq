@@ -21,7 +21,7 @@ Warm Academic — a palette inspired by well-bound books, warm paper, and schola
 | `--accent` | `30 45% 60%` | Gold accent — highlights, badges `#C4956A` |
 | `--accent-foreground` | `20 15% 12%` | Text on accent backgrounds |
 | `--muted` | `40 12% 88%` | Muted backgrounds, hover states |
-| `--muted-foreground` | `35 10% 40%` | Secondary text — muted but readable |
+| `--muted-foreground` | `35 12% 38%` | Secondary text — muted but readable |
 | `--border` | `40 12% 82%` | Borders, dividers `#D6CEBB` |
 | `--ring` | `215 40% 17%` | Focus rings (matches primary) |
 | `--destructive` | `0 70% 55%` | Errors, destructive actions |
@@ -40,6 +40,11 @@ All sans-serif — one family for headings and body.
 
 **Primary choice:** Inter (variable weight, excellent readability, academic without being stuffy).  
 **Fallback:** system-ui stack.
+
+Loaded via `next/font` in `app/layout.tsx` and exposed as the `--font-inter` variable, which
+`tailwind.config.ts` maps onto `font-sans`. This must stay wired up: the body previously carried
+Tailwind's stock `font-sans` with no font behind it, so every page silently rendered in whatever
+the host OS resolved to.
 
 ### Scale
 
