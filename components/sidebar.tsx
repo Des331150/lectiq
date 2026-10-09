@@ -1,50 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-
-export function Sidebar() {
-  const router = useRouter();
-  const [email, setEmail] = useState("");
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email) setEmail(user.email);
-    });
-  }, []);
-
-  const handleLogout = async () => {
-    const supabase = createClient();
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  };
-
-  return (
-    <aside className="w-52 shrink-0 bg-[#1B2A3B] text-[#F5F2EB] hidden md:flex flex-col min-h-screen">
-      <div className="px-4 py-5 border-b border-white/10">
-        <Link href="/dashboard" className="font-bold text-base tracking-tight">
-          Lectiq
-        </Link>
-      </div>
-
-      <SidebarNav variant="dark" className="flex-1 py-4" />
-
-      <div className="px-4 py-4 border-t border-white/10 space-y-3">
-        <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
-        <button
-          onClick={handleLogout}
-          className="text-xs text-white/50 hover:text-white/80 transition-colors min-h-[44px] inline-flex items-center"
-        >
-          Log out
-        </button>
-      </div>
-    </aside>
-  );
-}
+import { cn } from "@/lib/utils";
 
 interface SidebarNavProps {
   variant?: "dark" | "light";
@@ -59,23 +17,43 @@ const NAV_ITEMS = [
 ] as const;
 
 export function SidebarNav({ variant = "light", className, onNavigate }: SidebarNavProps) {
-  const base =
-    variant === "dark"
-      ? "block px-4 py-3 text-sm text-white/60 hover:text-white hover:bg-white/5 transition-colors"
-      : "block px-4 py-3 text-sm text-foreground/70 hover:text-foreground hover:bg-muted transition-colors";
+  const pathname = usePathname();
 
   return (
-    <nav className={className}>
-      {NAV_ITEMS.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={onNavigate}
-          className={base}
-        >
-          {item.label}
-        </Link>
-      ))}
+    <nav className={className} aria-label="Main">
+      {NAV_ITEMS.map((item) => {
+        // /documents and /quizzes live under the dashboard's study loop, so
+        // they read as "you are studying" rather than as a dead end.
+        const active =
+          pathname === item.href ||
+          (item.href === "/dashboard" && (pathname?.startsWith("/documents") || pathname?.startsWith("/quizzes")));
+
+        const base =
+          variant === "dark"
+            ? "block px-4 py-3 text-sm transition-colors"
+            : "block px-4 py-3 text-sm transition-colors";
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onNavigate}
+            aria-current={active ? "page" : undefined}
+            className={cn(
+              base,
+              variant === "dark"
+                ? active
+                  ? "bg-white/10 text-white"
+                  : "text-white/60 hover:bg-white/5 hover:text-white"
+                : active
+                  ? "bg-muted text-foreground"
+                  : "text-foreground/70 hover:bg-muted hover:text-foreground"
+            )}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

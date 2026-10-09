@@ -11,19 +11,26 @@ import { SidebarNav, UserMenu } from "@/components/sidebar";
 interface AppShellProps {
   children: React.ReactNode;
   title?: string;
+  /**
+   * The signed-in address, when the page has already fetched the session.
+   * Passing it avoids a client round-trip and the flash of "Loading..." in the
+   * sidebar. Omit it and the shell falls back to fetching on the client.
+   */
+  email?: string;
 }
 
-export function AppShell({ children, title }: AppShellProps) {
+export function AppShell({ children, title, email }: AppShellProps) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [email, setEmail] = useState("");
+  const [resolvedEmail, setResolvedEmail] = useState<string | undefined>(email);
 
   useEffect(() => {
+    if (email) return;
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user?.email) setEmail(user.email);
+      if (user?.email) setResolvedEmail(user.email);
     });
-  }, []);
+  }, [email]);
 
   const handleLogout = async () => {
     const supabase = createClient();
@@ -72,7 +79,7 @@ export function AppShell({ children, title }: AppShellProps) {
           onNavigate={() => setOpen(false)}
         />
         <div className="px-4 py-4 border-t border-white/10 space-y-3">
-          <UserMenu email={email} onLogout={handleLogout} variant="dark" />
+          <UserMenu email={resolvedEmail ?? ""} onLogout={handleLogout} variant="dark" />
         </div>
       </Sheet>
 
@@ -85,7 +92,7 @@ export function AppShell({ children, title }: AppShellProps) {
           </div>
           <SidebarNav variant="dark" className="flex-1 py-2 overflow-y-auto" />
           <div className="px-4 py-4 border-t border-white/10 space-y-3">
-            <p className="text-xs text-white/50 truncate">{email || "Loading..."}</p>
+            <p className="text-xs text-white/50 truncate">{resolvedEmail || "Loading..."}</p>
             <button
               onClick={handleLogout}
               className="text-xs text-white/50 hover:text-white/80 transition-colors min-h-[44px] inline-flex items-center"

@@ -1,3 +1,5 @@
+import { cn } from "@/lib/utils";
+
 interface DashboardStatsProps {
   documentsUsed: number;
   documentsLimit: number;
@@ -7,6 +9,14 @@ interface DashboardStatsProps {
   topicsExtracted: number;
 }
 
+/**
+ * Monthly usage as a quiet ruled strip rather than a grid of stat tiles.
+ *
+ * The old four tiles gave equal weight to quota counters and to numbers the
+ * student cannot act on. Two of them were the hero-metric template - big
+ * number, small label - which says nothing about what to do next. These are
+ * constraints on the month, so they read as constraints.
+ */
 export function DashboardStats({
   documentsUsed,
   documentsLimit,
@@ -15,37 +25,36 @@ export function DashboardStats({
   averageScore,
   topicsExtracted,
 }: DashboardStatsProps) {
-  const quizPct = Math.min((quizzesUsed / quizzesLimit) * 100, 100);
+  return (
+    <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-b border-border pb-5">
+      <Meter label="Documents" used={documentsUsed} limit={documentsLimit} />
+      <Meter label="Quizzes" used={quizzesUsed} limit={quizzesLimit} />
+      <span className="text-xs text-muted-foreground">
+        <span className="tabular-nums">{topicsExtracted}</span> topics extracted &middot;{" "}
+        <span className="tabular-nums">
+          {averageScore !== null ? `${Math.round(averageScore)}% avg score` : "no scores yet"}
+        </span>
+      </span>
+    </div>
+  );
+}
+
+function Meter({ label, used, limit }: { label: string; used: number; limit: number }) {
+  const pct = limit > 0 ? Math.min((used / limit) * 100, 100) : 0;
+  // Near the cap the month is about to stop, so the bar says so.
+  const nearLimit = limit > 0 && used / limit >= 0.8;
 
   return (
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-      <div className="rounded-lg border border-border bg-card p-4">
-        <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Documents</p>
-        <p className="text-[28px] font-bold text-primary">
-          {documentsUsed}
-          <span className="text-base font-normal text-muted-foreground"> / {documentsLimit}</span>
-        </p>
+    <div className="flex items-center gap-2.5">
+      <div className="h-1 w-20 overflow-hidden rounded-full bg-muted" aria-hidden="true">
+        <div
+          className={cn("h-full rounded-full", nearLimit ? "bg-destructive" : "bg-accent")}
+          style={{ width: `${pct}%` }}
+        />
       </div>
-      <div className="rounded-lg border border-border bg-card p-4">
-        <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Quizzes Taken</p>
-        <p className="text-[28px] font-bold text-primary">
-          {quizzesUsed}
-          <span className="text-base font-normal text-muted-foreground"> / {quizzesLimit}</span>
-        </p>
-        <div className="w-full h-1 bg-muted rounded-full mt-1.5">
-          <div className="h-full bg-accent rounded-full" style={{ width: `${quizPct}%` }} />
-        </div>
-      </div>
-      <div className="rounded-lg border border-border bg-card p-4">
-        <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Avg Score</p>
-        <p className="text-[28px] font-bold text-primary">
-          {averageScore !== null ? `${Math.round(averageScore)}%` : "\u2014"}
-        </p>
-      </div>
-      <div className="rounded-lg border border-border bg-card p-4">
-        <p className="text-xs uppercase tracking-[1px] text-muted-foreground mb-0.5">Topics Extracted</p>
-        <p className="text-[28px] font-bold text-primary">{topicsExtracted}</p>
-      </div>
+      <span className="tabular-nums text-xs text-muted-foreground">
+        {label} {used}/{limit}
+      </span>
     </div>
   );
 }
