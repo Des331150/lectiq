@@ -6,8 +6,6 @@ import { TRUNCATION_REASON, type TruncationReason } from "@/lib/ai/limits";
 import { claimQuota, releaseQuota, QUOTA_EXCEEDED_MESSAGE } from "@/lib/quota";
 import { revalidatePath } from "next/cache";
 
-export const maxDuration = 300;
-
 const MAX_PDF_PAGES = 200;
 const SUPPORTED_TYPES = ["pdf", "pptx"] as const;
 
