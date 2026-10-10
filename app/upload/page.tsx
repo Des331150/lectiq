@@ -6,6 +6,7 @@ import { uploadDocument } from "./actions";
 import { createClient } from "@/lib/supabase/client";
 import { UploadZone } from "@/components/upload-zone";
 import { AppShell } from "@/components/app-shell";
+import { detectFileType, formatBytes, MAX_SIZE_BYTES, MAX_SIZE_MB } from "@/lib/upload-types";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -14,13 +15,22 @@ export default function UploadPage() {
   const handleUpload = async (file: File) => {
     setError(null);
 
-    const ext = file.name.endsWith(".pptx") ? "pptx" : "pdf";
-    if (!["pdf", "pptx"].includes(ext)) {
-      setError("Only PDF and PPTX files are supported");
+    // Derive the type from the file's own name and MIME type, and refuse
+    // anything unrecognised. This previously read
+    // `file.name.endsWith(".pptx") ? "pptx" : "pdf"`, which relabelled every
+    // other file as a PDF: a .docx arrived in storage named .pdf and then failed
+    // deep inside text extraction with a message about PDF internals.
+    const ext = detectFileType(file);
+    if (!ext) {
+      setError(
+        `"${file.name}" isn't a PDF or PowerPoint file. Only .pdf and .pptx can be read.`
+      );
       return;
     }
-    if (file.size > 40 * 1024 * 1024) {
-      setError("File must be under 40MB");
+    if (file.size > MAX_SIZE_BYTES) {
+      setError(
+        `"${file.name}" is ${formatBytes(file.size)}. The limit is ${MAX_SIZE_MB}MB.`
+      );
       return;
     }
 
@@ -28,6 +38,8 @@ export default function UploadPage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { setError("Not authenticated"); return; }
 
+    // The stored path keeps the real extension so the server never has to infer
+    // the type from the name.
     const filePath = `${user.id}/${crypto.randomUUID()}.${ext}`;
 
     const { error: uploadError } = await supabase.storage

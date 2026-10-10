@@ -7,7 +7,38 @@ import { claimQuota, releaseQuota, QUOTA_EXCEEDED_MESSAGE } from "@/lib/quota";
 import { revalidatePath } from "next/cache";
 
 const MAX_PDF_PAGES = 200;
-const SUPPORTED_TYPES = ["pdf", "pptx"] as const;
+
+/**
+ * The uploaded object's type is decided by its magic bytes, not by the caller's
+ * claim or the storage path. A file that claims "pdf" but is a .docx would
+ * otherwise reach pdfjs, fail with a message about PDF internals, and leave the
+ * user with an error that never mentions the real problem.
+ */
+function sniffType(buffer: ArrayBuffer): "pdf" | "pptx" | null {
+  const bytes = new Uint8Array(buffer.slice(0, 8));
+  // %PDF-
+  if (
+    bytes.length >= 5 &&
+    bytes[0] === 0x25 &&
+    bytes[1] === 0x50 &&
+    bytes[2] === 0x44 &&
+    bytes[3] === 0x46 &&
+    bytes[4] === 0x2d
+  ) {
+    return "pdf";
+  }
+  // ZIP container: OOXML files (.pptx, .docx, .xlsx) all begin "PK\x03\x04".
+  if (
+    bytes.length >= 4 &&
+    bytes[0] === 0x50 &&
+    bytes[1] === 0x4b &&
+    bytes[2] === 0x03 &&
+    bytes[3] === 0x04
+  ) {
+    return "pptx";
+  }
+  return null;
+}
 
 function slideNumber(fileName: string): number {
   const match = fileName.match(/slide(\d+)\.xml$/);
@@ -73,7 +104,7 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
 
-  if (!SUPPORTED_TYPES.includes(fileType as (typeof SUPPORTED_TYPES)[number])) {
+  if (fileType !== "pdf" && fileType !== "pptx") {
     return { error: "Only PDF and PPTX files are supported" };
   }
 
@@ -120,8 +151,34 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
     }
 
     const buffer = await fileData.arrayBuffer();
+
+    // The caller sends a type derived from the filename; the bytes are the
+    // authority. ZIP alone is ambiguous (docx and xlsx are also ZIP), so a
+    // claimed-pdf file that sniffs as a ZIP is refused here with a message that
+    // names the actual problem.
+    const actual = sniffType(buffer);
+    if (!actual) {
+      await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
+      await releaseQuota(user.id, "document");
+      await supabase.storage.from("Documents").remove([filePath]);
+      return {
+        error: `"${fileName}" is not a readable PDF or PowerPoint file. If it opens in another program, export it as PDF or .pptx and try again.`,
+      };
+    }
+    if (actual !== fileType) {
+      await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
+      await releaseQuota(user.id, "document");
+      await supabase.storage.from("Documents").remove([filePath]);
+      return {
+        error:
+          actual === "pptx" && fileType === "pdf"
+            ? `"${fileName}" is a PowerPoint file, not a PDF. Export it as PDF, or upload the .pptx directly.`
+            : `"${fileName}" is a PDF, not a PowerPoint file.`,
+      };
+    }
+
     const { text, pageCount, reasons: extractReasons } =
-      fileType === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
+      actual === "pdf" ? await extractTextFromPdf(buffer) : await extractTextFromPptx(buffer);
 
     if (!text.trim()) {
       await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
@@ -164,6 +221,10 @@ export async function uploadDocument(filePath: string, fileName: string, fileTyp
     if (readyError) throw new Error(`Failed to mark document ready: ${readyError.message}`);
 
     await supabase.storage.from("Documents").remove([filePath]);
+
+    // Correct the stored type now that the bytes have confirmed it, so the
+    // column reflects what was actually processed rather than the claim.
+    await supabase.from("documents").update({ file_type: actual }).eq("id", doc.id);
   } catch (err) {
     await supabase.from("documents").update({ status: "error" }).eq("id", doc.id);
     await releaseQuota(user.id, "document");
