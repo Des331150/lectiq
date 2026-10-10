@@ -32,6 +32,12 @@ yarn-error.log*
 .env*
 !.env.example
 
+# supabase CLI
+# Written by `supabase link` and `supabase start`: the linked project ref, the
+# pooler connection string and local container state. Machine-specific, and the
+# pooler URL is a connection credential even though it carries no password.
+/supabase/.temp/
+
 # vercel
 .vercel
 
