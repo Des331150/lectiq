@@ -6,6 +6,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { QUIZ_FORMATS, QUIZ_FORMAT_META, type QuizFormat } from "@/lib/quiz-formats";
+import { MAX_TOPIC_IDS } from "@/lib/topic-cap";
 import type { Topic } from "@/types/database";
 
 interface TopicSelectorProps {
@@ -14,18 +15,22 @@ interface TopicSelectorProps {
 }
 
 /**
- * Mirrors MAX_TOPIC_IDS in app/api/quiz/generate/route.ts. The server rejects
- * anything larger, so selecting more here produced a guaranteed failure after
- * the user had already chosen their topics.
+ * The selector's own selection ceiling, mirroring MAX_TOPIC_IDS in
+ * app/api/quiz/generate/route.ts so a user cannot assemble a request the server
+ * will refuse.
+ *
+ * This is not reachable in practice: extraction caps a document at 60 topics
+ * (MAX_TOPICS in lib/ai/extract-topics.ts), which is below the server's limit.
+ * It stays as defence in depth rather than as a UI state — the earlier version
+ * rendered a warning banner and disabled checkboxes for a condition no document
+ * can produce.
  */
-const MAX_TOPICS = 100;
+const MAX_TOPICS = MAX_TOPIC_IDS;
 
 export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
   const router = useRouter();
   const listId = useId();
 
-  // Previously every topic was preselected, so any document with more than 100
-  // topics opened in a state the server would refuse.
   const [selected, setSelected] = useState<Set<string>>(
     () => new Set(topics.slice(0, MAX_TOPICS).map((t) => t.id))
   );
@@ -88,13 +93,6 @@ export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
           />
         </div>
       </div>
-
-      {topics.length > MAX_TOPICS && (
-        <p className="mb-4 rounded-md border border-warning bg-warning-surface px-3 py-2 text-sm text-warning">
-          This document has {topics.length} topics. You can build a quiz from up to{" "}
-          {MAX_TOPICS} at a time, so the first {MAX_TOPICS} were selected for you.
-        </p>
-      )}
 
       <fieldset className="mb-6">
         <legend className="sr-only">Choose the topics to quiz me on</legend>

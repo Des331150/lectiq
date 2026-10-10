@@ -8,7 +8,6 @@ import { Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
 import { QuizDeadEnd } from "@/components/quiz-dead-end";
 import { formatLabel, isQuizFormat } from "@/lib/quiz-formats";
-import { MAX_TOPIC_IDS } from "@/lib/topic-cap";
 
 function NewQuizContent() {
   const router = useRouter();
@@ -59,26 +58,6 @@ function NewQuizContent() {
             message="A quiz needs at least one topic to draw questions from."
             primaryAction={{
               label: "Choose topics",
-              href: `/documents/${docId}/topics`,
-            }}
-            secondaryAction={{ label: "Back to dashboard", href: "/dashboard" }}
-          />
-        </div>
-      </AppShell>
-    );
-  }
-
-  // The URL is user-editable, so the cap is re-checked here rather than trusting
-  // the selector to have prevented it. The server enforces the same limit.
-  if (topicIds.length > MAX_TOPIC_IDS) {
-    return (
-      <AppShell title="New Quiz">
-        <div className="py-8">
-          <QuizDeadEnd
-            title="That's more topics than one quiz can use"
-            message={`You have ${topicIds.length} topics selected, and the limit is ${MAX_TOPIC_IDS}. Go back and select fewer.`}
-            primaryAction={{
-              label: "Choose fewer topics",
               href: `/documents/${docId}/topics`,
             }}
             secondaryAction={{ label: "Back to dashboard", href: "/dashboard" }}

@@ -52,7 +52,9 @@ export default async function HistoryPage() {
             <Link key={quiz.id} href={`/quizzes/${quiz.id}/results`}>
               <div className="flex items-center justify-between gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{title}</p>
+                  <p className="font-medium leading-snug line-clamp-2" title={title}>
+                  {title}
+                </p>
                   <p className="text-sm text-muted-foreground break-words">
                     {new Date(quiz.created_at).toLocaleDateString()}
                     {quiz.question_count != null && (

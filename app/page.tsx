@@ -47,12 +47,16 @@ export default function LandingPage() {
           </div>
           <div className="flex-1 w-full">
             <Image
-              src="/dashboard-screenshot.png"
-              alt="Lectiq dashboard"
+              src="/dashboard-hero-v2.png"
+              alt="Lectiq dashboard showing the study queue"
               width={1200}
               height={800}
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="rounded-xl border border-border w-full h-auto shadow-sm"
+              // The hero occupies the right half of a two-column grid above a
+              // 900px breakpoint, but the full width below it. The previous
+              // 50vw cap made the browser pick the 640w candidate for a slot
+              // that renders up to 1200px wide, so the image arrived upscaled.
+              sizes="(max-width: 900px) 100vw, 50vw"
+              className="h-auto w-full rounded-xl border border-border shadow-sm"
             />
           </div>
         </div>
