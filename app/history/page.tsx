@@ -3,6 +3,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { LinkButton } from "@/components/ui/link-button";
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
+import { formatLabel, isQuizFormat } from "@/lib/quiz-formats";
 
 // The `document:documents(title)` select returns a PostgREST array join, not an
 // object, so the row type is declared from the query rather than by hand.
@@ -14,6 +15,14 @@ type HistoryQuiz = {
   score: number | null;
   created_at: string;
   document: { title: string }[] | null;
+};
+
+/** Row status shown instead of a score for a quiz that isn't finished. */
+const STATUS_LABEL: Record<string, string> = {
+  generating: "Still building",
+  ready: "Not attempted",
+  completed: "Completed",
+  error: "Failed to build",
 };
 
 export default async function HistoryPage() {
@@ -45,16 +54,29 @@ export default async function HistoryPage() {
                 <div className="min-w-0 flex-1">
                   <p className="font-medium truncate">{title}</p>
                   <p className="text-sm text-muted-foreground break-words">
-                    {new Date(quiz.created_at).toLocaleDateString()} &middot;{" "}
-                    {quiz.question_count} questions &middot;{" "}
-                    <span className="capitalize">{quiz.format.replace("_", " + ")}</span>
+                    {new Date(quiz.created_at).toLocaleDateString()}
+                    {quiz.question_count != null && (
+                      <>
+                        {" · "}
+                        {quiz.question_count}{" "}
+                        {quiz.question_count === 1 ? "question" : "questions"}
+                      </>
+                    )}
+                    {isQuizFormat(quiz.format) && (
+                      <>
+                        {" · "}
+                        {formatLabel(quiz.format)}
+                      </>
+                    )}
                   </p>
                 </div>
-                <div className="text-right shrink-0">
+                <div className="shrink-0 text-right">
                   {quiz.score !== null ? (
                     <p className="text-lg font-bold">{Math.round(quiz.score)}%</p>
                   ) : (
-                    <p className="text-sm text-muted-foreground capitalize">{quiz.status}</p>
+                    <p className="text-sm text-muted-foreground">
+                      {STATUS_LABEL[quiz.status] ?? quiz.status}
+                    </p>
                   )}
                 </div>
               </div>

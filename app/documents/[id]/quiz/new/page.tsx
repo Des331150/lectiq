@@ -6,6 +6,9 @@ import { Button } from "@/components/ui/button";
 import { LinkButton } from "@/components/ui/link-button";
 import { Loader2 } from "lucide-react";
 import { AppShell } from "@/components/app-shell";
+import { QuizDeadEnd } from "@/components/quiz-dead-end";
+import { formatLabel, isQuizFormat } from "@/lib/quiz-formats";
+import { MAX_TOPIC_IDS } from "@/lib/topic-cap";
 
 function NewQuizContent() {
   const router = useRouter();
@@ -13,11 +16,8 @@ function NewQuizContent() {
   const params = useParams();
   const docId = params.id as string;
   const topicsParam = searchParams.get("topics") || "";
-  const FORMATS = ["mcq", "free_response", "both"] as const;
   const rawFormat = searchParams.get("format") ?? "mcq";
-  const formatParam = (FORMATS as readonly string[]).includes(rawFormat)
-    ? (rawFormat as (typeof FORMATS)[number])
-    : "mcq";
+  const formatParam = isQuizFormat(rawFormat) ? rawFormat : "mcq";
   const topicIds = topicsParam.split(",").filter(Boolean);
 
   const [generating, setGenerating] = useState(false);
@@ -36,6 +36,7 @@ function NewQuizContent() {
           format: formatParam,
         }),
       });
+      // A network drop or 5xx returns HTML, and res.json() would throw.
       const data = await res.json().catch(() => null);
       if (!res.ok) {
         setError(data?.error || `Generation failed (${res.status})`);
@@ -52,11 +53,36 @@ function NewQuizContent() {
   if (topicIds.length === 0) {
     return (
       <AppShell title="New Quiz">
-        <div className="text-center py-12">
-          <p className="text-muted-foreground mb-4">No topics selected</p>
-          <LinkButton href={`/documents/${docId}/topics`} variant="outline">
-            Go back and select topics
-          </LinkButton>
+        <div className="py-8">
+          <QuizDeadEnd
+            title="No topics selected"
+            message="A quiz needs at least one topic to draw questions from."
+            primaryAction={{
+              label: "Choose topics",
+              href: `/documents/${docId}/topics`,
+            }}
+            secondaryAction={{ label: "Back to dashboard", href: "/dashboard" }}
+          />
+        </div>
+      </AppShell>
+    );
+  }
+
+  // The URL is user-editable, so the cap is re-checked here rather than trusting
+  // the selector to have prevented it. The server enforces the same limit.
+  if (topicIds.length > MAX_TOPIC_IDS) {
+    return (
+      <AppShell title="New Quiz">
+        <div className="py-8">
+          <QuizDeadEnd
+            title="That's more topics than one quiz can use"
+            message={`You have ${topicIds.length} topics selected, and the limit is ${MAX_TOPIC_IDS}. Go back and select fewer.`}
+            primaryAction={{
+              label: "Choose fewer topics",
+              href: `/documents/${docId}/topics`,
+            }}
+            secondaryAction={{ label: "Back to dashboard", href: "/dashboard" }}
+          />
         </div>
       </AppShell>
     );
@@ -64,27 +90,44 @@ function NewQuizContent() {
 
   return (
     <AppShell title="New Quiz">
-      <div className="text-center py-12">
-        <h1 className="text-2xl font-bold mb-2">Ready to generate your quiz</h1>
-        <p className="text-muted-foreground mb-2">
-          {topicIds.length} topic{topicIds.length !== 1 ? "s" : ""} selected
+      <div className="py-8 text-center">
+        <h1 className="mb-2 text-2xl font-bold tracking-tight">Ready to generate your quiz</h1>
+        <p className="text-muted-foreground">
+          {topicIds.length} {topicIds.length === 1 ? "topic" : "topics"} selected
         </p>
-        <p className="text-muted-foreground mb-8 capitalize">
-          Format: {formatParam.replace("_", " ")}
+        <p className="mt-1 text-muted-foreground">
+          Format: {formatLabel(formatParam)}
         </p>
-        <Button size="lg" onClick={handleGenerate} disabled={generating}>
+
+        <Button size="lg" onClick={handleGenerate} disabled={generating} className="mt-8">
           {generating ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Generating questions...
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              Generating questions…
             </>
           ) : (
-            "Generate Quiz"
+            "Generate quiz"
           )}
         </Button>
+
         {error && (
-          <p className="mt-4 text-sm text-destructive">{error}</p>
+          <div className="mx-auto mt-6 max-w-md rounded-md border border-destructive bg-card px-4 py-3 text-left">
+            <p className="text-sm font-medium text-destructive">{error}</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              No quota was used. You can adjust your selection and try again.
+            </p>
+          </div>
         )}
+
+        <p className="mt-6">
+          <LinkButton
+            href={`/documents/${docId}/topics`}
+            variant="ghost"
+            className="text-muted-foreground"
+          >
+            Change selection
+          </LinkButton>
+        </p>
       </div>
     </AppShell>
   );
@@ -92,7 +135,13 @@ function NewQuizContent() {
 
 export default function NewQuizPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center bg-background"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-background">
+          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+        </div>
+      }
+    >
       <NewQuizContent />
     </Suspense>
   );

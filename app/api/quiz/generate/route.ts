@@ -8,6 +8,7 @@ import {
   recordQuestionsGenerated,
   QUOTA_EXCEEDED_MESSAGE,
 } from "@/lib/quota";
+import { MAX_TOPIC_IDS } from "@/lib/topic-cap";
 
 export const maxDuration = 300;
 
@@ -15,7 +16,6 @@ const FORMATS = ["mcq", "free_response", "both"] as const;
 type QuizFormat = (typeof FORMATS)[number];
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const MAX_TOPIC_IDS = 100;
 
 function isFormat(value: unknown): value is QuizFormat {
   return typeof value === "string" && (FORMATS as readonly string[]).includes(value);

@@ -1,38 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { useId, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
+import { Select } from "@/components/ui/select";
+import { QUIZ_FORMATS, QUIZ_FORMAT_META, type QuizFormat } from "@/lib/quiz-formats";
 import type { Topic } from "@/types/database";
-import type { QuestionFormat } from "@/types";
 
 interface TopicSelectorProps {
   topics: Topic[];
   documentId: string;
 }
 
+/**
+ * Mirrors MAX_TOPIC_IDS in app/api/quiz/generate/route.ts. The server rejects
+ * anything larger, so selecting more here produced a guaranteed failure after
+ * the user had already chosen their topics.
+ */
+const MAX_TOPICS = 100;
+
 export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
   const router = useRouter();
-  const [selected, setSelected] = useState<Set<string>>(new Set(topics.map((t) => t.id)));
-  const [format, setFormat] = useState<QuestionFormat>("mcq");
+  const listId = useId();
+
+  // Previously every topic was preselected, so any document with more than 100
+  // topics opened in a state the server would refuse.
+  const [selected, setSelected] = useState<Set<string>>(
+    () => new Set(topics.slice(0, MAX_TOPICS).map((t) => t.id))
+  );
+  const [format, setFormat] = useState<QuizFormat>("mcq");
+
+  const atCap = selected.size >= MAX_TOPICS;
 
   const toggleTopic = (id: string) => {
-    const next = new Set(selected);
-    if (next.has(id)) next.delete(id);
-    else next.add(id);
-    setSelected(next);
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        // Silently ignoring a click past the cap reads as a broken control, so
+        // the checkbox is disabled instead and the reason is shown in the row.
+        if (next.size >= MAX_TOPICS) return prev;
+        next.add(id);
+      }
+      return next;
+    });
   };
 
-  const selectAll = () => setSelected(new Set(topics.map((t) => t.id)));
+  const selectAll = () =>
+    setSelected(new Set(topics.slice(0, MAX_TOPICS).map((t) => t.id)));
   const deselectAll = () => setSelected(new Set());
 
   const handleGenerate = () => {
@@ -42,57 +59,93 @@ export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
     router.push(`/documents/${documentId}/quiz/new?${params.toString()}`);
   };
 
+  const meta = QUIZ_FORMAT_META[format];
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={selectAll}>
-            Select All
+            Select all
           </Button>
           <Button variant="outline" size="sm" onClick={deselectAll}>
-            Deselect All
+            Deselect all
           </Button>
         </div>
-        <Select value={format} onValueChange={(v) => setFormat(v as QuestionFormat)}>
-          <SelectTrigger className="w-44">
-            <SelectValue placeholder="Question format" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="mcq">Multiple Choice</SelectItem>
-            <SelectItem value="free_response">Free Response</SelectItem>
-            <SelectItem value="both">Mixed</SelectItem>
-          </SelectContent>
-        </Select>
+        <Select
+          value={format}
+          onValueChange={setFormat}
+          label="Question format"
+          hint={meta.description}
+          className="w-full sm:w-64"
+          options={QUIZ_FORMATS.map((f) => ({
+            value: f,
+            label: QUIZ_FORMAT_META[f].label,
+          }))}
+        />
       </div>
 
-      <div className="space-y-2 mb-6">
-        {topics.map((topic) => (
-          <div
-            key={topic.id}
-            className={`flex items-start gap-3 rounded-lg border p-3 cursor-pointer transition-colors ${
-              selected.has(topic.id) ? "border-primary/50 bg-primary/5" : ""
-            }`}
-            onClick={() => toggleTopic(topic.id)}
-          >
-            <Checkbox
-              checked={selected.has(topic.id)}
-              onCheckedChange={() => toggleTopic(topic.id)}
-              className="mt-0.5"
-            />
-            <div className="flex-1">
-              <Label className="font-medium cursor-pointer">{topic.title}</Label>
-              <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{topic.content}</p>
-            </div>
-          </div>
-        ))}
-      </div>
+      {topics.length > MAX_TOPICS && (
+        <p className="mb-4 rounded-md border border-warning bg-warning-surface px-3 py-2 text-sm text-warning">
+          This document has {topics.length} topics. You can build a quiz from up to{" "}
+          {MAX_TOPICS} at a time, so the first {MAX_TOPICS} were selected for you.
+        </p>
+      )}
+
+      <fieldset className="mb-6">
+        <legend className="sr-only">Choose the topics to quiz me on</legend>
+        <ul className="space-y-2" aria-describedby={`${listId}-count`}>
+          {topics.map((topic) => {
+            const checkboxId = `${listId}-${topic.id}`;
+            const checked = selected.has(topic.id);
+            const disabled = !checked && atCap;
+            return (
+              <li key={topic.id}>
+                <div
+                  className={`flex items-start gap-3 rounded-lg border p-3 transition-colors ${
+                    checked ? "border-primary/50 bg-primary/5" : "border-border bg-card"
+                  } ${disabled ? "opacity-60" : ""}`}
+                >
+                  <Checkbox
+                    id={checkboxId}
+                    checked={checked}
+                    disabled={disabled}
+                    onCheckedChange={() => toggleTopic(topic.id)}
+                    className="mt-0.5"
+                  />
+                  <div className="min-w-0 flex-1">
+                    {/* The label points at the checkbox by id. It previously had
+                        no htmlFor and the checkbox had no id, so clicking the
+                        topic name did nothing at all. */}
+                    <label
+                      htmlFor={checkboxId}
+                      className={`block font-medium ${disabled ? "" : "cursor-pointer"}`}
+                    >
+                      {topic.title}
+                    </label>
+                    <p className="mt-1 line-clamp-2 text-sm text-muted-foreground">
+                      {topic.content}
+                    </p>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </fieldset>
+
+      <p id={`${listId}-count`} className="mb-2 text-sm text-muted-foreground">
+        {selected.size} of {topics.length}{" "}
+        {topics.length === 1 ? "topic" : "topics"} selected
+      </p>
 
       <Button
         className="w-full"
         disabled={selected.size === 0}
         onClick={handleGenerate}
       >
-        Generate Quiz ({selected.size} topic{selected.size !== 1 ? "s" : ""})
+        Generate quiz ({selected.size}{" "}
+        {selected.size === 1 ? "topic" : "topics"})
       </Button>
     </div>
   );
