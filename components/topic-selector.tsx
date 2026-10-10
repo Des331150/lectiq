@@ -63,7 +63,7 @@ export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={selectAll}>
             Select all
@@ -72,17 +72,21 @@ export function TopicSelector({ topics, documentId }: TopicSelectorProps) {
             Deselect all
           </Button>
         </div>
-        <Select
-          value={format}
-          onValueChange={setFormat}
-          label="Question format"
-          hint={meta.description}
-          className="w-full sm:w-64"
-          options={QUIZ_FORMATS.map((f) => ({
-            value: f,
-            label: QUIZ_FORMAT_META[f].label,
-          }))}
-        />
+        {/* The label and hint sit inside the control's own column, so the
+            buttons stay aligned with the top of the select rather than being
+            stretched against a full-width flex row. */}
+        <div className="w-full sm:w-72">
+          <Select
+            value={format}
+            onValueChange={setFormat}
+            label="Question format"
+            hint={meta.description}
+            options={QUIZ_FORMATS.map((f) => ({
+              value: f,
+              label: QUIZ_FORMAT_META[f].label,
+            }))}
+          />
+        </div>
       </div>
 
       {topics.length > MAX_TOPICS && (
