@@ -91,14 +91,8 @@ export function AppShell({ children, title, email }: AppShellProps) {
             </Link>
           </div>
           <SidebarNav variant="dark" className="flex-1 py-2 overflow-y-auto" />
-          <div className="px-4 py-4 border-t border-white/10 space-y-3">
-            <p className="text-xs text-white/50 truncate">{resolvedEmail || "Loading..."}</p>
-            <button
-              onClick={handleLogout}
-              className="text-xs text-white/50 hover:text-white/80 transition-colors min-h-[44px] inline-flex items-center"
-            >
-              Log out
-            </button>
+          <div className="px-4 py-4 border-t border-white/10">
+            <UserMenu email={resolvedEmail ?? ""} onLogout={handleLogout} variant="dark" />
           </div>
         </aside>
 

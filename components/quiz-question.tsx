@@ -74,14 +74,9 @@ export function QuizQuestionDisplay({
 
   return (
     <div className="rounded-lg border bg-card p-5 sm:p-6">
-      <div className="mb-3 flex flex-wrap items-baseline gap-x-3 gap-y-1">
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          Question {index + 1} of {total}
-        </p>
-        <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-          {TYPE_LABEL[question.type]}
-        </p>
-      </div>
+      <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+        {TYPE_LABEL[question.type]}
+      </p>
 
       <h2 className="mb-5 text-lg font-semibold leading-snug tracking-tight break-words">
         {question.question_text}

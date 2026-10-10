@@ -18,8 +18,15 @@ const FILTERS: { id: Filter; label: (count: number | null) => string }[] = [
   { id: "correct", label: () => "Correct only" },
 ];
 
-/** A free-response answer scoring below this counts as needing review. */
-const WEAK_SCORE = 60;
+/**
+ * A free-response answer scoring below this counts as needing review.
+ *
+ * Set at 70 rather than 60 because the review list is meant to be short and
+ * actionable. At 60 an answer the model rated 68% — genuinely thin — was
+ * filed under "correct" and never surfaced, which is the opposite of what the
+ * filter is for.
+ */
+const WEAK_SCORE = 70;
 
 type ReviewItem = {
   question: QuizQuestion;

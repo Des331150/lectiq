@@ -108,7 +108,7 @@ export function AnswerReview({ item, position, defaultOpen }: AnswerReviewProps)
               <Verdict item={item} />
             </span>
             <ChevronDown
-              className={`h-4 w-4 text-muted-foreground transition-transform ${
+              className={`h-4 w-4 shrink-0 text-muted-foreground transition-transform ${
                 open ? "rotate-180" : ""
               }`}
               aria-hidden="true"

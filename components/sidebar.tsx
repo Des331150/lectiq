@@ -69,11 +69,13 @@ export function UserMenu({ email, onLogout, className, variant = "light" }: User
   const textClass =
     variant === "dark" ? "text-white/50 hover:text-white/80" : "text-muted-foreground hover:text-foreground";
   return (
-    <div className={className}>
-      <p className="text-xs truncate">{email || "Loading..."}</p>
+    <div className={cn("flex flex-col gap-1", className)}>
+      <p className="truncate text-xs text-white/50" title={email || undefined}>
+        {email || "Loading..."}
+      </p>
       <button
         onClick={onLogout}
-        className={`text-xs transition-colors min-h-[44px] inline-flex items-center ${textClass}`}
+        className={`inline-flex min-h-[44px] items-center text-xs transition-colors ${textClass}`}
       >
         Log out
       </button>

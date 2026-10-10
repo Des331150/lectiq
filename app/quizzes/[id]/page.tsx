@@ -206,11 +206,44 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
 
       {phase.kind === "ready" && currentQuestion && (
         <>
-          <h1 ref={headingRef} tabIndex={-1} className="sr-only">
-            Question {current + 1} of {questions.length}
-          </h1>
+          <header className="mb-4">
+            {/* Visually hidden so the question itself is the page's focal
+                point, but present so screen readers announce the move between
+                questions — focus lands here on every change. */}
+            <h1 ref={headingRef} tabIndex={-1} className="sr-only">
+              Question {current + 1} of {questions.length}
+            </h1>
 
-          <div className="mb-1 flex items-center justify-between gap-3">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <p className="text-sm font-medium text-foreground">
+                Question {current + 1}{" "}
+                <span className="text-muted-foreground">of {questions.length}</span>
+              </p>
+              <p className="text-sm text-muted-foreground">
+                {answeredIds.size} of {questions.length} answered
+              </p>
+            </div>
+
+            <div
+              className="h-1.5 w-full overflow-hidden rounded-full bg-muted"
+              role="progressbar"
+              aria-valuemin={0}
+              aria-valuemax={questions.length}
+              aria-valuenow={answeredIds.size}
+              aria-label="Questions answered"
+            >
+              <div
+                className="h-full rounded-full bg-accent transition-[width] duration-200"
+                style={{
+                  width: `${
+                    questions.length > 0 ? (answeredIds.size / questions.length) * 100 : 0
+                  }%`,
+                }}
+              />
+            </div>
+          </header>
+
+          <div className="mb-5 flex justify-end">
             <label className="flex cursor-pointer items-center gap-2 text-sm text-muted-foreground">
               <input
                 type="checkbox"
@@ -220,25 +253,6 @@ export default function QuizPage({ params }: { params: Promise<{ id: string }> }
               />
               Skip to next after answering
             </label>
-            <p className="text-sm text-muted-foreground">
-              {answeredIds.size} of {questions.length} answered
-            </p>
-          </div>
-
-          <div
-            className="mb-6 h-1.5 w-full overflow-hidden rounded-full bg-muted"
-            role="progressbar"
-            aria-valuemin={0}
-            aria-valuemax={questions.length}
-            aria-valuenow={answeredIds.size}
-            aria-label="Questions answered"
-          >
-            <div
-              className="h-full rounded-full bg-accent transition-[width] duration-200"
-              style={{
-                width: `${questions.length > 0 ? (answeredIds.size / questions.length) * 100 : 0}%`,
-              }}
-            />
           </div>
 
           <QuizQuestionDisplay
