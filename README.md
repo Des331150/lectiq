@@ -77,6 +77,32 @@ Or paste each file into the Supabase dashboard SQL editor, in order:
 | `00006_documents_processing_warning.sql` | Adds `documents.processing_warnings` for structured truncation notices |
 | `00007_drop_subscription_fields.sql` | Removes the now-unused billing columns |
 | `00008_quota_and_answer_integrity.sql` | Deduplicates `quiz_answers` and enforces one answer per question; adds the `quota_limits` table plus atomic `claim_quota` / `release_quota` / `record_questions` functions; revokes direct client writes to `usage_records` and `quizzes` |
+| `00009_answer_feedback.sql` | Adds `quiz_questions.explanation` and the `quiz_answers.source_quote` / `what_was_right` / `what_was_missing` columns, so the results screen can explain *why* an answer was wrong and cite the line of the document that settles it. All nullable — rows predating it render a fallback rather than an empty section |
+
+#### Verifying a replay locally
+
+Migrations applied by pasting into the dashboard are invisible to the CLI, so a
+later `supabase db push` would replay every file. Record them as applied once,
+without running them:
+
+```bash
+supabase link --project-ref your-project-ref
+supabase migration repair --status applied 00001 00002 00003 00004 00005 00006 00007 00008 00009
+supabase migration list --linked   # every version now appears under Remote
+supabase db push --dry-run        # expect: Remote database is up to date
+```
+
+`repair` records what you assert; it does not verify it. To actually prove the
+files replay cleanly, build the schema from empty against a throwaway database:
+
+```bash
+supabase start          # needs Docker; set DOCKER_HOST for podman
+supabase db reset       # drops, re-applies all migrations from 00001
+```
+
+`supabase start` may report `pg_meta` / `studio` containers as unhealthy under
+podman. That does not affect the database — apply the files directly with
+`psql` to confirm the schema instead.
 
 The `users` table is populated automatically by a `SECURITY DEFINER` trigger on
 `auth.users` insert. No backfill needed after signup.
