@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lectiq Upload UI Prototypes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --background: #F5F2EB;
+    --foreground: #2C1810;
+    --card: #FFFFFF;
+    --card-surface: #E8E2D4;
+    --primary: #1B2A3B;
+    --primary-hover: #263C54;
+    --accent: #C4956A;
+    --muted: #73685C;
+    --muted-bg: #E8E2D4;
+    --border: #D6CEBB;
+    --destructive: #D32F2F;
+    --destructive-bg: #FDE8E8;
+    --success: #2E7D32;
+    --radius: 8px;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0;
+  }
+  .app-container {
+    display: flex;
+    min-height: 100vh;
+  }
+  /* Exact dark navy sidebar matching components/app-shell.tsx */
+  .sidebar {
+    width: 208px; /* w-52 */
+    background: #1B2A3B;
+    color: #F5F2EB;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  .brand-area {
+    padding: 20px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .brand {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    color: #F5F2EB;
+    text-decoration: none;
+  }
+  .nav-list {
+    flex: 1;
+    padding: 8px 0;
+  }
+  .nav-item {
+    display: block;
+    padding: 12px 16px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-item:hover {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+  }
+  .nav-item.active {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    font-weight: 500;
+  }
+  .user-footer {
+    padding: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  .user-email {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 4px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .logout-btn {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.5);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+  }
+  .logout-btn:hover {
+    color: rgba(255, 255, 255, 0.8);
+  }
+
+  .main-content {
+    flex: 1;
+    padding: 36px 40px;
+    max-width: 900px;
+  }
+  .header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+  }
+  .page-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--foreground);
+    margin-bottom: 4px;
+  }
+  .page-desc {
+    font-size: 14px;
+    color: var(--muted);
+  }
+  .quota-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--muted);
+  }
+  .quota-badge strong {
+    color: var(--foreground);
+  }
+  .quota-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+  .dropzone {
+    border: 2px dashed var(--border);
+    background: rgba(255, 255, 255, 0.4);
+    border-radius: var(--radius);
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .dropzone:hover {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.8);
+  }
+  .icon-box {
+    width: 48px;
+    height: 48px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    color: var(--primary);
+  }
+  .prompt-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-bottom: 4px;
+  }
+  .prompt-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 16px;
+  }
+  .tags {
+    display: inline-flex;
+    gap: 8px;
+  }
+  .pill {
+    background: var(--muted-bg);
+    color: var(--foreground);
+    padding: 3px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .tips-card {
+    margin-top: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .tips-title {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--foreground);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .tips-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .tip-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+  .tip-check {
+    color: var(--accent);
+    font-weight: bold;
+    font-size: 14px;
+  }
+  .tip-item strong {
+    color: var(--foreground);
+  }
+
+  /* Staged card */
+  .staged-box {
+    max-width: 440px;
+    margin: 0 auto;
+    text-align: left;
+  }
+  .staged-file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(44, 24, 16, 0.04);
+  }
+  .staged-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .file-badge-pdf {
+    width: 38px;
+    height: 38px;
+    background: #FEECEB;
+    color: #D32F2F;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+  }
+  .staged-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--foreground);
+  }
+  .staged-size {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .btn-remove {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 16px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+  }
+  .staged-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 14px;
+  }
+  .staged-hint {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #F5F2EB;
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+
+  /* Stepper */
+  .stepper-card {
+    max-width: 580px;
+    margin: 40px auto;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(44, 24, 16, 0.04);
+  }
+  .kicker {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+  }
+  .stepper-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-bottom: 6px;
+  }
+  .stepper-sub {
+    font-size: 13.5px;
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .timeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    max-width: 440px;
+    margin: 0 auto 28px;
+  }
+  .t-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .t-circle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .t-circle.done {
+    background: var(--success);
+    color: #fff;
+  }
+  .t-circle.active {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 0 0 4px rgba(27, 42, 59, 0.12);
+  }
+  .t-circle.pending {
+    background: var(--muted-bg);
+    color: var(--muted);
+  }
+  .t-label {
+    font-size: 11.5px;
+    font-weight: 600;
+  }
+  .t-label.active { color: var(--primary); }
+  .t-label.muted { color: var(--muted); }
+  .t-line {
+    flex: 1;
+    height: 2px;
+    margin-bottom: 20px;
+  }
+  .t-line.done { background: var(--success); }
+  .t-line.pending { background: var(--border); }
+  .live-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: #FAF8F5;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+  }
+
+  @media (max-width: 600px) {
+    .app-container { flex-direction: column; }
+    .sidebar { display: none; }
+    .main-content { padding: 20px 16px; }
+    .tips-grid { grid-template-columns: 1fr; }
+    .header-row { flex-direction: column; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+    <div style="background:#1B2A3B; color:#F5F2EB; padding:12px 24px; display:flex; justify-content:space-between; align-items:center;">
+      <div style="font-weight:700; font-size:16px;">Lectiq Prototype Showcase &bull; Upload &amp; Extraction Flow</div>
+      <div style="font-size:13px; color:#C4956A;">Interactive Visual Artifact</div>
+    </div>
+    <div style="padding: 20px;">
+      <h2 style="font-size:16px; margin: 20px 0 10px; color:#1B2A3B;">State 1: Initial Upload Screen (Idle &amp; Dropzone)</h2>
+      <div style="border: 1px solid #D6CEBB; border-radius: 8px; overflow: hidden; margin-bottom: 30px;">
+        
+<div class="app-container">
+  
+  <div class="sidebar">
+    <div class="brand-area">
+      <a href="#" class="brand">Lectiq</a>
+    </div>
+    <div class="nav-list">
+      <a href="#" class="nav-item ">Dashboard</a>
+      <a href="#" class="nav-item active">Upload</a>
+      <a href="#" class="nav-item ">History</a>
+    </div>
+    <div class="user-footer">
+      <div class="user-email">student@university.edu</div>
+      <button class="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header-row">
+      <div>
+        <h1 class="page-title">Upload Lecture Material</h1>
+        <p class="page-desc">Upload course slides or notes. We'll extract topics so you can generate custom quizzes.</p>
+      </div>
+      <div class="quota-badge">
+        <div class="quota-dot"></div>
+        <span>Documents: <strong>3</strong> / 10</span>
+      </div>
+    </div>
+
+    <div class="dropzone">
+      <div class="icon-box">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="17 8 12 3 7 8"></polyline>
+          <line x1="12" y1="3" x2="12" y2="15"></line>
+        </svg>
+      </div>
+      <div class="prompt-title">Drag & drop lecture slides or click to browse</div>
+      <div class="prompt-sub">Maximum file size: 40MB &bull; Text-based files only</div>
+      <div class="tags">
+        <span class="pill">PDF</span>
+        <span class="pill">PPTX</span>
+      </div>
+    </div>
+
+    <div class="tips-card">
+      <div class="tips-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>Tips for Best Quiz Generation</span>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Text-based slides:</strong> Lectures with structured bullet points and outlines generate the most accurate questions.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Selectable text:</strong> Ensure text can be highlighted in your PDF viewer. Scanned images without OCR cannot be processed.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Size &amp; Format:</strong> Supports .pdf and .pptx files up to 40MB. For massive decks, export just relevant chapters.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Frictionless review:</strong> Topics are extracted first so you can select exactly what concepts to test.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+
+      <h2 style="font-size:16px; margin: 20px 0 10px; color:#1B2A3B;">State 2: Staged File Card (Verification before extraction)</h2>
+      <div style="border: 1px solid #D6CEBB; border-radius: 8px; overflow: hidden; margin-bottom: 30px;">
+        
+<div class="app-container">
+  
+  <div class="sidebar">
+    <div class="brand-area">
+      <a href="#" class="brand">Lectiq</a>
+    </div>
+    <div class="nav-list">
+      <a href="#" class="nav-item ">Dashboard</a>
+      <a href="#" class="nav-item active">Upload</a>
+      <a href="#" class="nav-item ">History</a>
+    </div>
+    <div class="user-footer">
+      <div class="user-email">student@university.edu</div>
+      <button class="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="header-row">
+      <div>
+        <h1 class="page-title">Upload Lecture Material</h1>
+        <p class="page-desc">Upload course slides or notes. We'll extract topics so you can generate custom quizzes.</p>
+      </div>
+      <div class="quota-badge">
+        <div class="quota-dot"></div>
+        <span>Documents: <strong>3</strong> / 10</span>
+      </div>
+    </div>
+
+    <div class="dropzone" style="background: var(--card); border-style: solid; border-color: rgba(27, 42, 59, 0.4);">
+      <div class="staged-box">
+        <div class="staged-file-card">
+          <div class="staged-meta">
+            <div class="file-badge-pdf">PDF</div>
+            <div>
+              <div class="staged-name">BIOL_302_Cellular_Respiration.pdf</div>
+              <div class="staged-size">4.8MB &bull; PDF Document</div>
+            </div>
+          </div>
+          <button class="btn-remove" title="Remove">&times;</button>
+        </div>
+        <div class="staged-actions">
+          <span class="staged-hint">Drop another file to replace</span>
+          <button class="btn-primary">
+            Extract Topics &rarr;
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tips-card">
+      <div class="tips-title">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#C4956A" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="16" x2="12" y2="12"></line>
+          <line x1="12" y1="8" x2="12.01" y2="8"></line>
+        </svg>
+        <span>Tips for Best Quiz Generation</span>
+      </div>
+      <div class="tips-grid">
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Text-based slides:</strong> Lectures with structured bullet points and outlines generate the most accurate questions.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Selectable text:</strong> Ensure text can be highlighted in your PDF viewer. Scanned images without OCR cannot be processed.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Size &amp; Format:</strong> Supports .pdf and .pptx files up to 40MB. For massive decks, export just relevant chapters.</div>
+        </div>
+        <div class="tip-item">
+          <span class="tip-check">&check;</span>
+          <div><strong>Frictionless review:</strong> Topics are extracted first so you can select exactly what concepts to test.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+
+      <h2 style="font-size:16px; margin: 20px 0 10px; color:#1B2A3B;">State 3: 3-Phase Topic Extraction Stepper</h2>
+      <div style="border: 1px solid #D6CEBB; border-radius: 8px; overflow: hidden; margin-bottom: 30px;">
+        
+<div class="app-container">
+  
+  <div class="sidebar">
+    <div class="brand-area">
+      <a href="#" class="brand">Lectiq</a>
+    </div>
+    <div class="nav-list">
+      <a href="#" class="nav-item ">Dashboard</a>
+      <a href="#" class="nav-item active">Upload</a>
+      <a href="#" class="nav-item ">History</a>
+    </div>
+    <div class="user-footer">
+      <div class="user-email">student@university.edu</div>
+      <button class="logout-btn">Log out</button>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <div class="stepper-card">
+      <div class="kicker">AI Processing</div>
+      <h2 class="stepper-title">Analyzing &ldquo;BIOL_302_Cellular_Respiration.pdf&rdquo;</h2>
+      <p class="stepper-sub">Extracting core study topics so you can generate custom practice quizzes.</p>
+
+      <div class="timeline">
+        <div class="t-node">
+          <div class="t-circle done">&#10003;</div>
+          <span class="t-label">Uploaded</span>
+        </div>
+        <div class="t-line done"></div>
+        <div class="t-node">
+          <div class="t-circle active">2</div>
+          <span class="t-label active">Extracting</span>
+        </div>
+        <div class="t-line pending"></div>
+        <div class="t-node">
+          <div class="t-circle pending">3</div>
+          <span class="t-label muted">Ready</span>
+        </div>
+      </div>
+
+      <div class="live-pill">
+        <div class="pulse-dot"></div>
+        <span>Analyzing key terms, definitions, and slide takeaways... (8s)</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+      </div>
+    </div>
+  
+</body>
+</html>

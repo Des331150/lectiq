@@ -30,7 +30,7 @@ export default async function TopicsPage({
     if (processing === "true") {
       return (
         <AppShell title="Processing">
-          <ProcessingStatus documentId={id} />
+          <ProcessingStatus documentId={id} documentTitle={doc.title} />
         </AppShell>
       );
     }
