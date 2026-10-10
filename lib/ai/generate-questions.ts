@@ -6,6 +6,7 @@ interface GeneratedQuestion {
   options?: { label: string; text: string }[];
   correct_answer?: string;
   model_answer?: string;
+  explanation?: string;
   topic_id: string | null;
 }
 
@@ -16,6 +17,7 @@ interface ParsedQuestion {
   options?: Array<string | { label?: string; text?: string }>;
   correct_answer?: string;
   model_answer?: string;
+  explanation?: string;
 }
 
 interface TopicInput {
@@ -95,10 +97,12 @@ based on the provided topic content.
 For MCQ questions, include: question_text, type ("mcq"), options (array of {label: "A"/"B"/"C"/"D", text: string}), correct_answer (the correct label).
 For free response questions, include: question_text, type ("free_response"), model_answer (the expected answer).
 
+For EVERY question, include an "explanation" field: one or two sentences stating WHY the correct answer is correct, grounded in the source content. This is shown to the student after they answer, so explain the reasoning rather than restating the answer. For MCQ, also briefly note what makes the most tempting wrong option tempting.
+
 For EVERY question, include a "topic" field set to the EXACT title of the topic it is based on (one of the TOPIC: labels above).
 
 Return ONLY a JSON object with this structure:
-{ "questions": [{ "type": "mcq"|"free_response", "topic": "...", "question_text": "...", "options"?: [...], "correct_answer"?: "...", "model_answer"?: "..." }] }`;
+{ "questions": [{ "type": "mcq"|"free_response", "topic": "...", "question_text": "...", "options"?: [...], "correct_answer"?: "...", "model_answer"?: "...", "explanation": "..." }] }`;
 
   const userPrompt = `Generate questions based on these topics:\n\n${topicsText}\n\nGenerate as many distinct, high-quality questions as the source content warrants — do not undershoot. Cover all the material provided.`;
 
@@ -119,6 +123,7 @@ Return ONLY a JSON object with this structure:
       options: q.options ? q.options.map(toOption) : undefined,
       correct_answer: q.correct_answer,
       model_answer: q.model_answer,
+      explanation: q.explanation,
       topic_id: matchTopicId(q.topic, batch),
     }));
 

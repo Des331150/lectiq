@@ -1,8 +1,20 @@
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
+
+// The `document:documents(title)` select returns a PostgREST array join, not an
+// object, so the row type is declared from the query rather than by hand.
+type HistoryQuiz = {
+  id: string;
+  format: string;
+  status: string;
+  question_count: number | null;
+  score: number | null;
+  created_at: string;
+  document: { title: string }[] | null;
+};
 
 export default async function HistoryPage() {
   const supabase = await createServerSupabaseClient();
@@ -25,11 +37,13 @@ export default async function HistoryPage() {
 
       {quizzes && quizzes.length > 0 ? (
         <div className="space-y-2">
-          {quizzes.map((quiz: any) => (
+          {quizzes.map((quiz: HistoryQuiz) => {
+            const title = quiz.document?.[0]?.title || "Unknown document";
+            return (
             <Link key={quiz.id} href={`/quizzes/${quiz.id}/results`}>
               <div className="flex items-center justify-between gap-3 rounded-lg border p-4 hover:bg-muted/50 transition-colors">
                 <div className="min-w-0 flex-1">
-                  <p className="font-medium truncate">{quiz.document?.title || "Unknown document"}</p>
+                  <p className="font-medium truncate">{title}</p>
                   <p className="text-sm text-muted-foreground break-words">
                     {new Date(quiz.created_at).toLocaleDateString()} &middot;{" "}
                     {quiz.question_count} questions &middot;{" "}
@@ -45,14 +59,15 @@ export default async function HistoryPage() {
                 </div>
               </div>
             </Link>
-          ))}
+            );
+          })}
         </div>
       ) : (
         <div className="text-center py-12 border rounded-lg bg-muted/30">
           <p className="text-muted-foreground mb-4">No quizzes taken yet</p>
-          <Link href="/upload">
-            <Button variant="outline">Upload a document to get started</Button>
-          </Link>
+          <LinkButton href="/upload" variant="outline">
+            Upload a document to get started
+          </LinkButton>
         </div>
       )}
     </AppShell>

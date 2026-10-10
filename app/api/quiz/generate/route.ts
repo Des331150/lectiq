@@ -117,6 +117,7 @@ export async function POST(request: Request) {
       options: q.options || null,
       correct_answer: q.correct_answer || null,
       model_answer: q.model_answer || null,
+      explanation: q.explanation || null,
       topic_id: q.topic_id,
       position: i,
     }));

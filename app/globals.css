@@ -23,6 +23,20 @@
     --accent-foreground: 20 15% 12%;
     --destructive: 0 70% 55%;
     --destructive-foreground: 0 0% 98%;
+    /* Results colours. The results screen previously hardcoded green-600 /
+       yellow-600 / red-600, which measured 2.95:1 against --card — under the
+       4.5:1 AA floor for the small text they were used on. These are tuned to
+       clear AA on both --background and --card while staying inside the Warm
+       Academic palette. */
+    --success: 152 45% 26%;
+    --success-foreground: 40 20% 98%;
+    --success-surface: 150 30% 93%;
+    --warning: 32 80% 28%;
+    --warning-foreground: 40 20% 98%;
+    --warning-surface: 40 55% 93%;
+    --info: 215 40% 30%;
+    --info-foreground: 40 20% 98%;
+    --info-surface: 210 35% 94%;
     --border: 40 12% 82%;
     --input: 40 12% 82%;
     --ring: 215 40% 17%;

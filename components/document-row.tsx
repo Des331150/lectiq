@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { LoaderCircle, Trash2, TriangleAlert } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { deleteDocument } from "@/app/dashboard/actions";
 import type { Document } from "@/types/database";
 import {
@@ -80,22 +80,19 @@ export function DocumentRow({
 
       <div className="flex shrink-0 items-center gap-1">
         {stage !== "blocked" && (
-          <Link href={`/documents/${document.id}/topics`}>
-            <Button size="sm" variant="ghost" className="min-h-[44px]">
-              Topics
-            </Button>
-          </Link>
+          <LinkButton href={`/documents/${document.id}/topics`} size="sm" variant="ghost" className="min-h-[44px]">
+            Topics
+          </LinkButton>
         )}
         {action.href && (
-          <Link href={action.href}>
-            <Button
-              size="sm"
-              variant={stage === "not_started" ? "default" : "outline"}
-              className="min-h-[44px]"
-            >
-              {action.label}
-            </Button>
-          </Link>
+          <LinkButton
+            href={action.href}
+            size="sm"
+            variant={stage === "not_started" ? "default" : "outline"}
+            className="min-h-[44px]"
+          >
+            {action.label}
+          </LinkButton>
         )}
         {showDelete && <DeleteButton document={document} />}
       </div>

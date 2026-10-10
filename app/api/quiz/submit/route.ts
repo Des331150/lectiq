@@ -14,6 +14,9 @@ type AnswerRow = {
   is_correct?: boolean;
   ai_score?: number;
   ai_feedback?: string;
+  source_quote?: string | null;
+  what_was_right?: string | null;
+  what_was_missing?: string | null;
 };
 
 export async function POST(request: Request) {
@@ -98,9 +101,18 @@ export async function POST(request: Request) {
         );
         answerRow.ai_score = Math.max(0, Math.min(100, Math.round(Number(grading.score) || 0)));
         answerRow.ai_feedback = String(grading.feedback ?? "").slice(0, 2000);
+        // Best-effort fields. gradeFreeResponse already degrades a missing or
+        // unverified citation to null rather than throwing, so a sparse model
+        // response costs the citation and nothing else.
+        answerRow.source_quote = grading.sourceQuote;
+        answerRow.what_was_right = grading.whatWasRight;
+        answerRow.what_was_missing = grading.whatWasMissing;
       } catch {
         answerRow.ai_score = 0;
         answerRow.ai_feedback = "Grading failed. Please review manually.";
+        answerRow.source_quote = null;
+        answerRow.what_was_right = null;
+        answerRow.what_was_missing = null;
       }
     }
     answerRows.push(answerRow);

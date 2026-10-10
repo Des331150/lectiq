@@ -1,8 +1,7 @@
 import { redirect } from "next/navigation";
-import Link from "next/link";
 import { ArrowRight, Upload } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
-import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Card } from "@/components/ui/card";
 import { DashboardStats } from "@/components/dashboard-stats";
 import { DocumentRow } from "@/components/document-row";
@@ -98,12 +97,10 @@ export default async function DashboardPage() {
     <AppShell title="Dashboard" email={user.email}>
       <header className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-bold tracking-tight">Study queue</h1>
-        <Link href="/upload" className="shrink-0">
-          <Button>
-            <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
-            Upload document
-          </Button>
-        </Link>
+        <LinkButton href="/upload" className="shrink-0">
+          <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
+          Upload document
+        </LinkButton>
       </header>
 
       <div className="mt-4">
@@ -191,18 +188,19 @@ function ResumeCard({ row }: { row: Row }) {
 
         <div className="mt-4 flex flex-wrap gap-2">
           {action.href && (
-            <Link href={action.href}>
-              <Button size="sm" className="min-h-[44px]">
-                {action.label}
-                <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
-              </Button>
-            </Link>
+            <LinkButton href={action.href} size="sm" className="min-h-[44px]">
+              {action.label}
+              <ArrowRight className="ml-2 h-4 w-4" aria-hidden="true" />
+            </LinkButton>
           )}
-          <Link href={`/documents/${document.id}/topics`}>
-            <Button size="sm" variant="outline" className="min-h-[44px]">
-              Review topics
-            </Button>
-          </Link>
+          <LinkButton
+            href={`/documents/${document.id}/topics`}
+            size="sm"
+            variant="outline"
+            className="min-h-[44px]"
+          >
+            Review topics
+          </LinkButton>
         </div>
       </div>
     </Card>
@@ -223,12 +221,10 @@ function EmptyState() {
         builds a quiz from the ones you pick.
       </p>
       <div className="mt-6 flex flex-wrap justify-center gap-2">
-        <Link href="/upload">
-          <Button>
-            <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
-            Upload your first document
-          </Button>
-        </Link>
+        <LinkButton href="/upload">
+          <Upload className="mr-2 h-4 w-4" aria-hidden="true" />
+          Upload your first document
+        </LinkButton>
       </div>
       <p className="mt-4 text-xs text-muted-foreground">PDF and PowerPoint &middot; nothing is shared with anyone</p>
     </div>

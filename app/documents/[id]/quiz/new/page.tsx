@@ -3,8 +3,8 @@
 import { useRouter, useSearchParams, useParams } from "next/navigation";
 import { useState, Suspense } from "react";
 import { Button } from "@/components/ui/button";
+import { LinkButton } from "@/components/ui/link-button";
 import { Loader2 } from "lucide-react";
-import Link from "next/link";
 import { AppShell } from "@/components/app-shell";
 
 function NewQuizContent() {
@@ -54,9 +54,9 @@ function NewQuizContent() {
       <AppShell title="New Quiz">
         <div className="text-center py-12">
           <p className="text-muted-foreground mb-4">No topics selected</p>
-          <Link href={`/documents/${docId}/topics`}>
-            <Button variant="outline">Go back and select topics</Button>
-          </Link>
+          <LinkButton href={`/documents/${docId}/topics`} variant="outline">
+            Go back and select topics
+          </LinkButton>
         </div>
       </AppShell>
     );

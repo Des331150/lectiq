@@ -46,6 +46,9 @@ export interface QuizQuestion {
   options: { label: string; text: string }[] | null;
   correct_answer: string | null;
   model_answer: string | null;
+  /** Why the correct answer is correct. Null on questions generated before
+   *  migration 00009, so the UI must handle its absence. */
+  explanation: string | null;
   topic_id: string | null;
   position: number;
 }
@@ -57,6 +60,13 @@ export interface QuizAnswer {
   is_correct: boolean | null;
   ai_score: number | null;
   ai_feedback: string | null;
+  /** The sentence from the source that justifies the grade, when the grader
+   *  returned one. Best-effort: grading succeeds without it. */
+  source_quote: string | null;
+  /** Grade split into credit and gap so the UI can label them separately
+   *  rather than parsing the prose blob in ai_feedback. */
+  what_was_right: string | null;
+  what_was_missing: string | null;
   created_at: string;
 }
 
