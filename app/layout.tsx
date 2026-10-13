@@ -31,27 +31,27 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Lectiq",
-    title: "Lectiq - Turn your lecture notes into quizzes",
+    title: "Lectiq - Know why you got it wrong",
     description:
-      "Upload a lecture PDF or PowerPoint, pick the topics, and get a quiz graded against your own material.",
+      "Upload a lecture PDF or PowerPoint, take a quiz, and get each wrong answer explained against the line of your own document that settles it.",
     images: [
       {
-        // Reuses the hero asset so a shared link shows the product rather than a
-        // bare title. The file is 1200x800; declaring its real dimensions is what
-        // tells Slack and LinkedIn how to crop it.
-        url: "/dashboard-hero-v2.png",
+        // Matches the hero, so a shared link shows the same screen the visitor
+        // would have landed on. The file is 1200x800; declaring its real
+        // dimensions is what tells Slack and LinkedIn how to crop it.
+        url: "/results-hero-v2.png",
         width: 1200,
         height: 800,
-        alt: "The Lectiq dashboard showing a study queue of uploaded lectures",
+        alt: "A quiz result explaining why a wrong answer was wrong",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lectiq - Turn your lecture notes into quizzes",
+    title: "Lectiq - Know why you got it wrong",
     description:
-      "Upload a lecture PDF or PowerPoint, pick the topics, and get a quiz graded against your own material.",
-    images: ["/dashboard-hero-v2.png"],
+      "Upload a lecture PDF or PowerPoint, take a quiz, and get each wrong answer explained against the line of your own document that settles it.",
+    images: ["/results-hero-v2.png"],
   },
 };
 

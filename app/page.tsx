@@ -62,13 +62,12 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 md:flex-row">
           <div className="flex-1">
             <h1 className="mb-4 text-balance text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.15] tracking-tight">
-              Turn your lecture notes
-              <br className="hidden sm:inline" />{" "}
-              <span className="text-accent">into quizzes</span>
+              Know{" "}
+              <span className="text-accent">why</span> you got it wrong
             </h1>
             <p className="mb-7 max-w-[65ch] text-base leading-relaxed text-muted-foreground">
-              Upload a lecture PDF or PowerPoint. Pick the topics. Get a quiz graded
-              against your own material, with feedback on what you missed and why.
+              Upload a lecture PDF or PowerPoint, take a quiz, and get each wrong
+              answer explained against the line of your own document that settles it.
             </p>
             <div className="flex flex-wrap gap-2.5">
               <LinkButton href="/auth/register" size="lg" className="font-medium">
@@ -89,8 +88,8 @@ export default function LandingPage() {
           </div>
           <div className="w-full flex-1">
             <Image
-              src="/dashboard-hero-v2.png"
-              alt="Lectiq dashboard showing the study queue"
+              src="/results-hero-v2.png"
+              alt="A quiz result showing a wrong answer, the correct answer, and an explanation of why the choice was wrong"
               width={1200}
               height={800}
               // The hero occupies the right half of a two-column grid above a
