@@ -16,7 +16,6 @@ export function ProcessingStatus({ documentId, documentTitle }: ProcessingStatus
   const router = useRouter();
   const [title, setTitle] = useState(documentTitle || "");
   const [step, setStep] = useState<2 | 3>(2);
-  const [stepDetail, setStepDetail] = useState("Reading document text and structure...");
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [failed, setFailed] = useState(false);
 
@@ -28,16 +27,21 @@ export function ProcessingStatus({ documentId, documentTitle }: ProcessingStatus
     return () => clearInterval(timer);
   }, []);
 
-  // Update dynamic step detail based on elapsed time
-  useEffect(() => {
-    if (elapsedSeconds > 12) {
-      setStepDetail("Finalizing topic taxonomy and study concepts...");
-    } else if (elapsedSeconds > 5) {
-      setStepDetail("Analyzing key terms, definitions, and slide takeaways...");
-    } else {
-      setStepDetail("Reading document text and structure...");
-    }
-  }, [elapsedSeconds]);
+  /**
+   * The step detail is derived from elapsed time, so it is computed rather than
+   * stored. Keeping it in state meant an effect recalculating it on every tick,
+   * which cascades a second render per second for no benefit.
+   */
+  const timedStepDetail =
+    elapsedSeconds > 12
+      ? "Finalizing topic taxonomy and study concepts…"
+      : elapsedSeconds > 5
+        ? "Analyzing key terms, definitions, and slide takeaways…"
+        : "Reading document text and structure…";
+
+  // Polling only distinguishes "still extracting" from "ready", so the elapsed-time
+  // copy covers every intermediate state and step 3 supplies the final message.
+  const detail = step === 3 ? "Topics extracted! Loading quiz configuration…" : timedStepDetail;
 
   // Polling Supabase for document readiness
   useEffect(() => {
@@ -56,7 +60,6 @@ export function ProcessingStatus({ documentId, documentTitle }: ProcessingStatus
 
       if (data?.status === "ready") {
         setStep(3);
-        setStepDetail("Topics extracted! Loading quiz configuration...");
         clearInterval(interval);
         setTimeout(() => {
           router.refresh();
@@ -175,7 +178,7 @@ export function ProcessingStatus({ documentId, documentTitle }: ProcessingStatus
       {/* Live Detail Callout */}
       <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-background border border-border text-xs text-muted-foreground">
         <Loader2 className="w-3.5 h-3.5 animate-spin text-accent shrink-0" />
-        <span>{stepDetail}</span>
+        <span>{detail}</span>
         <span className="text-muted-foreground/60">({elapsedSeconds}s)</span>
       </div>
     </div>

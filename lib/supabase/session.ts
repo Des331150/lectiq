@@ -38,7 +38,18 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user && request.nextUrl.pathname.startsWith("/auth")) {
+  // Signed-in users are sent on to the app from the sign-in and sign-up forms,
+  // where there is nothing further to do.
+  //
+  // /auth/confirm-email is deliberately exempt. Opening the confirmation link
+  // establishes the session *before* the redirect lands, so a blanket rule
+  // bounced the person straight to the dashboard and the screen explaining
+  // what had just happened never rendered.
+  const isFormScreen =
+    request.nextUrl.pathname.startsWith("/auth/login") ||
+    request.nextUrl.pathname.startsWith("/auth/register");
+
+  if (user && isFormScreen) {
     const url = request.nextUrl.clone();
     url.pathname = "/dashboard";
     return NextResponse.redirect(url);
