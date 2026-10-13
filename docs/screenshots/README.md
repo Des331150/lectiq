@@ -18,5 +18,8 @@ and that only a rendered page exposed.
 | `auth-register-desktop.png` | Sign-up. A duplicate address now reports neutrally instead of confirming the account exists, with a route to sign in. |
 | `auth-login-mobile.png` | Sign-in at 375px, with the password reveal toggle. |
 
+| `landing-fixed-desktop-fold.png` | The landing page after the mechanical pass. Hero copy replaced the repeated "active recall" claims with what the product does, the footer no longer links to 404s, and buttons are not nested inside anchors. |
+| `landing-fixed-mobile-full.png` | The same page at 375px, full length. |
+
 These are point-in-time evidence, not current-state documentation. If a fix
 lands, the screenshot goes stale — regenerate rather than trusting them.
