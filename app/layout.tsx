@@ -37,12 +37,12 @@ export const metadata: Metadata = {
     images: [
       {
         // Matches the hero, so a shared link shows the same screen the visitor
-        // would have landed on. The file is 1200x800; declaring its real
+        // would have landed on. The file is 1984x702; declaring its real
         // dimensions is what tells Slack and LinkedIn how to crop it.
-        url: "/results-hero-v2.png",
-        width: 1200,
-        height: 800,
-        alt: "A quiz result explaining why a wrong answer was wrong",
+        url: "/results-tile-stacked.png",
+        width: 992,
+        height: 351,
+        alt: "A wrong answer, the correct one, and an explanation of why",
       },
     ],
   },
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     title: "Lectiq - Know why you got it wrong",
     description:
       "Upload a lecture PDF or PowerPoint, take a quiz, and get each wrong answer explained against the line of your own document that settles it.",
-    images: ["/results-hero-v2.png"],
+    images: ["/results-tile-stacked.png"],
   },
 };
 

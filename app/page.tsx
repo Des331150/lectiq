@@ -59,13 +59,13 @@ export default function LandingPage() {
       </header>
 
       <main className="flex-1">
-        <div className="mx-auto flex max-w-5xl flex-col items-center gap-10 px-4 py-12 sm:px-6 sm:py-16 md:flex-row">
-          <div className="flex-1">
+        <div className="mx-auto flex max-w-5xl flex-col gap-10 px-4 py-12 sm:px-6 sm:py-14">
+          <div className="max-w-2xl">
             <h1 className="mb-4 text-balance text-[clamp(2rem,5vw,3.25rem)] font-bold leading-[1.15] tracking-tight">
               Know{" "}
               <span className="text-accent">why</span> you got it wrong
             </h1>
-            <p className="mb-7 max-w-[65ch] text-base leading-relaxed text-muted-foreground">
+            <p className="mb-7 text-base leading-relaxed text-muted-foreground">
               Upload a lecture PDF or PowerPoint, take a quiz, and get each wrong
               answer explained against the line of your own document that settles it.
             </p>
@@ -86,20 +86,45 @@ export default function LandingPage() {
               Free while you have 10 documents a month.
             </p>
           </div>
-          <div className="w-full flex-1">
+
+          {/*
+            Stacked rather than beside the copy. In a two-column split the tile
+            got 468px of a 1200px capture, putting its body text at about 5px.
+            Full width it renders near the size it was captured at, so the
+            reasoning is readable, which is the only reason to show it.
+
+            Two assets, each captured for the width it renders at. The wide tile
+            at 992px becomes 0.35 scale under 640px, where its text is
+            decorative rather than legible, so phones get their own capture.
+          */}
+          <figure className="hidden w-full sm:block">
             <Image
-              src="/results-hero-v2.png"
-              alt="A quiz result showing a wrong answer, the correct answer, and an explanation of why the choice was wrong"
-              width={1200}
-              height={800}
-              // The hero occupies the right half of a two-column grid above a
-              // 900px breakpoint, and the full width below it. A 50vw cap made
-              // the browser pick the 640w candidate for a slot that renders up
-              // to 1200px wide, so the image arrived upscaled.
-              sizes="(max-width: 900px) 100vw, 50vw"
+              src="/results-tile-stacked.png"
+              alt="A wrong multiple-choice answer, the correct answer beside it, and an explanation of why the choice was wrong"
+              width={992}
+              height={351}
+              sizes="(max-width: 1048px) 100vw, 992px"
               className="h-auto w-full rounded-xl border border-border shadow-sm"
             />
-          </div>
+            <figcaption className="mt-2 text-xs text-muted-foreground">
+              Every wrong answer comes with the reasoning and the line of your
+              document it came from.
+            </figcaption>
+          </figure>
+
+          <figure className="w-full sm:hidden">
+            <Image
+              src="/results-tile-mobile.png"
+              alt="A wrong multiple-choice answer, the correct answer beside it, and an explanation of why the choice was wrong"
+              width={343}
+              height={491}
+              sizes="(max-width: 639px) 100vw, 0px"
+              className="h-auto w-full rounded-xl border border-border shadow-sm"
+            />
+            <figcaption className="mt-2 text-xs text-muted-foreground">
+              Every wrong answer comes with the reasoning.
+            </figcaption>
+          </figure>
         </div>
 
         <div className="border-t border-border px-4 py-12 sm:px-6">
