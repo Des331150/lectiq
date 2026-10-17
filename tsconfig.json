@@ -30,5 +30,7 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules"]
+  // tests/ has its own tsconfig, because Node runs those files by stripping
+  // types and therefore needs explicit .ts extensions on relative imports.
+  "exclude": ["node_modules", "tests"]
 }

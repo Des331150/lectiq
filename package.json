@@ -3,11 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.20.0",
+  "//engines": "The unit tests run .ts files directly, which needs unflagged type stripping. It landed in Node 22.18 and is unflagged from 23.6, so CI pins 24.",
+  "engines": {
+    "node": ">=22.18.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test tests/unit/*.test.ts",
+    "test:browser": "node --test tests/browser/*.test.mjs",
+    "test:all": "npm run test && npm run test:browser",
+    "test:types": "tsc --noEmit -p tests/tsconfig.json"
   },
   "dependencies": {
     "@supabase/ssr": "^0.6.1",

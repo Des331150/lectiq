@@ -1,0 +1,31 @@
+{
+  // Node 26 runs the unit tests by stripping TypeScript types, which requires
+  // explicit .ts extensions on relative imports. Enabling
+  // allowImportingTsExtensions in the app's tsconfig would make that legal
+  // everywhere, where nothing needs it, so the tests get their own config and
+  // the app's stays focused on application code.
+  //
+  // Deliberately standalone rather than extending the app config: relative
+  // paths and the "@/*" alias are resolved against this file's location, so an
+  // extends would silently rebase every one of them.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowImportingTsExtensions": true,
+    "types": ["node"],
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": ["**/*.ts", "../lib/**/*.ts", "../types/**/*.ts"],
+  "exclude": ["../node_modules"]
+}

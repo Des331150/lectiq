@@ -1,0 +1,84 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: npx tsc --noEmit
+
+      # Separate config: the tests import with explicit .ts extensions, which
+      # the app config rejects. See tests/tsconfig.json.
+      - name: Typecheck tests
+        run: pnpm test:types
+
+      - name: Lint
+        run: pnpm lint
+
+      # Pure logic only: no database, no server, no secrets. These guard the
+      # regressions that unit-level rules caught after the fact, notably the
+      # results review threshold and the upload type sniffing.
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Build
+        run: pnpm build
+
+  browser:
+    # Runs against a real dev server. Separated from the job above so a
+    # Playwright failure is readable as its own failure rather than buried in
+    # a matrix, and so the fast job stays fast.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec playwright install --with-deps chromium
+
+      # No Supabase credentials on purpose. The browser tests cover signed-out
+      # screens and structure only; anything needing a session or a real
+      # database belongs in a follow-up job with secrets, not here.
+      - name: Start dev server
+        run: pnpm dev &
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: placeholder-anon-key
+
+      - name: Wait for the server
+        run: |
+          for i in $(seq 1 60); do
+            if curl -sf -o /dev/null http://localhost:3000/; then
+              echo "server up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "server did not start" >&2
+          exit 1
+
+      - name: Browser tests
+        run: pnpm test:browser

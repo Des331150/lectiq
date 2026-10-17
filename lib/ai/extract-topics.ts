@@ -1,5 +1,6 @@
 import { aiComplete } from "./client";
 import { TRUNCATION_REASON, type TruncationReason } from "./limits";
+import { EXTRACTION_TOPIC_CAP } from "../topic-cap";
 
 interface ExtractedTopic {
   title: string;
@@ -8,7 +9,7 @@ interface ExtractedTopic {
 }
 
 const CHUNK_CHARS = 10000;
-const MAX_TOPICS = 60;
+const MAX_TOPICS = EXTRACTION_TOPIC_CAP;
 const MAX_TOTAL_CHUNKS = 30;
 const TIME_BUDGET_MS = 90_000;
 const MIN_SLIDE_MARKERS = 2;

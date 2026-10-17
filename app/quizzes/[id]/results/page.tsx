@@ -8,6 +8,7 @@ import { AppShell } from "@/components/app-shell";
 import { QuizDeadEnd } from "@/components/quiz-dead-end";
 import { LinkButton } from "@/components/ui/link-button";
 import { createClient } from "@/lib/supabase/client";
+import { buildReviewItems, type ReviewItem } from "@/lib/review";
 import type { Quiz, QuizQuestion, QuizAnswer } from "@/types/database";
 
 type Filter = "review" | "all" | "correct";
@@ -17,22 +18,6 @@ const FILTERS: { id: Filter; label: (count: number | null) => string }[] = [
   { id: "all", label: () => "All" },
   { id: "correct", label: () => "Correct only" },
 ];
-
-/**
- * A free-response answer scoring below this counts as needing review.
- *
- * Set at 70 rather than 60 because the review list is meant to be short and
- * actionable. At 60 an answer the model rated 68% — genuinely thin — was
- * filed under "correct" and never surfaced, which is the opposite of what the
- * filter is for.
- */
-const WEAK_SCORE = 70;
-
-type ReviewItem = {
-  question: QuizQuestion;
-  answer: QuizAnswer | undefined;
-  needsReview: boolean;
-};
 
 export default function ResultsPage({ params }: { params: Promise<{ id: string }> }) {
   const [loading, setLoading] = useState(true);
@@ -100,22 +85,10 @@ export default function ResultsPage({ params }: { params: Promise<{ id: string }
     };
   }, [params]);
 
-  const answersByQuestion = useMemo(() => {
-    const map = new Map<string, QuizAnswer>();
-    answers.forEach((a) => map.set(a.question_id, a));
-    return map;
-  }, [answers]);
-
-  const reviewItems: ReviewItem[] = useMemo(() => {
-    return questions.map((question) => {
-      const answer = answersByQuestion.get(question.id);
-      const needsReview =
-        question.type === "mcq"
-          ? answer?.is_correct === false
-          : typeof answer?.ai_score === "number" && answer.ai_score < WEAK_SCORE;
-      return { question, answer, needsReview };
-    });
-  }, [questions, answersByQuestion]);
+  const reviewItems: ReviewItem[] = useMemo(
+    () => buildReviewItems(questions, answers),
+    [questions, answers]
+  );
 
   const reviewCount = reviewItems.filter((item) => item.needsReview).length;
 
